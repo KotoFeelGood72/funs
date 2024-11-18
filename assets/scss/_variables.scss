@@ -1,0 +1,46 @@
+$point_1: 1200px;
+$point_2: 1024px;
+$point_3: 1023px;
+$point_4: 768px;
+$point_5: 640px;
+$point_6: 480px;
+$point_7: 375px;
+$point_8: 320px;
+
+$page_width: 120rem;
+
+
+$white: #fff;
+$black: #000;
+$color_text_base: $black;
+$body_bg: $white;
+
+$light: #F3E4E0;
+$rose: #F3E4E0;
+
+
+
+$header: 17.7rem;
+$footer: 11.3rem;
+
+
+$font_path: "@/assets/fonts/";
+
+$font_1: 'Inter-Regular';
+$font_2: 'Gilroy-Medium';
+
+$font_size_base: 1.6rem;
+
+
+.container {
+    max-width: $page_width;
+    padding: 0 2rem;
+    margin: 0 auto;
+    @media(max-width: 1024px) {
+        padding: 0 4.5rem;
+    }
+    @media(max-width: 480px) {
+        padding: 0 2rem;
+    }
+}
+
