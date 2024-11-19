@@ -9,8 +9,8 @@
       />
     </div>
     <div class="filter-group">
-      <label for="to">Куда</label>
       <SearchSelect
+        label="Куда"
         :options="airData.city"
         @selected="onSelect"
         v-model="air.selectedCityFrom"
@@ -24,8 +24,12 @@
       />
     </div>
     <div class="filter-group">
-      <label for="passengers">Пассажиров</label>
-      <Select :options="airData.people" v-model="air.selectedPeople" />
+      <Select
+        :options="airData.people"
+        v-model="air.selectedPeople"
+        placeholder="Выбрать класс"
+        label="Пассажиров"
+      />
     </div>
     <btn name="Искать для визы" icon="right" @click="applyFilters" />
   </div>
@@ -54,5 +58,10 @@ const onSelect = (value: string) => {
 <style scoped lang="scss">
 .filters {
   @include flex-space;
+  gap: 2.4rem;
+}
+
+.filter-group {
+  flex-grow: 1;
 }
 </style>

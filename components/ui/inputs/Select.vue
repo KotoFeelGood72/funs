@@ -1,9 +1,13 @@
 <template>
-  <div class="custom-select">
+  <div class="select" @click="toggleDropdown">
+    <!-- Метка -->
+    <label :class="{ active: dropdownOpen || modelValue }" class="label">
+      {{ label }}
+    </label>
+
     <!-- Выбранное значение -->
-    <div class="selected" @click="toggleDropdown">
+    <div class="selected">
       {{ modelValue || placeholder }}
-      <span class="arrow">&#9662;</span>
     </div>
 
     <!-- Выпадающий список -->
@@ -28,6 +32,7 @@ defineProps<{
   options: string[]; // Список опций
   placeholder?: string; // Текст по умолчанию
   modelValue: string; // Текущее выбранное значение
+  label?: string; // Текст метки
 }>();
 
 // Эмит события
@@ -49,31 +54,58 @@ const selectOption = (option: string) => {
 </script>
 
 <style scoped lang="scss">
-.custom-select {
+.select {
   position: relative;
-  width: 200px;
-  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 
-  .selected {
-    padding: 0.8rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    background-color: #fff;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  font-family: $font_2;
+  padding: 1.1rem 1.6rem;
+  width: 100%;
+  background: transparent;
+  z-index: 1;
+  border: 0.1rem solid $light;
+  border-radius: 0.4rem;
+  font-size: 1.8rem;
 
-    &:hover {
-      border-color: #888;
-    }
+  .label {
+    position: absolute;
+    top: 50%;
+    left: 1.6rem;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-size: 1.4rem;
+    font-family: $font_2;
+    color: $dark;
   }
 
-  .arrow {
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-    color: #888;
+  .label.active {
+    top: 0;
+    left: 0.7rem;
+    background-color: $white;
+    z-index: 22;
+    padding: 0 1rem;
+    color: $blue;
   }
+
+  //   .search-input {
+  //     @include app;
+  //     font-family: $font_2;
+  //     padding: 1.1rem 1.6rem;
+  //     width: 100%;
+  //     background: transparent;
+  //     z-index: 1;
+  //     border: 0.1rem solid $light;
+  //     border-radius: 0.4rem;
+  //     font-size: 1.8rem;
+
+  //     &:focus {
+  //       //   outline: none;
+  //       //   border-color: #1890ff;
+  //     }
+  //   }
 
   .options {
     position: absolute;
@@ -82,17 +114,15 @@ const selectOption = (option: string) => {
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
-    border: 1px solid #ccc;
+    background: white;
+    border: 0.1rem solid $light;
     border-radius: 0.5rem;
-    background-color: #fff;
     z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 0;
-    margin: 0;
-    list-style: none;
 
     li {
+      font-size: 1.4rem;
       padding: 0.8rem 1rem;
+      color: $dark;
       cursor: pointer;
       transition: background-color 0.2s;
 
@@ -104,6 +134,11 @@ const selectOption = (option: string) => {
         background-color: #e6f7ff;
         color: #1890ff;
       }
+    }
+
+    .no-options {
+      padding: 0.8rem 1rem;
+      color: #999;
     }
   }
 }
