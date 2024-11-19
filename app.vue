@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+  <NuxtLayout>
+    <NuxtPage></NuxtPage>
+  </NuxtLayout>
 </template>
 
 <style lang="scss">
-@include bp($point_2) {
-}
+@use "./assets/scss/style.scss";
 </style>

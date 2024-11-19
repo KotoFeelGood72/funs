@@ -2,14 +2,30 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
+
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "~/assets/_variables.scss" as *; 
-            @use "~/assets/_mixins.scss" as *;`,
+          additionalData: `
+            @use "~/assets/scss/_mixins.scss" as *;
+            @use "~/assets/scss/variables.scss" as *;
+            `,
+          api: "modern",
         },
       },
     },
+  },
+
+  modules: ["@nuxt/icon", "@pinia/nuxt"],
+
+  icon: {
+    // provider: "server",
+    customCollections: [
+      {
+        prefix: "f",
+        dir: "./assets/icons",
+      },
+    ],
   },
 });
