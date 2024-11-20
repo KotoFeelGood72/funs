@@ -22,6 +22,9 @@
 <style scoped lang="scss">
 .hero_main {
   color: $blue;
+  background-color: $white;
+  padding: 3.2rem;
+  border-radius: 3.2rem;
   h2 {
     font-size: 10rem;
     line-height: 9.5rem;
@@ -41,7 +44,7 @@
 }
 
 .txt {
-  padding: 2rem 0 2.4rem 0;
+  padding: 2rem 0 3.2rem 0;
   font-size: 2.4rem;
   color: $dark;
 }

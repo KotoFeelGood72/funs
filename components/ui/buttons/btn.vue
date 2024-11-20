@@ -1,5 +1,5 @@
 <template>
-  <div class="btn">
+  <div class="btn" :class="[isColorTheme]">
     <div class="loading" v-if="loading">
       <Icon name="svg-spinners:eclipse" />
     </div>
@@ -11,11 +11,25 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   name: string;
   loading?: boolean;
   icon?: string;
+  theme?: string;
 }>();
+
+const isColorTheme = computed(() => {
+  switch (props.theme) {
+    case "white":
+      return "theme-white";
+    case "transparent":
+      return "theme-transparent";
+    case "primary":
+      return "theme-primary";
+    case "secondary":
+      return "theme-secondary";
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -29,6 +43,26 @@ defineProps<{
   color: $blue;
   font-family: $font_3;
   transition: all 0.3s ease-in-out;
+
+  &.theme-white {
+    background-color: $white;
+    color: $blue;
+    border-color: $white;
+    &:hover {
+      border-color: $light;
+      background-color: $light;
+      color: $blue;
+    }
+  }
+  &.theme-transparent {
+    background-color: transparent;
+    color: $white;
+    &:hover {
+      border-color: transparent;
+      background-color: transparent;
+      color: rgba(255, 255, 255, 0.589);
+    }
+  }
   &:hover {
     background-color: $blue;
     color: $white;

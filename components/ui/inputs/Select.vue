@@ -7,7 +7,8 @@
 
     <!-- Выбранное значение -->
     <div class="selected">
-      {{ modelValue || placeholder }}
+      <p>{{ modelValue }}</p>
+      <slot />
     </div>
 
     <!-- Выпадающий список -->
@@ -16,7 +17,7 @@
         v-for="(option, index) in options"
         :key="index"
         :class="{ selected: option === modelValue }"
-        @click="selectOption(option)"
+        @click.stop="selectOption(option)"
       >
         {{ option }}
       </li>
@@ -25,12 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 // Пропсы
-defineProps<{
+const props = defineProps<{
   options: string[]; // Список опций
-  placeholder?: string; // Текст по умолчанию
   modelValue: string; // Текущее выбранное значение
   label?: string; // Текст метки
 }>();
@@ -41,15 +41,23 @@ const emit = defineEmits(["update:modelValue"]);
 // Состояния
 const dropdownOpen = ref(false); // Открытие/закрытие выпадающего списка
 
+// Установить активное значение при инициализации
+onMounted(() => {
+  if (!props.modelValue && props.options.length > 0) {
+    emit("update:modelValue", props.options[0]);
+  }
+});
+
 // Переключение дропдауна
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
+  console.log("Good");
 };
 
 // Выбор опции
 const selectOption = (option: string) => {
   emit("update:modelValue", option); // Обновляем значение через v-model
-  dropdownOpen.value = false; // Закрываем дропдаун
+  dropdownOpen.value = false;
 };
 </script>
 
@@ -59,15 +67,7 @@ const selectOption = (option: string) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  font-family: $font_2;
-  padding: 1.1rem 1.6rem;
-  width: 100%;
-  background: transparent;
-  z-index: 1;
-  border: 0.1rem solid $light;
-  border-radius: 0.4rem;
-  font-size: 1.8rem;
+  cursor: pointer;
 
   .label {
     position: absolute;
@@ -76,36 +76,32 @@ const selectOption = (option: string) => {
     transform: translateY(-50%);
     transition: all 0.3s ease;
     pointer-events: none;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     font-family: $font_2;
     color: $dark;
+    &.active {
+      top: -0.2rem;
+      left: 0.7rem;
+      background-color: $white;
+      z-index: 22;
+      padding: 0 1rem;
+      color: $blue;
+      font-size: 1.4rem;
+    }
   }
 
-  .label.active {
-    top: 0;
-    left: 0.7rem;
-    background-color: $white;
-    z-index: 22;
-    padding: 0 1rem;
-    color: $blue;
+  .selected {
+    font-family: $font_2;
+    padding: 1rem 1.6rem;
+    width: 100%;
+    background: transparent;
+    z-index: 1;
+    border-bottom: 0.1rem solid $blue;
+    font-size: 1.8rem;
+    color: $dark;
+
+    @include flex-space;
   }
-
-  //   .search-input {
-  //     @include app;
-  //     font-family: $font_2;
-  //     padding: 1.1rem 1.6rem;
-  //     width: 100%;
-  //     background: transparent;
-  //     z-index: 1;
-  //     border: 0.1rem solid $light;
-  //     border-radius: 0.4rem;
-  //     font-size: 1.8rem;
-
-  //     &:focus {
-  //       //   outline: none;
-  //       //   border-color: #1890ff;
-  //     }
-  //   }
 
   .options {
     position: absolute;
@@ -114,7 +110,7 @@ const selectOption = (option: string) => {
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
-    background: white;
+    background: $white;
     border: 0.1rem solid $light;
     border-radius: 0.5rem;
     z-index: 1000;

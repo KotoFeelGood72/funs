@@ -39,6 +39,7 @@ const setActiveTab = (index: number) => {
 .tabs {
   display: flex;
   flex-direction: column;
+  gap: 2.3rem;
 }
 
 .tabs-list {
@@ -103,8 +104,8 @@ const setActiveTab = (index: number) => {
 }
 
 .tab-content {
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-top: none;
+  // padding: 2rem;
+  // border: 1px solid #ddd;
+  // border-top: none;
 }
 </style>
