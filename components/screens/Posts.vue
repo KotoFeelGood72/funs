@@ -5,16 +5,11 @@
         <h3>Блог</h3>
         <btn name="Смотреть все" icon="right" theme="transparent" />
       </div>
-      <div class="posts-grid">
-        <div
-          class="post"
-          v-for="(item, i) in posts"
-          :key="'home-post-item-' + i"
-          :class="['area-' + i]"
-        >
+      <ul class="posts-grid">
+        <li v-for="(item, i) in posts" :key="'home-post-item-' + i">
           <Post :post="item" />
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -39,6 +34,35 @@ defineProps<{
   margin-bottom: 3.2rem;
   h3 {
     font-size: 3.2rem;
+  }
+}
+
+.posts-grid {
+  display: grid;
+  width: 100%;
+  //   max-width: 118rem;
+  gap: 2rem;
+  grid-auto-flow: dense;
+  grid-template-areas:
+    "a b ."
+    "c d e";
+
+  li {
+    &:nth-child(1) {
+      grid-area: a;
+    }
+    &:nth-child(2) {
+      grid-area: b;
+    }
+    &:nth-child(3) {
+      grid-area: c;
+    }
+    &:nth-child(4) {
+      grid-area: d;
+    }
+    &:nth-child(5) {
+      grid-area: e;
+    }
   }
 }
 </style>

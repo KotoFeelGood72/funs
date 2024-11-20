@@ -1,12 +1,22 @@
 <template>
-  <div class="divider" :style="{ height: heightInRem }"></div>
+  <div
+    class="divider"
+    :style="{ height: heightInRem }"
+    :class="[{ blue: color }]"
+  ></div>
 </template>
 
 <script setup lang="ts">
 // Принимаем параметр высоты через пропсы
-const props = defineProps<{
-  height: number; // Высота в rem
-}>();
+const props = withDefaults(
+  defineProps<{
+    height: number; // Высота в rem
+    color?: boolean;
+  }>(),
+  {
+    color: false,
+  }
+);
 
 // Преобразуем значение высоты в rem
 const heightInRem = `${props.height}rem`;
@@ -15,6 +25,8 @@ const heightInRem = `${props.height}rem`;
 <style scoped lang="scss">
 .divider {
   width: 100%; /* Занимает всю ширину */
-  background-color: $blue;
+  &.blue {
+    background-color: $blue;
+  }
 }
 </style>

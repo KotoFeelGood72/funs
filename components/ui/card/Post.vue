@@ -17,9 +17,24 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   post: any;
 }>();
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post_img {
+  width: 100%;
+  height: 100%;
+  @include flex-center;
+  img {
+    width: 100%;
+  }
+}
+
+.post {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+</style>
