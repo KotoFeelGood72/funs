@@ -23,6 +23,50 @@
     <Faq />
     <Divider :height="8" :color="true" />
     <Posts :posts="posts" />
+    <Divider :height="8" :color="true" />
+    <section class="quote">
+      <div class="container">
+        <div class="quote_main">
+          <h2>бронировать с</h2>
+          <div class="qoute_row">
+            <img src="~/assets/img/pic-logo.png" />
+            <h3>Funbooking</h3>
+          </div>
+          <h4>— это весело!</h4>
+        </div>
+      </div>
+    </section>
+    <section class="services">
+      <div class="container">
+        <div class="services_main">
+          <div class="service_card">
+            <div class="service_card__img">
+              <img src="" alt="" />
+            </div>
+            <div class="service_card__content">
+              <h3>Text</h3>
+              <p>
+                Приятно, граждане, наблюдать, как представители современных
+                социальных резервов формируют глобальную экономическую сеть и
+                при этом — ассоциативно распределены по отраслям.
+              </p>
+              <btn name="Найти отель" icon="right" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="callback">
+      <div class="container">
+        <div class="callback_main">
+          <div class="callback__content">
+            <h3>Обратная связь</h3>
+            <p>Обратитесь в поддержку</p>
+          </div>
+          <Form />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -34,6 +78,8 @@ import Preview from "~/components/screens/Preview.vue";
 import Faq from "~/components/screens/Faq.vue";
 import Divider from "~/components/ui/Divider.vue";
 import Posts from "~/components/screens/Posts.vue";
+import btn from "~/components/ui/buttons/btn.vue";
+import Form from "~/components/shared/Form.vue";
 
 const tabList = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA" }];
 
