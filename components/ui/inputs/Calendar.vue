@@ -1,7 +1,7 @@
 <template>
   <div class="air-date">
     <VueDatePicker
-      v-model="localValue"
+      v-model="localRange"
       range
       :hide-navigation="['month', 'year', 'time']"
       :min-date="today"
@@ -29,27 +29,41 @@ import "@vuepic/vue-datepicker/dist/main.css";
 
 // Пропсы
 const props = defineProps<{
-  modelValue: Date[] | null;
+  startDate?: Date | null; // Начальная дата
+  endDate?: Date | null; // Конечная дата
 }>();
 
 // Эмиссия событий
 const emit = defineEmits<{
-  (event: "update:modelValue", value: Date[] | null): void;
+  (event: "update:startDate", value: Date | null): void;
+  (event: "update:endDate", value: Date | null): void;
 }>();
 
-// Локальное состояние
+// Локальное состояние для диапазона
+const localRange = ref<Date[] | null>(null);
 const today = new Date();
-const localValue = ref<Date[] | null>(null);
 
-// Следим за изменением значения
+// Следим за внешними значениями и обновляем локальное состояние
 watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      localValue.value = newValue;
-    }
+  () => [props.startDate, props.endDate],
+  ([newStart, newEnd]) => {
+    localRange.value = newStart && newEnd ? [newStart, newEnd] : null;
   },
   { immediate: true }
+);
+
+// Следим за изменением диапазона и эмитим события
+watch(
+  () => localRange.value,
+  (newRange) => {
+    if (newRange) {
+      emit("update:startDate", newRange[0] || null);
+      emit("update:endDate", newRange[1] || null);
+    } else {
+      emit("update:startDate", null);
+      emit("update:endDate", null);
+    }
+  }
 );
 
 // Форматирование диапазона дат

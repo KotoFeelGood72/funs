@@ -63,6 +63,14 @@ const isColorTheme = computed(() => {
       color: rgba(255, 255, 255, 0.589);
     }
   }
+  &.theme-primary {
+    background-color: $blue;
+    color: $white;
+    &:hover {
+      background-color: transparent;
+      color: $blue;
+    }
+  }
   &:hover {
     background-color: $blue;
     color: $white;

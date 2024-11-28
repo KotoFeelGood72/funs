@@ -11,8 +11,8 @@
       <btn name="Бронировать для визы" />
     </div>
     <div class="air-content">
-      <!-- <AirHead /> -->
-      <!-- <AirInfo /> -->
+      <AirHead title="" logo="" />
+      <AirInfo start="" end="" :count="2" />
     </div>
   </div>
 </template>
@@ -23,4 +23,10 @@ import AirHead from "../air/AirHead.vue";
 import AirInfo from "../air/AirInfo.vue";
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.air {
+  border: 0.1rem solid #d9d9d9;
+  padding: 1.6rem;
+  border-radius: 0.8rem;
+}
+</style>

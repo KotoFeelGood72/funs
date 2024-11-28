@@ -16,7 +16,11 @@ export default defineNuxtConfig({
       },
     },
   },
-  plugins: ["~/plugins/datepicker.client.ts", "~/plugins/outside.client.ts"],
+  plugins: [
+    "~/plugins/datepicker.client.ts",
+    "~/plugins/outside.client.ts",
+    "~/plugins/toast.js",
+  ],
   modules: ["@nuxt/icon", "@pinia/nuxt"],
 
   icon: {
@@ -28,7 +32,8 @@ export default defineNuxtConfig({
       },
     ],
   },
+
   build: {
-    transpile: ["@vuepic/vue-datepicker"],
+    transpile: ["@vuepic/vue-datepicker", "vue-toastification"],
   },
 });

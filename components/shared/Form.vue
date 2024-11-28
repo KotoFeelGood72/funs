@@ -12,7 +12,12 @@
       v-model="formData.textarea"
       label="Обращение"
     />
-    <btn name="Отправить" icon="right" @click="sendForm" />
+    <btn
+      name="Отправить"
+      icon="right"
+      @click="sendForm"
+      style="width: 100%; justify-content: center"
+    />
   </div>
 </template>
 
@@ -25,4 +30,11 @@ import btn from "../ui/buttons/btn.vue";
 const { sendForm, formData } = useFormSend();
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.form {
+  @include flex-start;
+  flex-direction: column;
+  gap: 2.4rem;
+  flex-grow: 1;
+}
+</style>

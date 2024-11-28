@@ -1,31 +1,28 @@
 <template>
   <div class="select">
-    <!-- Метка поля -->
-    <label :class="{ active: dropdownOpen || localValue }" class="label">
+    <label :class="{ active: dropdownOpen || displayName }" class="label">
       {{ label }}
     </label>
-
-    <!-- Поле поиска -->
     <input
       type="text"
-      v-model="localValue"
+      :value="displayName"
       @focus="toggleDropdown(true)"
       @blur="toggleDropdown(false)"
+      @input="onInput($event)"
       :placeholder="dropdownOpen ? '' : placeholder"
       class="input"
     />
 
-    <!-- Список вариантов -->
-    <ul v-if="dropdownOpen" class="options">
+    <ul v-if="dropdownOpen && options.length > 0" class="options">
       <li
-        v-for="(option, index) in filteredOptions"
+        v-for="(option, index) in options"
         :key="index"
-        :class="{ selected: option === localValue }"
+        :class="{ selected: option.value === displayName }"
         @mousedown="selectOption(option)"
       >
-        {{ option }}
+        {{ option.name }}
       </li>
-      <li v-if="filteredOptions.length === 0" class="no-options">
+      <li v-if="options.length === 0" class="no-options">
         Нет доступных вариантов
       </li>
     </ul>
@@ -34,11 +31,12 @@
 
 <script setup lang="ts">
 import { ref, computed, defineEmits } from "vue";
+import { useFiltersStore } from "~/store/useFilterStore";
 
 // Пропсы
 const props = defineProps<{
-  options: string[]; // Список вариантов
-  modelValue: string; // Связанное значение через v-model
+  options: Array<{ name: string; value: string }>; // Список опций
+  modelValue: { name: string; value: string }; // Объект, связанный через v-model
   placeholder?: string; // Текст-заполнитель
   label?: string; // Метка поля
 }>();
@@ -46,33 +44,43 @@ const props = defineProps<{
 // Эмиссия события для обновления modelValue
 const emit = defineEmits(["update:modelValue"]);
 
-// Локальное состояние через computed
+// Получение метода clearPlace из store
+const { clearPlace } = useFiltersStore();
+
+// Локальное значение через computed
 const localValue = computed({
-  get: () => props.modelValue, // Получаем текущее значение
-  set: (value: string) => emit("update:modelValue", value), // Обновляем модель
+  get: () => props.modelValue,
+  set: (value) => emit("update:modelValue", value),
 });
 
-// Открытое/закрытое состояние выпадающего списка
+// Вычисляемое значение для отображения в input
+const displayName = computed(() => localValue.value?.name || "");
+
+// Состояние дропдауна
 const dropdownOpen = ref(false);
 
-// Фильтрация вариантов на основе строки поиска
-const filteredOptions = computed(() =>
-  props.options.filter((option) =>
-    option.toLowerCase().includes(localValue.value.toLowerCase())
-  )
-);
-
-// Открытие/закрытие дропдауна
 const toggleDropdown = (open: boolean) => {
+  console.log("Received open state:", open); // Проверьте, передается ли true
   setTimeout(() => {
     dropdownOpen.value = open;
-  }, 150); // Задержка, чтобы избежать закрытия при выборе
+    console.log("Dropdown state after update:", dropdownOpen.value);
+    if (!open) {
+      clearPlace();
+    }
+  }, 150);
 };
 
-// Выбор варианта
-const selectOption = (option: string) => {
-  localValue.value = option; // Обновляем модель через computed
+// Обработка выбора опции
+const selectOption = (option: { name: string; value: string }) => {
+  emit("update:modelValue", option); // Устанавливаем выбранный объект
+  clearPlace(); // Вызываем clearPlace после выбора
   toggleDropdown(false); // Закрываем дропдаун
+};
+
+// Обработка ввода в поле
+const onInput = (event: InputEvent) => {
+  const value = (event.target as HTMLInputElement).value;
+  emit("update:modelValue", { name: value, value: "" }); // Обновляем только имя
 };
 </script>
 

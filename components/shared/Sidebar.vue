@@ -84,4 +84,51 @@ const selectedTransfer = ref<any>();
 const selectedAvia = ref<any>();
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.sidebar {
+  border: 0.1rem solid #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+  padding: 1.6rem;
+  border-radius: 0.8rem;
+  width: 100%;
+  max-width: 29rem;
+}
+
+.sidebar-head {
+  @include flex-start;
+  gap: 1.2rem;
+
+  & > p {
+    font-size: 2.4rem;
+    font-family: $font_2;
+  }
+}
+
+.clear {
+  @include flex-center;
+  background-color: $gray-light;
+  padding: 0.5rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-size: 1.6rem;
+  gap: 0.8rem;
+  font-family: $font_2;
+}
+
+.ic {
+  @include flex-center;
+}
+
+.row-head {
+  font-size: 1.4rem;
+  margin-bottom: 1.6rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+</style>

@@ -5,7 +5,9 @@
     </div>
     <div class="post_content">
       <h3>{{ post.title }}</h3>
-      <p>{{ post.txt }}</p>
+      <div class="desc">
+        <p>{{ post.txt }}</p>
+      </div>
       <div class="post_link">
         <p>Подробнее</p>
         <div class="ic">
@@ -23,12 +25,30 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
+.post {
+  @include flex-start;
+  gap: 3.2rem;
+
+  h3 {
+    font-size: 2.4rem;
+  }
+
+  .desc {
+    max-height: 6rem;
+    overflow: hidden;
+    padding: 0.8rem 0 1.6rem 0;
+  }
+}
 .post_img {
   width: 100%;
-  height: 100%;
+  height: 20rem;
   @include flex-center;
+  border-radius: 0.8rem;
+  overflow: hidden;
   img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -36,5 +56,20 @@ defineProps<{
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.post_link {
+  @include flex-end;
+  gap: 0.8rem;
+  color: $blue;
+  cursor: pointer;
+  padding: 1.2rem 0;
+  p {
+    font-size: 1.8rem;
+    font-family: $font_2;
+  }
+  .ic {
+    transform: rotate(45deg);
+  }
 }
 </style>

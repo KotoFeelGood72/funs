@@ -26,4 +26,26 @@ const localValue = computed({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.search {
+  @include flex-space;
+  border: 0.1rem solid #d9d9d9;
+  border-radius: 3rem;
+  // max-width: 43.7rem;
+  // width: 100%;
+  flex-grow: 1;
+}
+
+input {
+  @include app;
+  font-size: 1.8rem;
+  width: 100%;
+  padding: 1.6rem;
+}
+
+.submit {
+  @include flex-center;
+  cursor: pointer;
+  margin-right: 1.6rem;
+}
+</style>

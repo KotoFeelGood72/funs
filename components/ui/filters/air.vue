@@ -3,9 +3,9 @@
     <div class="filter-group">
       <SearchSelect
         label="Откуда"
-        :options="airData.city"
+        :options="places"
         @selected="onSelect"
-        v-model="air.selectedCityFrom"
+        v-model="selectedCityFrom"
       />
     </div>
     <div class="filter-change" @click="swapCities">
@@ -19,18 +19,21 @@
     <div class="filter-group">
       <SearchSelect
         label="Куда"
-        :options="airData.city"
+        :options="places"
         @selected="onSelect"
-        v-model="air.selectedCityTo"
+        v-model="selectedCityTo"
       />
     </div>
     <div class="filter-group">
-      <Calendar v-model="air.selectedDateTo" />
+      <Calendar
+        v-model:startDate="selectedDateTo"
+        v-model:endDate="selectedDateFrom"
+      />
     </div>
     <div class="filter-group">
       <Select
         :options="airData.people"
-        v-model="air.selectedPeople"
+        v-model="selectedPeople"
         label="Пассажиров"
       >
         <div class="people-ic">
@@ -43,33 +46,73 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
-import { useFiltersStoreRefs } from "~/stores/useFilterStore";
+import { ref, watch } from "vue";
+import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Select from "../inputs/Select.vue";
 import Calendar from "../inputs/Calendar.vue";
 import btn from "../buttons/btn.vue";
+import { useFiltersStore } from "~/store/useFilterStore";
 
 // Доступ к фильтрам через хранилище
-const { air, airData } = useFiltersStoreRefs();
+const {
+  airData,
+  places,
+  selectedCityFrom,
+  selectedCityTo,
+  selectedDateFrom,
+  selectedDateTo,
+  selectedPeople,
+} = useFiltersStoreRefs();
+const { fetchPlace, fetchTickets, clearPlace } = useFiltersStore();
 const emit = defineEmits();
 
 // Применить фильтры
 const applyFilters = () => {
-  emit("filter-applied", air.value);
+  // Собираем параметры из текущих значений
+  const queryParams = {
+    departure: selectedCityFrom.value?.value || "", // Код города отправления
+    arrival: selectedCityTo.value?.value || "", // Код города прибытия
+    date_forward: selectedDateFrom.value || "", // Дата отправления
+    date_backward: selectedDateTo.value || "", // Дата возвращения
+    class_type: "ECONOMY", // Тип класса (может быть динамическим)
+    adults: 1, // Количество взрослых (замените на динамическое значение)
+    children: 0, // Количество детей (замените на динамическое значение)
+    infants: 0, // Количество младенцев (замените на динамическое значение)
+  };
+
+  // Вызываем fetchTickets с параметрами
+  fetchTickets(queryParams);
+
+  // Если нужно, эмитим событие для других компонентов
+  emit("filter-applied", queryParams);
 };
 
-// Обработчик для "меняем местами"
 const swapCities = () => {
-  const temp = air.value.selectedCityFrom;
-  air.value.selectedCityFrom = air.value.selectedCityTo;
-  air.value.selectedCityTo = temp;
+  const temp = selectedCityFrom.value;
+  selectedCityFrom.value = selectedCityTo.value;
+  selectedCityTo.value = temp;
+  clearPlace(); // Очищаем места после смены
 };
 
 // Логирование выбранного значения
 const onSelect = (value: string) => {
   console.log("Выбранный вариант:", value);
 };
+
+watch(
+  () => selectedCityFrom.value,
+  (newValue) => {
+    if (newValue.name) fetchPlace(newValue.name);
+  }
+);
+
+watch(
+  () => selectedCityTo.value,
+  (newValue) => {
+    if (newValue.name) fetchPlace(newValue.name);
+  }
+);
 </script>
 
 <style scoped lang="scss">

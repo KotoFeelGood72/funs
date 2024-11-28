@@ -68,6 +68,7 @@ const selectOption = (option: string) => {
   flex-direction: column;
   gap: 0.5rem;
   cursor: pointer;
+  border-bottom: 0.1rem solid $blue;
 
   .label {
     position: absolute;
@@ -96,7 +97,7 @@ const selectOption = (option: string) => {
     width: 100%;
     background: transparent;
     z-index: 1;
-    border-bottom: 0.1rem solid $blue;
+    // border-bottom: 0.1rem solid $blue;
     font-size: 1.8rem;
     color: $dark;
 

@@ -5,11 +5,17 @@
         <h3>Блог</h3>
         <btn name="Смотреть все" icon="right" theme="transparent" />
       </div>
-      <ul class="posts-grid">
-        <li v-for="(item, i) in posts" :key="'home-post-item-' + i">
-          <Post :post="item" />
-        </li>
-      </ul>
+      <div class="post__w">
+        <ul class="posts-grid">
+          <li v-for="(item, i) in posts" :key="'home-post-item-' + i">
+            <Post :post="item" />
+          </li>
+        </ul>
+        <div class="adv">
+          <div class="adv_item"><img src="~/assets/img/adv.png" /></div>
+          <div class="adv_item"><img src="~/assets/img/adv.png" /></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -24,6 +30,9 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
+.post__w {
+  @include flex-start;
+}
 .posts {
   background-color: $blue;
   color: $white;
@@ -38,30 +47,47 @@ defineProps<{
 }
 
 .posts-grid {
-  display: grid;
-  width: 100%;
-  //   max-width: 118rem;
-  gap: 2rem;
-  grid-auto-flow: dense;
-  grid-template-areas:
-    "a b ."
-    "c d e";
-
+  @include flex-start;
+  flex-wrap: wrap;
+  gap: 3.2rem;
+  max-width: 118.8rem;
   li {
+    background-color: $white;
+    border: 0.1rem solid #d9d9d9;
+    border-radius: 3.2rem;
+    padding: 3.2rem;
+    color: $dark;
+
     &:nth-child(1) {
-      grid-area: a;
+      max-width: calc(50% - 3.2rem);
     }
     &:nth-child(2) {
-      grid-area: b;
+      max-width: calc(50% - 3.2rem);
     }
     &:nth-child(3) {
-      grid-area: c;
+      max-width: calc(33.3% - 3.2rem);
     }
     &:nth-child(4) {
-      grid-area: d;
+      max-width: calc(33.3% - 3.2rem);
     }
     &:nth-child(5) {
-      grid-area: e;
+      max-width: calc(33.3% - 3.2rem);
+    }
+  }
+}
+
+.adv {
+  @include flex-start;
+  flex-direction: column;
+  gap: 3.2rem;
+  div {
+    width: 100%;
+    height: 100%;
+    @include flex-center;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
 }
