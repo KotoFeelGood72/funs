@@ -87,6 +87,12 @@ onMounted(() => {
   width: 100%;
 }
 
+.content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
 .top {
   // padding: 3.2rem;
   padding-bottom: 3.2rem;

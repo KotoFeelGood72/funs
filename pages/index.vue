@@ -7,8 +7,7 @@
             <air />
           </template>
           <template #tab-1>
-            <h2>Контент таба 2</h2>
-            <p>Это содержимое второго таба.</p>
+            <hotel />
           </template>
           <template #tab-2>
             <h2>Контент таба 3</h2>
@@ -103,6 +102,7 @@
 import Hero from "~/components/screens/Hero.vue";
 import Tabs from "~/components/ui/Tabs.vue";
 import air from "~/components/ui/filters/air.vue";
+import hotel from "~/components/ui/filters/hotel.vue";
 import Preview from "~/components/screens/Preview.vue";
 import Faq from "~/components/screens/Faq.vue";
 import Divider from "~/components/ui/Divider.vue";

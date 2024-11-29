@@ -9,7 +9,12 @@
         </div>
         <div class="right">
           <listLink :list="nav" />
-          <btn name="Личный кабинет" icon="user" />
+          <btn
+            name="Личный кабинет"
+            icon="user"
+            theme="primary"
+            @click="openModal('auth')"
+          />
         </div>
       </div>
     </div>
@@ -19,9 +24,11 @@
 <script setup lang="ts">
 import listLink from "../ui/list/list-link.vue";
 import btn from "../ui/buttons/btn.vue";
+import { useModalStore } from "~/store/useModalStore";
 
+const { openModal } = useModalStore();
 const nav = [
-  { link: "/", name: "Билеты" },
+  { link: "/air", name: "Билеты" },
   { link: "/", name: "Отели" },
   { link: "/", name: "ETA" },
 ];

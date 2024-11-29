@@ -2,46 +2,26 @@
   <div class="filters">
     <div class="filter-group">
       <SearchSelect
-        label="Откуда"
+        label="Город"
         :options="places"
         @selected="onSelect"
         v-model="selectedCityFrom"
       />
     </div>
-    <div class="filter-change" @click="swapCities">
-      <div class="filter-change__ic">
-        <Icon name="f:right" />
-      </div>
-      <div class="filter-change__ic">
-        <Icon name="f:left" />
-      </div>
-    </div>
-    <div class="filter-group">
-      <SearchSelect
-        label="Куда"
-        :options="places"
-        @selected="onSelect"
-        v-model="selectedCityTo"
+    <div class="filter-group date">
+      <Calendar
+        v-model:startDate="selectedDateTo"
+        v-model:endDate="selectedDateFrom"
       />
     </div>
     <div class="filter-group">
       <Calendar
         v-model:startDate="selectedDateTo"
         v-model:endDate="selectedDateFrom"
-        :isRange="true"
       />
     </div>
     <div class="filter-group">
       <SelectPeople />
-      <!-- <Select
-        :options="airData.people"
-        v-model="selectedPeople"
-        label="Пассажиров"
-      >
-        <div class="people-ic">
-          <Icon name="f:user" />
-        </div>
-      </Select> -->
     </div>
     <btn name="Искать для визы" icon="right" @click="applyFilters" />
   </div>
@@ -125,9 +105,9 @@ watch(
 }
 
 .filter-group {
+  @include flex-start;
+  gap: 2.4rem;
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .people-ic {

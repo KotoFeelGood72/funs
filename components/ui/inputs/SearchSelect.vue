@@ -60,10 +60,10 @@ const displayName = computed(() => localValue.value?.name || "");
 const dropdownOpen = ref(false);
 
 const toggleDropdown = (open: boolean) => {
-  console.log("Received open state:", open); // Проверьте, передается ли true
+  // console.log("Received open state:", open); // Проверьте, передается ли true
   setTimeout(() => {
     dropdownOpen.value = open;
-    console.log("Dropdown state after update:", dropdownOpen.value);
+    // console.log("Dropdown state after update:", dropdownOpen.value);
     if (!open) {
       clearPlace();
     }
@@ -137,7 +137,7 @@ const onInput = (event: InputEvent) => {
     z-index: 1000;
 
     li {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       padding: 0.8rem 1rem;
       color: $dark;
       cursor: pointer;
@@ -149,7 +149,7 @@ const onInput = (event: InputEvent) => {
 
       &.selected {
         background-color: #e6f7ff;
-        color: #1890ff;
+        color: $blue;
       }
     }
 

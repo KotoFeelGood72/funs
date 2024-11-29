@@ -35,32 +35,42 @@
         />
       </div>
     </div>
-    <Range
+    <PriceRange
       :min="0"
       :max="10000"
       :step="100"
-      :valueMin="priceMin"
-      :valueMax="priceMax"
       format="currency"
-      @update:valueMin="priceMin = $event"
-      @update:valueMax="priceMax = $event"
+      v-model:min-value="priceMin"
+      v-model:max-value="priceMax"
     />
-    <Range
+    <TimeRange
       :min="0"
-      :max="3600"
+      :max="3510"
       :step="30"
-      :valueMin="timeMin"
-      :valueMax="timeMax"
-      format="time"
-      @update:valueMin="timeMin = $event"
-      @update:valueMax="timeMax = $event"
+      :minValue="timeMin"
+      :maxValue="timeMax"
+    />
+    <TimeRange
+      :min="0"
+      :max="3510"
+      :step="30"
+      :minValue="timeMin"
+      :maxValue="timeMax"
+    />
+    <TimeRange
+      :min="0"
+      :max="3510"
+      :step="30"
+      :minValue="timeMin"
+      :maxValue="timeMax"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import Checkboxes from "../ui/inputs/Checkboxes.vue";
-import Range from "../ui/inputs/Range.vue";
+import PriceRange from "../ui/inputs/PriceRange.vue";
+import TimeRange from "../ui/inputs/TimeRange.vue";
 
 const priceMin = ref(1000);
 const priceMax = ref(9000);

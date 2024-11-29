@@ -17,10 +17,12 @@
     "gsap": "^3.12.5",
     "nuxt": "^3.14.159",
     "pinia": "^2.2.7",
+    "resize-observer-polyfill": "^1.5.1",
     "sass-loader": "^16.0.3",
     "v-click-outside": "^3.2.0",
     "vue": "latest",
     "vue-router": "latest",
+    "vue-simple-range-slider": "^1.1.0",
     "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {

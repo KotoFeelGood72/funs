@@ -59,7 +59,7 @@ export const useFiltersStore = defineStore("filters", {
     },
 
     async clearPlace() {
-      console.log("clear");
+      // console.log("clear");
       this.places = [];
     },
   },

@@ -44,6 +44,7 @@ const props = withDefaults(
 .area__head {
   @include flex-center;
   gap: 1rem;
+  margin-bottom: 3.2rem;
   // padding-top: 3.2rem;
   h3 {
     font-size: 2.4rem;

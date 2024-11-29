@@ -30,8 +30,8 @@ import { ref, watch, onMounted } from "vue";
 
 // Пропсы
 const props = defineProps<{
-  options: string[]; // Список опций
-  modelValue: string; // Текущее выбранное значение
+  options: string[] | number[]; // Список опций
+  modelValue: string | number; // Текущее выбранное значение
   label?: string; // Текст метки
 }>();
 
@@ -39,7 +39,7 @@ const props = defineProps<{
 const emit = defineEmits(["update:modelValue"]);
 
 // Состояния
-const dropdownOpen = ref(false); // Открытие/закрытие выпадающего списка
+const dropdownOpen = ref(true); // Открытие/закрытие выпадающего списка
 
 // Установить активное значение при инициализации
 onMounted(() => {
@@ -48,15 +48,13 @@ onMounted(() => {
   }
 });
 
-// Переключение дропдауна
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
-  console.log("Good");
 };
 
 // Выбор опции
-const selectOption = (option: string) => {
-  emit("update:modelValue", option); // Обновляем значение через v-model
+const selectOption = (option: string | number) => {
+  emit("update:modelValue", option);
   dropdownOpen.value = false;
 };
 </script>
@@ -117,12 +115,12 @@ const selectOption = (option: string) => {
     z-index: 1000;
 
     li {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       padding: 0.8rem 1rem;
       color: $dark;
       cursor: pointer;
       transition: background-color 0.2s;
-
+      @include flex-space;
       &:hover {
         background-color: #f5f5f5;
       }
