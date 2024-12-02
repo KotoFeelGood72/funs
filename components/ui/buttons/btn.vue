@@ -49,8 +49,8 @@ const isColorTheme = computed(() => {
     color: $blue;
     border-color: $white;
     &:hover {
-      border-color: $light;
-      background-color: $light;
+      border-color: transparent;
+      background-color: transparent;
       color: $blue;
     }
   }

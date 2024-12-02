@@ -25,24 +25,20 @@ import { ref, watch } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
-// Пропсы
 const props = defineProps<{
-  startDate?: string | null; // Начальная дата
-  endDate?: string | null; // Конечная дата
-  isRange?: boolean; // Режим диапазона или одиночной даты
+  startDate?: string | null;
+  endDate?: string | null;
+  isRange?: boolean;
 }>();
 
-// Эмиссия событий
 const emit = defineEmits<{
   (event: "update:startDate", value: string | null): void;
   (event: "update:endDate", value: string | null): void;
 }>();
 
-// Локальное состояние
 const localValue = ref<Date | Date[] | null>(null);
 const today = new Date();
 
-// Форматирование даты в `YYYY-MM-DD`
 const formatToYYYYMMDD = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
