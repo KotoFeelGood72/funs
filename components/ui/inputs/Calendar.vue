@@ -6,9 +6,7 @@
       :hide-navigation="['month', 'year', 'time']"
       :min-date="today"
       :show-last-in-range="false"
-      multi-calendars
       no-today
-      disable-year-select
       locale="ru"
       cancelText="Отменить"
       selectText="Выбрать"

@@ -87,7 +87,7 @@ const confirmSelection = () => {
         <p>{{ headerText }}</p>
       </div>
       <div class="header_ic">
-        <Icon name="f:user" />
+        <Icon name="f:user" :size="14"/>
       </div>
     </div>
     <transition name="fade">
@@ -172,8 +172,15 @@ const confirmSelection = () => {
 .people-wrapper {
   position: relative;
 }
+
+.header_ic {
+  @include flex-center;
+  margin-bottom: .5rem;
+  margin-right: 1rem;
+}
 .header {
   @include flex-space;
+  align-items: flex-end;
   gap: 2rem;
   border-bottom: 0.1rem solid $blue;
   padding-bottom: 0.5rem;

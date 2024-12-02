@@ -9,7 +9,7 @@
           <!-- <Icon name="f:tleft" :size="16" /> -->
         </div>
       </div>
-      <btn name="Бронировать для визы" />
+      <btn name="Бронировать для визы" @click="nextToAir()"/>
     </div>
     <div class="air-content">
       <AirHead title="" logo="" />
@@ -22,6 +22,13 @@
 import btn from "../buttons/btn.vue";
 import AirHead from "../air/AirHead.vue";
 import AirInfo from "../air/AirInfo.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
+
+const nextToAir = () => {
+  router.push('/air/1')
+}
 </script>
 
 <style scoped lang="scss">

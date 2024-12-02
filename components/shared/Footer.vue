@@ -13,9 +13,7 @@
             <p>© 1996-2024 Funbooking</p>
           </div>
           <div class="footer_bottom">
-            <p>
-              Информация, размещенная на сайте, не является публичной офертой
-            </p>
+            <p>Информация, размещенная на сайте, не является публичной офертой</p>
             <ul class="socials">
               <li>
                 <a href="#" target="_blank">
@@ -160,5 +158,8 @@ const nav = ref<any>([
 .footer_logo {
   position: relative;
   z-index: 22;
+  img {
+    width: 100%;
+  }
 }
 </style>

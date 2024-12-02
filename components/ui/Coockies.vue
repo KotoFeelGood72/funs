@@ -1,9 +1,8 @@
 <template>
   <div v-if="!isCookieAccepted" class="cookies">
     <p>
-      Кстати, действия представителей оппозиции представлены в исключительно
-      положительном свете. Бронь авиабилета можно проверить на сайте
-      авиакомпании после оплаты заказа.
+      Кстати, действия представителей оппозиции представлены в исключительно положительном
+      свете. Бронь авиабилета можно проверить на сайте авиакомпании после оплаты заказа.
     </p>
     <div class="row">
       <btn name="Отклонить" @click="acceptCookie" />
@@ -32,7 +31,7 @@ const acceptCookie = () => {
 </script>
 
 <style scoped lang="scss">
-.coockies {
+.cookies {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -44,6 +43,7 @@ const acceptCookie = () => {
   background-color: $white;
   z-index: 999;
   gap: 2rem;
+  box-shadow: 0 0 2rem 0 #00000027;
   .row {
     @include flex-start;
     gap: 1.5rem;
