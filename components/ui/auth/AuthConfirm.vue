@@ -14,6 +14,7 @@
             type="text"
             maxlength="1"
             class="otp-input"
+            placeholder="-"
             v-model="otp[index]"
             @input="onInput(index, $event)"
             @keydown.backspace="onBackspace(index)"
@@ -21,7 +22,13 @@
         </div>
       </div>
       <div class="auth_bottom">
-        <btn name="Подтвердить" theme="primary" size="large" @click="verifyOtp" />
+        <btn
+          name="Подтвердить"
+          theme="primary"
+          size="large"
+          style="justify-content: center"
+          @click="verifyOtp"
+        />
       </div>
     </div>
   </div>
@@ -49,7 +56,9 @@ const onInput = (index: number, event: Event) => {
 // Обработка нажатия клавиши Backspace
 const onBackspace = (index: number) => {
   if (index > 0 && otp.value[index] === "") {
-    const previousInput = document.querySelectorAll(".otp-input")[index - 1] as HTMLInputElement;
+    const previousInput = document.querySelectorAll(".otp-input")[
+      index - 1
+    ] as HTMLInputElement;
     previousInput?.focus();
   }
 };
@@ -86,23 +95,24 @@ const verifyOtp = () => {
 }
 
 .otp-inputs {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+  @include flex-center;
+  gap: 2.4rem;
 }
 
 .otp-input {
-  width: 4rem;
-  height: 5rem;
+  width: 7.3rem;
+  border: 0;
+  border-bottom: 0.1rem solid $blue;
+  font-size: 3rem;
+  padding: 1.6rem;
+  @include flex-center;
   text-align: center;
-  font-size: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s;
-
-  &:focus {
-    border-color: #007bff;
+  font-family: $font_1;
+  font-weight: 400;
+  color: $blue;
+  &::-webkit-input-placeholder {
+    color: $blue;
+    opacity: 1;
   }
 }
 </style>

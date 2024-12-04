@@ -1,34 +1,51 @@
 <template>
   <div class="faq">
-    <h2 class="faq-title">Часто задаваемые вопросы</h2>
-
-    <div class="faq-item" v-for="(item, index) in questions" :key="index">
-      <div class="faq-question" @click="toggleAnswer(index)">
-        {{ item.question }}
-        <span class="faq-icon" :class="{ open: activeIndex === index }">+</span>
+    <div class="small-container">
+      <h2 class="faq-title">Часто задаваемые вопросы</h2>
+      <div class="faq-list">
+        <div class="faq-item" v-for="(item, index) in questions" :key="index">
+          <div class="faq-question" @click="toggleAnswer(index)">
+            {{ item.question }}
+            <span class="faq-icon" :class="{ open: activeIndex === index }"
+              ><Icon
+                :name="activeIndex !== index ? 'f:acc-plus' : 'f:acc-minus'"
+                :size="40"
+            /></span>
+          </div>
+          <div class="faq-answer" v-if="activeIndex === index">
+            {{ item.answer }}
+          </div>
+        </div>
       </div>
-      <div class="faq-answer" v-if="activeIndex === index">
-        {{ item.answer }}
+
+      <div class="faq-support">
+        <p>
+          Задайте вопрос в поддержку.<br />Ответ придёт на электронную почту в
+          течение 24 часов
+        </p>
+        <Textareas placeholder="Введите ваше обращение" label="Обращение" />
       </div>
-    </div>
 
-    <div class="faq-support">
-      <p>Задайте вопрос в поддержку.<br />Ответ придёт на электронную почту в течение 24 часов</p>
-      <a href="#" class="faq-link">Обращение</a>
+      <btn
+        name="Отправить"
+        theme="primary"
+        size="large"
+        style="justify-content: center"
+        icon="right"
+      />
     </div>
-
-    <btn name="Отправить →" theme="primary" size="large" />
   </div>
 </template>
 
 <script setup lang="ts">
-import btn from '~/components/ui/buttons/btn.vue';
-import { ref } from 'vue';
+import btn from "~/components/ui/buttons/btn.vue";
+import Textareas from "~/components/ui/inputs/Textareas.vue";
+import { ref } from "vue";
 
 const questions = ref([
-  { question: 'Вопрос?', answer: 'Ответ на первый вопрос.' },
-  { question: 'Вопрос?', answer: 'Ответ на второй вопрос.' },
-  { question: 'Вопрос?', answer: 'Ответ на третий вопрос.' },
+  { question: "Вопрос?", answer: "Ответ на первый вопрос." },
+  { question: "Вопрос?", answer: "Ответ на второй вопрос." },
+  { question: "Вопрос?", answer: "Ответ на третий вопрос." },
 ]);
 
 const activeIndex = ref<number | null>(null);
@@ -40,75 +57,63 @@ const toggleAnswer = (index: number) => {
 
 <style scoped lang="scss">
 .faq {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-
+  padding-top: 3.2rem;
   &-title {
     text-align: center;
     font-size: 2.4rem;
     margin-bottom: 2rem;
+    font-weight: 500;
+    font-family: $font_2;
   }
 
   .faq-item {
-    border: 1px solid #e0e0e0;
-    border-radius: 1rem;
-    margin-bottom: 1rem;
+    border: 0.1rem solid #a2d0ff;
+    border-radius: 2rem;
+
     overflow: hidden;
 
     .faq-question {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 1.6rem;
-      font-size: 1.6rem;
+      padding: 1.5rem 1.6rem;
       cursor: pointer;
       transition: background-color 0.3s;
-
-      &:hover {
-        background-color: #f5f5f5;
-      }
-
-      .faq-icon {
-        font-size: 2rem;
-        color: #007bff;
-        transform: rotate(0);
-        transition: transform 0.3s;
-
-        &.open {
-          transform: rotate(45deg);
-        }
-      }
+      @include flex-space;
+      font-size: 1.8rem;
+      font-family: $font_2;
+      position: relative;
     }
 
     .faq-answer {
-      padding: 1.2rem 1.6rem;
-      font-size: 1.4rem;
-      color: #555;
-      border-top: 1px solid #e0e0e0;
-      background-color: #f9f9f9;
+      font-size: 1.6rem;
+      font-family: $font_2;
+      font-weight: 500;
+      color: $gray;
+      padding: 0 1.6rem 1.6rem 1.6rem;
     }
   }
+}
 
-  .faq-support {
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+  margin-bottom: 3.2rem;
+}
+
+.faq-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 1.6rem;
+  @include flex-center;
+}
+
+.faq-support {
+  margin-bottom: 2.4rem;
+  p {
     text-align: center;
-    margin: 2rem 0;
-
-    p {
-      color: #555;
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-    }
-
-    .faq-link {
-      color: #007bff;
-      text-decoration: none;
-      font-size: 1.6rem;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
+    font-size: 1.8rem;
+    color: $dark;
+    margin-bottom: 2.4rem;
   }
 }
 </style>

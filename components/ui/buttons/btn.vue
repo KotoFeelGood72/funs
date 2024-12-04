@@ -5,7 +5,7 @@
     </div>
     <p>{{ name }}</p>
     <div class="icon" v-if="icon">
-      <Icon :name="'f:' + icon" />
+      <Icon :name="'f:' + icon" :size="15" />
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ const props = defineProps<{
   loading?: boolean;
   icon?: string;
   theme?: string;
-  size?: string
+  size?: string;
 }>();
 
 const isColorTheme = computed(() => {

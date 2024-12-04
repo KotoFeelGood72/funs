@@ -1,24 +1,35 @@
 <template>
   <div class="settings">
-    <h2 class="settings-title">Настройки личного кабинета</h2>
-    <div class="settings-card">
-      <h3 class="settings-card-title">Уведомления</h3>
-      <div class="settings-item" v-for="(notification, index) in notifications" :key="index">
-        <span :class="{ 'settings-item-link': notification.link }">{{ notification.text }}</span>
-        <label class="switch">
-          <input type="checkbox" v-model="notification.enabled" />
-          <span class="slider"></span>
-        </label>
+    <div class="small-container">
+      <h2 class="settings-title">Настройки личного кабинета</h2>
+      <div class="settings-card">
+        <h3 class="settings-card-title">Уведомления</h3>
+        <div
+          class="settings-item"
+          v-for="(notification, index) in notifications"
+          :key="index"
+        >
+          <span :class="{ 'settings-item-link': notification.link }">{{
+            notification.text
+          }}</span>
+          <label class="switch">
+            <input type="checkbox" v-model="notification.enabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
-    </div>
-    <div class="settings-delete">
-      <a href="#" class="settings-delete-link">Удалить профиль</a>
+      <btn
+        name="Удалить профиль"
+        theme="white"
+        style="justify-content: center"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import btn from "~/components/ui/buttons/btn.vue";
 
 const notifications = ref([
   { text: "Напоминать о завершении бронирования", enabled: true, link: true },
@@ -31,59 +42,53 @@ const notifications = ref([
 
 <style scoped lang="scss">
 .settings {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: Arial, sans-serif;
+  padding-top: 3.2rem;
 
   &-title {
     text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    color: #333;
+    font-size: 2.4rem;
+    font-family: $font_2;
+    font-weight: 500;
+    margin-bottom: 3.2rem;
   }
 
   .settings-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
+    border: 0.1rem solid #d9d9d9;
+    border-radius: 0.8rem;
+    padding: 1.6rem;
+    margin-bottom: 3.2rem;
 
     &-title {
-      font-size: 1.6rem;
-      margin-bottom: 1.5rem;
-      color: #555;
+      font-size: 1.4rem;
+      margin-bottom: 1.6rem;
+      font-family: $font_2;
+      font-weight: 500;
     }
   }
 
   .settings-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 1.4rem;
-    color: #555;
+    @include flex-space;
+
+    &:not(:last-child) {
+      margin-bottom: 1.2rem;
+    }
 
     &:last-child {
       border-bottom: none;
     }
 
-    &-link {
-      color: #007bff;
-      cursor: pointer;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
+    font-weight: 500;
+    .settings-item-link {
+      font-size: 1.8rem;
+      color: $blue;
     }
   }
 
   .switch {
     position: relative;
     display: inline-block;
-    width: 34px;
-    height: 20px;
+    width: 4rem;
+    height: 2.4rem;
 
     input {
       opacity: 0;
@@ -93,34 +98,37 @@ const notifications = ref([
 
     .slider {
       position: absolute;
+      border: 0.1rem solid $gray;
       cursor: pointer;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
+      background-color: $white;
       transition: 0.4s;
-      border-radius: 20px;
+      border-radius: 2rem;
 
       &:before {
         position: absolute;
         content: "";
-        height: 14px;
-        width: 14px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
+        height: 1.8rem;
+        width: 1.8rem;
+        left: 0.3rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: $gray;
         transition: 0.4s;
         border-radius: 50%;
       }
     }
 
     input:checked + .slider {
-      background-color: #007bff;
+      background-color: $blue;
     }
 
     input:checked + .slider:before {
-      transform: translateX(14px);
+      transform: translateX(14px) translateY(-50%);
+      background-color: $white;
     }
   }
 

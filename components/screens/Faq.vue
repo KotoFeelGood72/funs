@@ -176,6 +176,7 @@ nextTick(() => calculateHeights());
   h3 {
     font-size: 2.4rem;
     color: $dark;
+    font-weight: 500;
   }
 }
 
