@@ -1,24 +1,22 @@
 <template>
   <div class="input">
-    <label :for="id" :class="{ active: localValue || isFocused }">
+    <label :for="id">
       {{ label }}
     </label>
     <input
-      ref="inputRef"
       :type="type"
       v-model="localValue"
       :id="id"
-      @focus="handleFocus"
-      @blur="handleBlur"
+      :placeholder="placeholder"
     />
     <div class="input_ic" v-if="icon">
-      <Icon :name="'f:' + icon" />
+      <Icon :name="'f:' + icon" :size="18"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+
 
 const props = withDefaults(
   defineProps<{
@@ -27,45 +25,25 @@ const props = withDefaults(
     type?: "text" | "email";
     label: string;
     icon?: string;
+    placeholder?: string
   }>(),
   {
     modelValue: "",
     id: "",
     label: "",
     icon: "",
+    placeholder: ''
   }
 );
 
 const emit = defineEmits(["update:modelValue"]);
 
-// Локальные состояния
-const isFocused = ref(false);
-const inputRef = ref<HTMLInputElement | null>(null);
-
-// Реактивное значение для v-model
 const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
 
-// Обработчики событий фокуса и потери фокуса
-const handleFocus = () => {
-  isFocused.value = true;
-};
 
-const handleBlur = () => {
-  isFocused.value = false;
-};
-
-// Публичный метод для установки фокуса
-const focusInput = () => {
-  inputRef.value?.focus();
-};
-
-// Экспорт метода для родительского компонента
-defineExpose({
-  focus: focusInput,
-});
 </script>
 
 <style scoped lang="scss">
@@ -74,37 +52,44 @@ defineExpose({
   width: 100%;
   height: 4.8rem;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+
+
 }
 
 label {
-  position: absolute;
-  left: 1.8rem;
-  top: 1.8rem;
-  font-size: 1.8rem;
+  padding-left: 1.6rem;
+  font-size: 1.4rem;
   color: $blue;
   pointer-events: none;
-  transition: all 0.2s ease-in-out;
-  color: $black;
+  line-height: 1rem;
 }
 
 input {
   width: 100%;
+  height: 100%;
   padding: 0.3rem 1.6rem 0.6rem 1.6rem;
   font-size: 1.8rem;
   border: none;
   border-bottom: 0.1rem solid $blue;
   outline: none;
+
+  &::-webkit-input-placeholder {
+    opacity: 1;
+    color: $dark
+  }
 }
 
 input:focus {
   border-bottom: 0.1rem solid $blue;
 }
 
-label.active {
-  left: 1.6rem;
-  top: 0;
-  font-size: 1.4rem;
-  color: $blue;
+
+.input_ic {
+  position: absolute;
+  top: 60%;
+  right: 1.6rem;
+  transform: translateY(-50%);
+  @include flex-center;
 }
 </style>

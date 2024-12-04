@@ -1,5 +1,6 @@
 <template>
   <div class="air-date">
+    <label for="date-picker" class="label">Дата поездки</label>
     <VueDatePicker
       v-model="localValue"
       :range="isRange"
@@ -29,6 +30,7 @@ const props = defineProps<{
   startDate?: string | null;
   endDate?: string | null;
   isRange?: boolean;
+  label?: string
 }>();
 
 const emit = defineEmits<{
@@ -118,55 +120,52 @@ const formatDateRange = (range: Date[] | null) => {
 </script>
 
 <style scoped lang="scss">
+.air-date {
+  width: 100%;
+}
+:deep(.dp__menu_inner) {
+  font-size: 1.6rem;
+}
+:deep(.dp__action_button) {
+  font-size: 1.6rem;
+}
+:deep(.dp__selection_preview) {
+  font-size: 1.6rem;
+}
 :deep(.dp__input) {
   border: none;
-  border-bottom: 0.1rem solid $blue !important;
+  border-bottom: 0.1rem solid $blue;
   border-radius: 0 !important;
   font-size: 1.8rem;
-  padding: 1rem 1.6rem;
-  color: $dark;
+  padding: .85rem 1.6rem!important;
+  color: $black;
 
   &::-webkit-input-placeholder {
     opacity: 1;
-    color: $dark;
+    color: var(--dark);
   }
 }
 
 :deep(.dp__input_icon) {
   right: 1.6rem;
   left: auto;
-  color: $blue;
-  @include flex-center;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-:deep(.dp--clear-btn) {
-  display: none;
-}
-
-:deep(.dp__calendar_header_item) {
-  font-size: 1.6rem;
-  font-family: $font_2;
-}
-
-:deep(.dp__cell_inner) {
+.label {
+  display: block;
   font-size: 1.4rem;
+  padding-left: 1.6rem;
+  margin-bottom: -1rem;
+  position: relative;
+  z-index: 22;
+  color: $blue;
 }
 
-:deep(.dp__month_year_select) {
-  font-size: 1.6rem;
-}
-:deep(.dp__overlay_cell_pad) {
-  font-size: 1.6rem;
-}
-:deep(.dp__selection_preview) {
-  font-size: 1.6rem;
-}
-:deep(.dp__action_button) {
-  font-size: 1.6rem;
-  padding: 1rem 1.6rem;
-}
-
-:deep(.dp__action_select) {
-  background-color: $blue;
+.ic {
+  color: $blue;
 }
 </style>

@@ -7,7 +7,7 @@
       <p>{{ title }}</p>
     </div>
     <div class="share">
-      <Icon name="f:share" />
+      <Icon name="f:share" :size="25"/>
     </div>
   </div>
 </template>
@@ -19,4 +19,28 @@ const props = defineProps<{
 }>();
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+
+.head {
+  @include flex-space
+}
+
+.air-logo {
+  @include flex-start;
+  gap: 1.6rem
+}
+
+
+.air_logo__img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100rem;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+</style>

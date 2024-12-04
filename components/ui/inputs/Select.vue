@@ -1,17 +1,17 @@
 <template>
-  <div class="select" @click="toggleDropdown">
-    <!-- Метка -->
+  <div class="select" @click="toggleDropdown" ref="selectRef">
+    <!-- Label -->
     <label :class="{ active: dropdownOpen || modelValue }" class="label">
       {{ label }}
     </label>
 
-    <!-- Выбранное значение -->
+    <!-- Placeholder или выбранное значение -->
     <div class="selected">
-      <p>{{ modelValue }}</p>
+      <p class="selected-text">{{ modelValue || placeholder }}</p>
       <slot />
     </div>
 
-    <!-- Выпадающий список -->
+    <!-- Dropdown options -->
     <ul v-if="dropdownOpen" class="options">
       <li
         v-for="(option, index) in options"
@@ -21,33 +21,44 @@
       >
         {{ option }}
       </li>
+      <li v-if="!options.length" class="no-options">Нет доступных опций</li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 
 // Пропсы
 const props = defineProps<{
   options: string[] | number[]; // Список опций
-  modelValue: string | number; // Текущее выбранное значение
+  modelValue: string | number | null; // Текущее выбранное значение
   label?: string; // Текст метки
+  placeholder?: string; // Placeholder, если значение не выбрано
 }>();
 
 // Эмит события
 const emit = defineEmits(["update:modelValue"]);
 
-// Состояния
-const dropdownOpen = ref(true); // Открытие/закрытие выпадающего списка
+const dropdownOpen = ref(false); // Открытие/закрытие выпадающего списка
+const selectRef = ref<HTMLDivElement | null>(null);
 
-// Установить активное значение при инициализации
-onMounted(() => {
-  if (!props.modelValue && props.options.length > 0) {
-    emit("update:modelValue", props.options[0]);
+// Закрытие выпадающего списка при клике вне компонента
+const handleClickOutside = (event: MouseEvent) => {
+  if (selectRef.value && !selectRef.value.contains(event.target as Node)) {
+    dropdownOpen.value = false;
   }
+};
+
+// Добавляем и удаляем слушатель кликов вне компонента
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
 });
 
+// Переключение состояния выпадающего списка
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
 };
@@ -64,38 +75,27 @@ const selectOption = (option: string | number) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  // gap: 0.5rem;
   cursor: pointer;
   border-bottom: 0.1rem solid $blue;
 
   .label {
     position: absolute;
-    top: 50%;
     left: 1.6rem;
-    transform: translateY(-50%);
     transition: all 0.3s ease;
     pointer-events: none;
-    font-size: 1.8rem;
     font-family: $font_2;
-    color: $dark;
-    &.active {
-      top: -0.2rem;
-      left: 0.7rem;
-      background-color: $white;
-      z-index: 22;
-      padding: 0 1rem;
-      color: $blue;
-      font-size: 1.4rem;
-    }
+    color: $blue;
+    font-size: 1.4rem;
   }
 
   .selected {
     font-family: $font_2;
-    padding: 1rem 1.6rem;
+    padding: 1.4rem 1.6rem .3rem 1.6rem;
     width: 100%;
+    height: 100%;
     background: transparent;
     z-index: 1;
-    // border-bottom: 0.1rem solid $blue;
     font-size: 1.8rem;
     color: $dark;
 
@@ -110,24 +110,24 @@ const selectOption = (option: string | number) => {
     max-height: 200px;
     overflow-y: auto;
     background: $white;
-    border: 0.1rem solid $light;
-    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem 0 #00000012;
     z-index: 1000;
 
     li {
       font-size: 1.8rem;
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 1.6rem;
       color: $dark;
       cursor: pointer;
-      transition: background-color 0.2s;
       @include flex-space;
-      &:hover {
-        background-color: #f5f5f5;
-      }
+      border-bottom: .1rem solid #A2D0FF6B;
+      transition: all .3s ease-in-out;
+      font-family: $font_2;
 
+      &:hover {
+        color: $light-blue;
+      }
       &.selected {
-        background-color: #e6f7ff;
-        color: #1890ff;
+        color: $blue;
       }
     }
 

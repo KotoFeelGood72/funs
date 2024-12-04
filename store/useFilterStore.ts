@@ -15,12 +15,12 @@ interface FetchTiket {
 export const useFiltersStore = defineStore("filters", {
   state: () => ({
     selectedCityFrom: {
-      value: "",
-      name: "",
+      value: "MSK",
+      name: "Москва",
     },
     selectedCityTo: {
-      value: "",
-      name: "",
+      value: "OAE",
+      name: "Dubai",
     },
     selectedDateTo: "" as string,
     selectedDateFrom: "" as string,

@@ -175,7 +175,7 @@ const confirmSelection = () => {
 
 .header_ic {
   @include flex-center;
-  margin-bottom: .5rem;
+  // margin-bottom: .5rem;
   margin-right: 1rem;
 }
 .header {
@@ -183,7 +183,7 @@ const confirmSelection = () => {
   align-items: flex-end;
   gap: 2rem;
   border-bottom: 0.1rem solid $blue;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
   cursor: pointer;
 
   span {

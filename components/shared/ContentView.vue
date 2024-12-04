@@ -7,6 +7,7 @@
             <Icon name="f:left" />
           </div>
           <h3>{{ title }}</h3>
+          <div class="square"></div>
         </div>
         <div class="area__layout">
           <slot />
@@ -42,7 +43,7 @@ const props = withDefaults(
 }
 
 .area__head {
-  @include flex-center;
+  @include flex-space;
   gap: 1rem;
   margin-bottom: 3.2rem;
   // padding-top: 3.2rem;
@@ -55,5 +56,12 @@ const props = withDefaults(
 
 .area-back {
   @include flex-center;
+  width: 4.8rem;
+  height: 4.8rem;
+}
+
+.square {
+  width: 4.8rem;
+  height: 4.8rem;
 }
 </style>

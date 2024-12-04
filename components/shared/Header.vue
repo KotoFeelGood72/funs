@@ -29,7 +29,7 @@ import { useModalStore } from "~/store/useModalStore";
 const { openModal } = useModalStore();
 const nav = [
   { link: "/air", name: "Билеты" },
-  { link: "/", name: "Отели" },
+  { link: "/hotel", name: "Отели" },
   { link: "/", name: "ETA" },
 ];
 </script>

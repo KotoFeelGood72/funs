@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <!-- <div class="auth">
+    <div class="auth">
       <Close @close="closeAllModals" />
       <div class="auth_head">
         <h3>Вход в личный кабинет</h3>
@@ -13,13 +13,11 @@
         <btn name="Зарегистрироваться"  style="justify-content: center; width: 100%;" />
         <btn name="Войти" theme="primary" style="justify-content: center; width: 100%;" />
       </div>
-    </div> -->
-    <AuthConfirm/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AuthConfirm from "~/components/ui/auth/AuthConfirm.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Close from "~/components/ui/Close.vue";

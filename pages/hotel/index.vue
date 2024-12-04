@@ -1,151 +1,193 @@
 <template>
-  <div class="hotel">
-    <ContentView title="Отели в Амстердаме">
-      <div class="top">
-        <hotel />
-      </div>
-      <div class="body">
-        <div class="tabs">
-          <button
-            v-for="(tab, index) in tabs"
-            :key="index"
-            :class="{ active: currentTab === index }"
-            @click="currentTab = index"
-          >
-            {{ tab }}
-          </button>
+  <ContentView title="Москва — Амстердам, 11 ноя — 9 дек, 2024">
+    <div class="header">
+      <hotel />
+    </div>
+    <div class="passenger-form">
+      <PassengerTabs
+        :tabs="passengers"
+        :activeTab="activeTab"
+        @update:activeTab="setActiveTab"
+      />
+      <div class="tab-content">
+        <div class="form-grid">
+          <Inputs
+            label="Фамилия"
+            placeholder="Введите фамилию как в загранпаспорте"
+            v-model="passengers[activeTab].lastName"
+            :id="'lastName' + activeTab"
+          />
+          <Inputs
+            label="Имя"
+            placeholder="Введите имя как в загранпаспорте"
+            v-model="passengers[activeTab].firstName"
+            :id="'firstName' + activeTab"
+          />
+          <DatePicker :disablePast="true" v-model="passengers[activeTab].dateOfBirth" />
+          <Select
+            :options="['Мужчина', 'Женщина']"
+            v-model="passengers[activeTab].gender"
+            label="Пол"
+            placeholder="Выберите пол"
+          />
+          <Inputs
+            label="Серия загранпаспорта"
+            placeholder="Введите серию"
+            v-model="passengers[activeTab].passportSeries"
+            :id="'passportSeries' + activeTab"
+          />
+          <Inputs
+            label="Номер загранпаспорта"
+            placeholder="Введите номер"
+            v-model="passengers[activeTab].passportNumber"
+            :id="'passportNumber' + activeTab"
+          />
+          <Select
+            :options="['Россия', 'Украина', 'Беларусь']"
+            v-model="passengers[activeTab].citizenship"
+            label="Гражданство"
+            placeholder="Выберите страну"
+          />
+          <Inputs
+            label="Email"
+            type="email"
+            placeholder="Введите email"
+            v-model="passengers[activeTab].email"
+            :id="'email' + activeTab"
+            icon="email"
+          />
         </div>
-        <div class="form">
-          <div class="form-row">
-            <Inputs
-              label="Фамилия"
-              placeholder="Введите фамилию как в загранпаспорте"
-            />
-            <Inputs
-              label="Имя"
-              placeholder="Введите имя как в загранпаспорте"
-            />
+        <div class="note">
+          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
+        </div>
+        <div class="bottom">
+          <div class="total">
+            <span>Общая стоимость</span>
+            <p class="price">550 ₽</p>
           </div>
-          <div class="form-row">
-            <Calendar label="Дата рождения" placeholder="ДД.ММ.ГГГГ" />
-            <Inputs label="Email" placeholder="Введите email" type="email" />
-          </div>
-          <div class="form-row">
-            <Select
-              label="Размещение"
-              :options="placements"
-              placeholder="Выберите объект проживания"
-            />
-            <Select
-              label="Класс отеля"
-              :options="hotelClasses"
-              placeholder="Выберите класс"
-            />
-          </div>
-          <div class="info">
-            <p>
-              Отель без полной предоплаты для подачи на визу. Проверяем
-              бронирование на срок до 14 дней. Соответствует требованиям
-              большинства консульств.
-            </p>
-          </div>
-          <div class="footer">
-            <p>
-              Общая стоимость <span>{{ totalCost }} ₽</span>
-            </p>
-            <button class="btn-primary" @click="submitBooking">Далее</button>
-          </div>
+          <btn
+            name="Далее"
+            theme="primary"
+            size="normal"
+            @click="
+              router.push({ name: 'air-id-confirmId', params: { id: 1, confirmId: 2 } })
+            "
+          />
         </div>
       </div>
-    </ContentView>
-  </div>
+    </div>
+  </ContentView>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import ContentView from "~/components/shared/ContentView.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
-import Calendar from "~/components/ui/inputs/Calendar.vue";
+import btn from "~/components/ui/buttons/btn.vue";
+import DatePicker from "~/components/ui/inputs/DatePicker.vue";
 import Select from "~/components/ui/inputs/Select.vue";
+import PassengerTabs from "~/components/ui/PassengerTabs.vue";
+import { useRouter } from "vue-router";
 import hotel from "~/components/ui/filters/hotel.vue";
+import { ref } from "vue";
 
-// Состояние вкладок (взрослые, дети)
-const tabs = ["Взрослый №1", "Взрослый №2", "Ребёнок №1"];
-const currentTab = ref(0);
+const router = useRouter();
 
-// Данные для выбора
-const placements = ["Отель", "Апартаменты", "Хостел"];
-const hotelClasses = ["Эконом", "Стандарт", "Люкс"];
+// Массив пассажиров
+const passengers = ref([
+  {
+    lastName: "",
+    firstName: "",
+    dateOfBirth: null,
+    gender: "",
+    passportSeries: "",
+    passportNumber: "",
+    citizenship: "",
+    email: "",
+    class: "эконом",
+  },
+  {
+    lastName: "",
+    firstName: "",
+    dateOfBirth: null,
+    gender: "",
+    passportSeries: "",
+    passportNumber: "",
+    citizenship: "",
+    email: "",
+    class: "эконом",
+  },
+]);
 
-// Итоговая стоимость
-const totalCost = ref(600);
+// Активная вкладка
+const activeTab = ref(0);
 
-// Подтверждение бронирования
-const submitBooking = () => {
-  alert("Данные отправлены!");
+// Устанавливаем активный таб
+const setActiveTab = (index: number) => {
+  activeTab.value = index;
 };
 </script>
 
 <style scoped lang="scss">
-.hotel {
-  .tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
 
-    button {
-      padding: 0.8rem 1.6rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+.header {
+  margin-bottom: 3.2rem;
+}
+.passenger-form {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 94.8rem;
+  .tab-links {
+    @include flex-start;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    font-size: 1.8rem;
+    font-family: $font_2;
+    margin-bottom: 2.4rem;
+
+    .tab-link {
+      background-color: $gray-light;
+      border-radius: 0.8rem;
+      color: $dark;
+      padding: 1rem 0.8rem 0.8rem 0.8rem;
       cursor: pointer;
-      background: white;
-      font-weight: bold;
-
       &.active {
-        background: #007aff;
-        color: white;
+        color: $blue;
+        background-color: #a2d0ff4a;
       }
     }
   }
 
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-
-    .form-row {
+  .tab-content {
+    .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+      gap: 2.4rem;
+      margin-bottom: 2.4rem;
     }
+  }
 
-    .info {
-      font-size: 0.9rem;
-      color: #555;
-    }
+  .note {
+    color: #999;
+    margin-bottom: 2.4rem;
+    font-size: 1.4rem;
+  }
 
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.2rem;
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.6rem;
 
+    .total {
       span {
-        font-weight: bold;
-        color: #007aff;
+        font-size: 1.4rem;
+        color: #999;
+        display: block;
+        margin-bottom: 0.8rem;
       }
-
-      .btn-primary {
-        padding: 0.8rem 1.6rem;
-        background: #007aff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-
-        &:hover {
-          background: #005bb5;
-        }
+      p {
+        font-size: 3.2rem;
+        font-weight: bold;
       }
     }
   }

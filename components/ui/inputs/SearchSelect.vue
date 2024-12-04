@@ -9,7 +9,6 @@
       @focus="toggleDropdown(true)"
       @blur="toggleDropdown(false)"
       @input="onInput($event)"
-      :placeholder="dropdownOpen ? '' : placeholder"
       class="input"
     />
 
@@ -30,58 +29,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineEmits } from "vue";
+import { ref, computed, defineEmits, onMounted } from "vue";
 import { useFiltersStore } from "~/store/useFilterStore";
 
 // Пропсы
 const props = defineProps<{
   options: Array<{ name: string; value: string }>; // Список опций
-  modelValue: { name: string; value: string }; // Объект, связанный через v-model
-  placeholder?: string; // Текст-заполнитель
-  label?: string; // Метка поля
+  modelValue: { name: string; value: string }; // Текущее выбранное значение
+  defaultIndex?: number; // Индекс для дефолтного значения
+  label?: string; // Метка для поля
 }>();
 
-// Эмиссия события для обновления modelValue
 const emit = defineEmits(["update:modelValue"]);
-
-// Получение метода clearPlace из store
 const { clearPlace } = useFiltersStore();
 
-// Локальное значение через computed
 const localValue = computed({
   get: () => props.modelValue,
   set: (value) => emit("update:modelValue", value),
 });
 
-// Вычисляемое значение для отображения в input
+// Отображаемое имя
 const displayName = computed(() => localValue.value?.name || "");
 
-// Состояние дропдауна
+// Состояние dropdown
 const dropdownOpen = ref(false);
 
+// Переключение dropdown
 const toggleDropdown = (open: boolean) => {
-  // console.log("Received open state:", open); // Проверьте, передается ли true
   setTimeout(() => {
     dropdownOpen.value = open;
-    // console.log("Dropdown state after update:", dropdownOpen.value);
     if (!open) {
       clearPlace();
     }
-  }, 150);
+  }, 50);
 };
 
-// Обработка выбора опции
+// Выбор опции
 const selectOption = (option: { name: string; value: string }) => {
-  emit("update:modelValue", option); // Устанавливаем выбранный объект
-  clearPlace(); // Вызываем clearPlace после выбора
-  toggleDropdown(false); // Закрываем дропдаун
+  emit("update:modelValue", option); // Устанавливаем выбранное значение
+  clearPlace();
+  toggleDropdown(false);
 };
 
-// Обработка ввода в поле
-const onInput = (event: InputEvent) => {
-  const value = (event.target as HTMLInputElement).value;
-  emit("update:modelValue", { name: value, value: "" }); // Обновляем только имя
+// Обработка ввода
+const onInput = (event: Event) => {
+  const target = event.target as HTMLInputElement; // Явное указание типа
+  const value = target.value;
+  emit("update:modelValue", { name: value, value: "" }); // Устанавливаем значение
 };
+
+onMounted(() => {
+  if (!localValue.value?.value && props.options.length > 0) {
+    const defaultOption =
+      props.options[props.defaultIndex || 0] || props.options[0]; // Значение по индексу или первое
+    emit("update:modelValue", defaultOption);
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -89,27 +92,16 @@ const onInput = (event: InputEvent) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  width: 100%;
+  // gap: 0.5rem;
 
   .label {
-    position: absolute;
-    top: 50%;
-    left: 1.6rem;
-    transform: translateY(-50%);
-    transition: all 0.3s ease;
+    padding-left: 1.6rem;
     pointer-events: none;
-    font-size: 1.8rem;
     font-family: $font_2;
-    color: $dark;
-    &.active {
-      top: -0.2rem;
-      left: 0.7rem;
-      background-color: $white;
-      z-index: 22;
-      padding: 0 1rem;
-      color: $blue;
-      font-size: 1.4rem;
-    }
+    color: $blue;
+    font-size: 1.4rem;
+    margin-bottom: -1rem;
   }
 
   .input {

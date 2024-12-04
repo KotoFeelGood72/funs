@@ -6,14 +6,13 @@
         <p>Багаж</p>
         <div class="ic">
           <Icon name="f:tright" :size="16" />
-          <!-- <Icon name="f:tleft" :size="16" /> -->
         </div>
       </div>
-      <btn name="Бронировать для визы" @click="nextToAir()"/>
+      <btn name="Бронировать для визы" @click="nextToAir()" theme="primary" size="normal"/>
     </div>
     <div class="air-content">
-      <AirHead title="" logo="" />
-      <AirInfo start="" end="" :count="2" />
+      <AirHead title="TURKISH AIRLINES" logo="" />
+      <AirInfo start="" end="" :count="1" />
     </div>
   </div>
 </template>
@@ -50,15 +49,25 @@ const nextToAir = () => {
   @include flex-start;
   gap: 0.8rem;
   margin-bottom: 2.8rem;
-  // &.active {
   p {
     color: $blue;
     font-size: 1.8rem;
     font-family: $font_3;
   }
-  // }
   .ic {
     @include flex-center;
   }
+}
+
+.air-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  flex-grow: 1;
+}
+
+.air_action {
+  min-width: 25.7rem;
 }
 </style>

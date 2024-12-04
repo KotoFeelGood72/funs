@@ -1,5 +1,5 @@
 <template>
-  <div class="btn" :class="[isColorTheme]">
+  <div class="btn" :class="[isColorTheme, isSize]">
     <div class="loading" v-if="loading">
       <Icon name="svg-spinners:eclipse" />
     </div>
@@ -16,6 +16,7 @@ const props = defineProps<{
   loading?: boolean;
   icon?: string;
   theme?: string;
+  size?: string
 }>();
 
 const isColorTheme = computed(() => {
@@ -28,6 +29,18 @@ const isColorTheme = computed(() => {
       return "theme-primary";
     case "secondary":
       return "theme-secondary";
+  }
+});
+const isSize = computed(() => {
+  switch (props.size) {
+    case "small":
+      return "small-btn";
+    case "normal":
+      return "normal-btn";
+    case "medium":
+      return "medium-btn";
+    case "large":
+      return "large-btn";
   }
 });
 </script>
@@ -43,6 +56,23 @@ const isColorTheme = computed(() => {
   color: $blue;
   font-family: $font_3;
   transition: all 0.3s ease-in-out;
+
+  &.small-btn {
+    padding: 1.4rem 2.4rem;
+    height: 4rem;
+  }
+  &.normal-btn {
+    padding: 1.4rem 2.4rem;
+    height: 5rem;
+  }
+  &.medium-btn {
+    padding: 1.4rem 2.4rem;
+    height: 5rem;
+  }
+  &.large-btn {
+    padding: 1.4rem 2.4rem;
+    height: 5rem;
+  }
 
   &.theme-white {
     background-color: $white;
