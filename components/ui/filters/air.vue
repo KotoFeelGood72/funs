@@ -26,22 +26,18 @@
     </div>
     <div class="filter-group">
       <Calendar
-        v-model:startDate="selectedDateTo"
-        v-model:endDate="selectedDateFrom"
+        v-model:startDate="filterData.date_backward"
+        v-model:endDate="filterData.date_forward"
         :isRange="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeople />
-      <!-- <Select
-        :options="airData.people"
-        v-model="selectedPeople"
-        label="Пассажиров"
-      >
-        <div class="people-ic">
-          <Icon name="f:user" />
-        </div>
-      </Select> -->
+      <SelectPeople
+        v-model:class_type="filterData.class_type"
+        v-model:adults="filterData.adults"
+        v-model:children="filterData.children"
+        v-model:infants="filterData.infants"
+      />
     </div>
     <btn name="Искать для визы" icon="right" @click="applyFilters" />
   </div>
@@ -51,56 +47,26 @@
 import { ref, watch } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
-import Select from "../inputs/Select.vue";
 import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useFiltersStore } from "~/store/useFilterStore";
 
 // Доступ к фильтрам через хранилище
-const {
-  airData,
-  places,
-  selectedCityFrom,
-  selectedCityTo,
-  selectedDateFrom,
-  selectedDateTo,
-  selectedPeople,
-} = useFiltersStoreRefs();
+const { places, filterData, selectedCityFrom, selectedCityTo } =
+  useFiltersStoreRefs();
 const { fetchPlace, fetchTickets, clearPlace } = useFiltersStore();
 const emit = defineEmits();
 
-// Применить фильтры
 const applyFilters = () => {
-  // Собираем параметры из текущих значений
-  const queryParams = {
-    departure: selectedCityFrom.value?.value || "", // Код города отправления
-    arrival: selectedCityTo.value?.value || "", // Код города прибытия
-    date_forward: selectedDateFrom.value || "", // Дата отправления
-    date_backward: selectedDateTo.value || "", // Дата возвращения
-    class_type: "ECONOMY", // Тип класса (может быть динамическим)
-    adults: 1, // Количество взрослых (замените на динамическое значение)
-    children: 0, // Количество детей (замените на динамическое значение)
-    infants: 0, // Количество младенцев (замените на динамическое значение)
-  };
-
-  // Вызываем fetchTickets с параметрами
-  fetchTickets(queryParams);
-
-  // Если нужно, эмитим событие для других компонентов
-  emit("filter-applied", queryParams);
+  fetchTickets();
 };
 
 const swapCities = () => {
   const temp = selectedCityFrom.value;
   selectedCityFrom.value = selectedCityTo.value;
   selectedCityTo.value = temp;
-  clearPlace(); // Очищаем места после смены
-};
-
-// Логирование выбранного значения
-const onSelect = (value: string) => {
-  // console.log("Выбранный вариант:", value);
+  clearPlace();
 };
 
 watch(

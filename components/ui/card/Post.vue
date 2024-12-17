@@ -19,9 +19,18 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  post: any;
-}>();
+withDefaults(
+  defineProps<{
+    post: any;
+  }>(),
+  {
+    post: {
+      img: "",
+      title: "",
+      txt: "",
+    },
+  }
+);
 </script>
 
 <style scoped lang="scss">

@@ -1,26 +1,53 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, nextTick, watch } from "vue";
 import Select from "./Select.vue";
 import btn from "../buttons/btn.vue";
-// import Icon from "@/components/Icon.vue";
+
+// Пропсы для v-model
+const props = defineProps<{
+  class_type: string;
+  adults: number;
+  children: number;
+  infants: number;
+}>();
+
+// Эмитим изменения для синхронизации с родителем
+const emit = defineEmits([
+  "update:class_type",
+  "update:adults",
+  "update:children",
+  "update:infants",
+]);
+
+// Локальные состояния
+const classType = ref(props.class_type || "ECONOMY");
+const adults = ref(props.adults || 1);
+const children = ref(props.children || 0);
+const infants = ref(props.infants || 0);
+
+// Синхронизация локальных значений с v-model
+watch(classType, (newValue) => {
+  emit("update:class_type", newValue);
+});
+watch(adults, (newValue) => {
+  emit("update:adults", newValue);
+});
+watch(children, (newValue) => {
+  emit("update:children", newValue);
+});
+watch(infants, (newValue) => {
+  emit("update:infants", newValue);
+});
 
 const isDropdownVisible = ref(false);
 const dropdownPosition = ref("bottom");
 const wrapper = ref<HTMLElement | null>(null);
 const dropdown = ref<HTMLElement | null>(null);
 
-// Счётчики
-const adults = ref(2);
-const children = ref(0);
-const rooms = ref(1);
-const childAges = ref<number[]>([]);
-
-// Вычисляемое свойство для отображения текста в заголовке
 const headerText = computed(() => {
-  return `Взрослых — ${adults.value}, Детей — ${children.value}`;
+  return `Взрослый — ${adults.value}, Детей — ${children.value}`;
 });
 
-// Открытие/закрытие выпадающего списка
 const toggleDropdown = async () => {
   isDropdownVisible.value = !isDropdownVisible.value;
 
@@ -30,7 +57,6 @@ const toggleDropdown = async () => {
   }
 };
 
-// Определение позиции выпадающего списка
 const calculateDropdownPosition = () => {
   if (!wrapper.value || !dropdown.value) return;
 
@@ -51,29 +77,22 @@ const decreaseAdults = () => {
   if (adults.value > 1) adults.value--;
 };
 
-const increaseChildren = () => {
-  children.value++;
-  childAges.value.push(0);
-};
+const increaseChildren = () => children.value++;
 const decreaseChildren = () => {
-  if (children.value > 0) {
-    children.value--;
-    childAges.value.pop();
-  }
+  if (children.value > 0) children.value--;
 };
 
-const increaseRooms = () => rooms.value++;
-const decreaseRooms = () => {
-  if (rooms.value > 1) rooms.value--;
+const increaseInfants = () => infants.value++;
+const decreaseInfants = () => {
+  if (infants.value > 0) infants.value--;
 };
 
+// Подтверждение выбора
 const confirmSelection = () => {
-  console.log({
-    adults: adults.value,
-    children: children.value,
-    rooms: rooms.value,
-    childAges: childAges.value,
-  });
+  if (children.value > 0 && infants.value > children.value) {
+    alert("Количество младенцев не может превышать количество детей.");
+    return;
+  }
   isDropdownVisible.value = false;
 };
 </script>
@@ -82,12 +101,11 @@ const confirmSelection = () => {
   <div class="people-wrapper" ref="wrapper">
     <div class="header" @click="toggleDropdown">
       <div class="header_col">
-        <span>Гостей</span>
-        <!-- Динамически обновляем текст в заголовке -->
+        <span>Параметры</span>
         <p>{{ headerText }}</p>
       </div>
       <div class="header_ic">
-        <Icon name="f:user" :size="14"/>
+        <Icon name="f:user" :size="14" />
       </div>
     </div>
     <transition name="fade">
@@ -97,6 +115,14 @@ const confirmSelection = () => {
         ref="dropdown"
       >
         <div class="counter-container">
+          <div class="counter">
+            <p>Класс обслуживания</p>
+            <Select
+              :options="['ECONOMY', 'BUSINESS', 'FIRST']"
+              v-model="classType"
+            />
+          </div>
+
           <div class="counter">
             <p>Взрослых</p>
             <div class="counter-buttons">
@@ -123,33 +149,14 @@ const confirmSelection = () => {
             </div>
           </div>
 
-          <div v-if="children > 0">
-            <Select
-              v-for="(age, index) in children"
-              :key="index"
-              :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]"
-              v-model="childAges[index]"
-              :label="'Возраст ребёнка ' + (index + 1)"
-            />
-          </div>
-
-          <div class="txt">
-            <p>Текст</p>
-            <span>
-              Чтобы найти подходящий вариант для вашей группы и показать
-              корректные цены, нам нужно знать возраст ваших детей на момент
-              отъезда.
-            </span>
-          </div>
-
           <div class="counter">
-            <p>Номера</p>
+            <p>Младенцев</p>
             <div class="counter-buttons">
-              <button @click="decreaseRooms">
+              <button @click="decreaseInfants">
                 <Icon name="f:minus" />
               </button>
-              <span>{{ rooms }}</span>
-              <button @click="increaseRooms">
+              <span>{{ infants }}</span>
+              <button @click="increaseInfants">
                 <Icon name="f:plus" />
               </button>
             </div>
