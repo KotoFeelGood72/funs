@@ -38,7 +38,7 @@ api.interceptors.response.use(
 
       toast.error(`Ошибка ${status}: ${message}`, {
         timeout: 5000, // Время отображения в миллисекундах
-
+// @ts-ignore
         position: "bottom-left", // Позиция тоста
         closeOnClick: true, // Закрытие при клике
         pauseOnHover: false,

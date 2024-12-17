@@ -10,14 +10,12 @@
       :placeholder="placeholder"
     />
     <div class="input_ic" v-if="icon">
-      <Icon :name="'f:' + icon" :size="18"/>
+      <Icon :name="'f:' + icon" :size="18" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
-
 const props = withDefaults(
   defineProps<{
     modelValue?: string;
@@ -25,14 +23,14 @@ const props = withDefaults(
     type?: "text" | "email";
     label: string;
     icon?: string;
-    placeholder?: string
+    placeholder?: string;
   }>(),
   {
     modelValue: "",
     id: "",
     label: "",
     icon: "",
-    placeholder: ''
+    placeholder: "",
   }
 );
 
@@ -42,8 +40,6 @@ const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
-
-
 </script>
 
 <style scoped lang="scss">
@@ -53,8 +49,7 @@ const localValue = computed({
   height: 4.8rem;
   display: flex;
   flex-direction: column;
-
-
+  align-items: flex-start;
 }
 
 label {
@@ -76,14 +71,13 @@ input {
 
   &::-webkit-input-placeholder {
     opacity: 1;
-    color: $dark
+    color: $dark;
   }
 }
 
 input:focus {
   border-bottom: 0.1rem solid $blue;
 }
-
 
 .input_ic {
   position: absolute;

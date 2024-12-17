@@ -44,5 +44,6 @@ const nav = [
 }
 .right {
   @include flex-end;
+  gap: 3.2rem;
 }
 </style>

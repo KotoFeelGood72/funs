@@ -3,7 +3,7 @@
     <div class="info-start">
       <div class="info_start__col">
         <div class="info-ic">
-          <Icon name="f:start" :size="25"/>
+          <Icon name="f:start" :size="25" />
         </div>
       </div>
       <div class="info_start__col">
@@ -14,16 +14,16 @@
     </div>
     <AirLine :num="count" />
     <div class="info-end">
-    <div class="info_end__col">
-      <div class="info-ic">
-          <Icon name="f:end" :size="25"/>
+      <div class="info_end__col">
+        <div class="info-ic">
+          <Icon name="f:end" :size="25" />
         </div>
-    </div>
-    <div class="info_end__col">
-      <h3 class="time">01:30</h3>
-      <p class="city">Амстердам 9 дек, пн</p>
-      <span class="tags">AMS</span>
-    </div>
+      </div>
+      <div class="info_end__col">
+        <h3 class="time">01:30</h3>
+        <p class="city">Амстердам 9 дек, пн</p>
+        <span class="tags">AMS</span>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +38,6 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-
 .info {
   @include flex-space;
   gap: 1.6rem;
@@ -52,7 +51,7 @@ defineProps<{
 .city {
   font-size: 1.4rem;
   color: $gray;
-  padding: .8rem 0 2.8rem 0;
+  padding: 0.8rem 0 2.8rem 0;
 }
 
 .tags {
@@ -63,17 +62,17 @@ defineProps<{
 }
 
 .info-ic {
-  @include flex-center
+  @include flex-center;
 }
 
 .info-start {
   @include flex-start;
   align-items: flex-start;
-  gap: 2.4rem
+  gap: 2.4rem;
 }
 .info-end {
   @include flex-start;
   align-items: flex-start;
-  gap: 2.4rem
+  gap: 2.4rem;
 }
 </style>

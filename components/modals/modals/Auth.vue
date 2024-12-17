@@ -1,20 +1,38 @@
 <template>
   <div class="modal">
-    <!-- <div class="auth">
+    <div class="auth">
       <Close @close="closeAllModals" />
       <div class="auth_head">
         <h3>Вход в личный кабинет</h3>
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
       </div>
       <div class="auth_body">
-        <Inputs v-model="email" label="E-Mail" id="auth-email" placeholder="Ваш e-mail"/>
+        <Inputs
+          v-model="email"
+          label="E-Mail"
+          id="auth-email"
+          placeholder="Ваш e-mail"
+        />
+        <Inputs
+          v-model="email"
+          label="пароль"
+          id="auth-password"
+          placeholder="Ваш пароль"
+        />
       </div>
       <div class="auth_bottom">
-        <btn name="Зарегистрироваться"  style="justify-content: center; width: 100%;" />
-        <btn name="Войти" theme="primary" style="justify-content: center; width: 100%;" />
+        <btn
+          name="Зарегистрироваться"
+          style="justify-content: center; width: 100%"
+        />
+        <btn
+          name="Войти"
+          theme="primary"
+          style="justify-content: center; width: 100%"
+        />
       </div>
-    </div> -->
-    <AuthConfirm/>
+    </div>
+    <!-- <AuthConfirm /> -->
   </div>
 </template>
 
@@ -57,6 +75,12 @@ const email = ref<any>("");
 
 .auth_bottom {
   @include flex-start;
+  gap: 2rem;
+}
+
+.auth_body {
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 }
 </style>

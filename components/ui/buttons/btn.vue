@@ -57,6 +57,10 @@ const isSize = computed(() => {
   font-family: $font_3;
   transition: all 0.3s ease-in-out;
 
+  p {
+    margin-bottom: -0.3rem;
+  }
+
   &.small-btn {
     padding: 1.4rem 2.4rem;
     height: 4rem;
@@ -79,9 +83,11 @@ const isSize = computed(() => {
     color: $blue;
     border-color: $white;
     &:hover {
-      border-color: transparent;
-      background-color: transparent;
-      color: $blue;
+      // border-color: transparent;
+      // background-color: transparent;
+      color: $white;
+      opacity: 0.9;
+      border-color: $blue;
     }
   }
   &.theme-transparent {

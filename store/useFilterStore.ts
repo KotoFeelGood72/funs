@@ -1,30 +1,29 @@
 import { defineStore, storeToRefs } from "pinia";
 import { api } from "~/api/api";
 
-interface FetchTiket {
-  departure: string;
-  arrival: string;
-  date_forward: string;
-  date_backward: string;
-  class_type: string;
-  adults: number;
-  children: number;
-  infants: number;
-}
+
 
 export const useFiltersStore = defineStore("filters", {
   state: () => ({
     selectedCityFrom: {
-      value: "MSK",
-      name: "Москва",
+      value: "AAI",
+      name: "Arraias",
     },
     selectedCityTo: {
       value: "OAE",
       name: "Dubai",
     },
-    selectedDateTo: "" as string,
-    selectedDateFrom: "" as string,
-    selectedPeople: "" as string,
+    filterData: {
+      departure: '',
+      arrival: '',
+      date_forward: '',
+      date_backward: '',
+      class_type: '',
+      adults: 0,
+      children: 0,
+      infants: 0,
+
+    } as any,
     airData: {
       people: ["Эконому-1", "Эконому-2", "Эконому-3"],
     },
@@ -32,9 +31,11 @@ export const useFiltersStore = defineStore("filters", {
     tickets: [] as any,
   }),
   actions: {
-    async fetchTickets(queryParams: FetchTiket) {
+    async fetchTickets() {
       try {
-        const response = await api.get("/tickets", { params: queryParams });
+        this.filterData.departure = this.selectedCityFrom.value;
+        this.filterData.arrival = this.selectedCityTo.value;
+        const response = await api.get("/tickets", { params: this.filterData });
         this.tickets = response.data;
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
