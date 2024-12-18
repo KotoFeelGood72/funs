@@ -5,13 +5,26 @@
         <h3>Заполните данные профиля для доступа к заказам</h3>
       </div>
       <div class="profile-form">
-        <Inputs placeholder="Введите фамилию" label="Фамилия" />
-        <Inputs placeholder="Введите имя" label="Имя" />
+        <Inputs
+          placeholder="Введите фамилию"
+          label="Фамилия"
+          v-model="user.first_name"
+        />
+        <Inputs
+          placeholder="Введите имя"
+          label="Имя"
+          v-model="user.last_name"
+        />
         <Inputs
           placeholder="Введите адрес электронной почты (обязательно)"
           label="Email"
+          v-model="user.email"
         />
-        <Inputs placeholder="Введите номер телефона" label="Номер телефона" />
+        <Inputs
+          placeholder="Введите номер телефона"
+          label="Номер телефона"
+          v-model="user.phone_number"
+        />
       </div>
       <Checkboxes
         :id="'agreement-profile-edit'"
@@ -21,7 +34,12 @@
       />
       <div class="footer">
         <btn name="Отменить" size="normal" />
-        <btn name="Сохранить" size="normal" theme="primary" />
+        <btn
+          name="Сохранить"
+          size="normal"
+          theme="primary"
+          @click="updateProfile"
+        />
       </div>
     </div>
   </div>
@@ -31,6 +49,9 @@
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import Checkboxes from "~/components/ui/inputs/Checkboxes.vue";
 import btn from "~/components/ui/buttons/btn.vue";
+import { useAuth } from "~/composables/useAuth";
+
+const { updateProfile, user } = useAuth();
 </script>
 
 <style scoped lang="scss">

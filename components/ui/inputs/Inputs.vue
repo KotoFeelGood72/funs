@@ -4,13 +4,26 @@
       {{ label }}
     </label>
     <input
-      :type="type"
+      :type="isPasswordVisible ? 'text' : type"
       v-model="localValue"
       :id="id"
       :placeholder="placeholder"
     />
-    <div class="input_ic" v-if="icon">
-      <Icon :name="'f:' + icon" :size="18" />
+    <div
+      class="input_ic"
+      v-if="type === 'password' || icon"
+      @click="togglePasswordVisibility"
+    >
+      <Icon
+        :name="
+          type === 'password'
+            ? isPasswordVisible
+              ? 'fluent:eye-16-filled'
+              : 'fluent:eye-off-16-filled'
+            : ''
+        "
+        :size="18"
+      />
     </div>
   </div>
 </template>
@@ -18,9 +31,9 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    modelValue?: string;
+    modelValue: any;
     id?: string;
-    type?: "text" | "email";
+    type?: "text" | "email" | "password";
     label: string;
     icon?: string;
     placeholder?: string;
@@ -40,6 +53,15 @@ const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
+
+// Состояние видимости пароля
+const isPasswordVisible = ref(false);
+
+const togglePasswordVisibility = () => {
+  if (props.type === "password") {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -81,9 +103,11 @@ input:focus {
 
 .input_ic {
   position: absolute;
-  top: 60%;
+  top: 50%;
   right: 1.6rem;
   transform: translateY(-50%);
+  cursor: pointer;
+
   @include flex-center;
 }
 </style>

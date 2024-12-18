@@ -9,14 +9,12 @@ const api = axios.create({
 
 // Интерсептор запросов
 api.interceptors.request.use(
-  (config) => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      const token = parsedUser?.user?.token?.token;
-      if (token) {
-        config.headers.Authorization = `Basic ${token}`;
-      }
+  async (config) => {
+    const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт
+    const { accessToken } = useAuth(); // Получение токенов в момент запроса
+
+    if (accessToken.value) {
+      config.headers.Authorization = `Bearer ${accessToken.value}`;
     }
     return config;
   },
@@ -27,33 +25,29 @@ api.interceptors.request.use(
 
 // Интерсептор ответов
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Проверяем наличие объекта ошибки
+  (response) => response,
+  async (error) => {
     if (error && error.response) {
       const status = error.response.status;
-      const message = error.response.data?.message || "Произошла ошибка";
-
-      toast.error(`Ошибка ${status}: ${message}`, {
-        timeout: 5000, // Время отображения в миллисекундах
-// @ts-ignore
-        position: "bottom-left", // Позиция тоста
-        closeOnClick: true, // Закрытие при клике
-        pauseOnHover: false,
-        draggable: true,
-        draggablePercent: 0.6,
-        hideProgressBar: false,
-        icon: true,
-      });
 
       if (status === 401) {
-        localStorage.removeItem("user");
-        window.location.href = "/login";
+        try {
+          const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт
+          const { refresh, logout } = useAuth();
+
+          await refresh(); // Обновляем токен
+          return api.request(error.config); // Повторяем запрос с новым токеном
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError);
+          toast.error("Сессия истекла. Выполните вход снова.");
+          localStorage.removeItem("user");
+          // window.location.href = "/"; // Редирект на главную страницу
+        }
+      } else {
+        const message = error.response.data?.message || "Произошла ошибка";
+        toast.error(`Ошибка ${status}: ${message}`);
       }
     } else {
-      // Если ошибка связана с сетью или объект response отсутствует
       toast.error("Ошибка сети. Проверьте подключение к интернету.");
     }
 

@@ -19,7 +19,7 @@
       <Preview />
       <Divider :height="8" />
     </div>
-    <Faq />
+    <Faq :faqs="faq" />
     <Divider :height="8" :color="true" />
     <Posts :posts="posts" />
     <Divider :height="8" :color="true" />
@@ -109,6 +109,9 @@ import Divider from "~/components/ui/Divider.vue";
 import Posts from "~/components/screens/Posts.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Form from "~/components/shared/Form.vue";
+import { useFaqs } from "~/composables/useFaqs";
+
+const { fetchFaqs, faq } = useFaqs();
 
 const tabList = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA" }];
 
@@ -144,6 +147,10 @@ const posts = ref<any>([
     id: "11",
   },
 ]);
+
+onMounted(() => {
+  fetchFaqs();
+});
 </script>
 
 <style scoped lang="scss">

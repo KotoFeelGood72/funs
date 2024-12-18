@@ -63,6 +63,12 @@ import { ref, nextTick } from "vue";
 import Divider from "../ui/Divider.vue";
 import btn from "../ui/buttons/btn.vue";
 
+const props = defineProps<{
+  faqs: any;
+}>();
+
+console.log(props.faqs);
+
 const questions = [
   {
     question: "Вопрос?",

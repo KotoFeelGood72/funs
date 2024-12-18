@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="auth">
-      <Close @close="closeAllModals" />
+      <Close @close="store.closeAllModals" />
       <div class="auth_head">
         <h3>Вход в личный кабинет</h3>
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
@@ -14,25 +14,21 @@
           placeholder="Ваш e-mail"
         />
         <Inputs
-          v-model="email"
-          label="пароль"
+          v-model="password"
+          label="Пароль"
           id="auth-password"
+          type="password"
           placeholder="Ваш пароль"
         />
       </div>
       <div class="auth_bottom">
         <btn
-          name="Зарегистрироваться"
+          name="Авторизоваться"
           style="justify-content: center; width: 100%"
-        />
-        <btn
-          name="Войти"
-          theme="primary"
-          style="justify-content: center; width: 100%"
+          @click="login"
         />
       </div>
     </div>
-    <!-- <AuthConfirm /> -->
   </div>
 </template>
 
@@ -43,10 +39,11 @@ import btn from "~/components/ui/buttons/btn.vue";
 import Close from "~/components/ui/Close.vue";
 import { useModalStore } from "~/store/useModalStore";
 import { ref } from "vue";
+import { useAuth } from "~/composables/useAuth";
 
-const { closeAllModals } = useModalStore();
+const store = useModalStore();
 
-const email = ref<any>("");
+const { email, password, login } = useAuth(store);
 </script>
 
 <style scoped lang="scss">
