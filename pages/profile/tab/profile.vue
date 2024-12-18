@@ -6,13 +6,13 @@
       </div>
       <div class="profile-form">
         <Inputs
-          placeholder="Введите фамилию"
-          label="Фамилия"
+          placeholder="Введите имя"
+          label="Имя"
           v-model="user.first_name"
         />
         <Inputs
-          placeholder="Введите имя"
-          label="Имя"
+          placeholder="Введите фамилию"
+          label="Фамилия"
           v-model="user.last_name"
         />
         <Inputs

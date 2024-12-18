@@ -28,8 +28,10 @@ export function useAuth(store?: any) {
   const email = ref<string>("");
   const password = ref<string>("");
 
-  accessToken.value = localStorage.getItem("accessToken");
-  refreshToken.value = localStorage.getItem("refreshToken");
+  if (process.client) {
+    accessToken.value = localStorage.getItem("accessToken");
+    refreshToken.value = localStorage.getItem("refreshToken");
+  }
 
   // Регистрация пользователя
   // const register = async () => {

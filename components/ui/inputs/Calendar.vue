@@ -30,7 +30,7 @@ const props = defineProps<{
   startDate?: string | null;
   endDate?: string | null;
   isRange?: boolean;
-  label?: string
+  label?: string;
 }>();
 
 const emit = defineEmits<{
@@ -100,7 +100,6 @@ const formatDate = (date: Date | null) => {
   });
 };
 
-// Форматирование диапазона дат
 const formatDateRange = (range: Date[] | null) => {
   if (!range || range.length !== 2 || !range[0] || !range[1]) {
     return "Выбрать даты";
@@ -108,14 +107,19 @@ const formatDateRange = (range: Date[] | null) => {
 
   const [start, end] = range;
 
-  const format = (date: Date) =>
-    date.toLocaleDateString("ru-RU", {
+  const format = (date: Date, showYear = true) => {
+    return date.toLocaleDateString("ru-RU", {
       day: "numeric",
       month: "short",
-      year: "numeric",
+      year: showYear ? "numeric" : undefined,
     });
+  };
 
-  return `${format(start)} — ${format(end)}`;
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const formattedStart = format(start, !sameYear); // Скрываем год, если он совпадает с годом конечной даты
+  const formattedEnd = format(end);
+
+  return `${formattedStart} — ${formattedEnd}`;
 };
 </script>
 
@@ -137,7 +141,7 @@ const formatDateRange = (range: Date[] | null) => {
   border-bottom: 0.1rem solid $blue;
   border-radius: 0 !important;
   font-size: 1.8rem;
-  padding: .85rem 1.6rem!important;
+  padding: 0.85rem 1.6rem !important;
   color: $black;
 
   &::-webkit-input-placeholder {

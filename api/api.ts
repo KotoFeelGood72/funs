@@ -41,7 +41,7 @@ api.interceptors.response.use(
           console.error("Token refresh failed:", refreshError);
           toast.error("Сессия истекла. Выполните вход снова.");
           localStorage.removeItem("user");
-          // window.location.href = "/"; // Редирект на главную страницу
+          window.location.href = "/"; // Редирект на главную страницу
         }
       } else {
         const message = error.response.data?.message || "Произошла ошибка";

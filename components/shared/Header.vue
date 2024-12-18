@@ -9,7 +9,17 @@
         </div>
         <div class="right">
           <listLink :list="nav" />
+          <!-- Если пользователь авторизован -->
           <btn
+            v-if="isUser"
+            :name="user.email"
+            icon="user"
+            theme="primary"
+            @click="goToProfile"
+          />
+          <!-- Если пользователь не авторизован -->
+          <btn
+            v-else
             name="Личный кабинет"
             icon="user"
             theme="primary"
@@ -25,13 +35,34 @@
 import listLink from "../ui/list/list-link.vue";
 import btn from "../ui/buttons/btn.vue";
 import { useModalStore } from "~/store/useModalStore";
+import { useAuth } from "~/composables/useAuth";
+import { useRouter } from "vue-router";
+import { computed } from "vue";
 
+const { user, accessToken } = useAuth();
 const { openModal } = useModalStore();
+const router = useRouter();
+
 const nav = [
   { link: "/air", name: "Билеты" },
   { link: "/hotel", name: "Отели" },
   { link: "/", name: "ETA" },
 ];
+
+// Проверка, что пользователь авторизован
+const isUser = computed(() => {
+  return (
+    user.value &&
+    typeof user.value === "object" &&
+    Object.keys(user.value).length > 0 &&
+    accessToken.value
+  );
+});
+
+// Переход в личный кабинет
+const goToProfile = () => {
+  router.push("/profile");
+};
 </script>
 
 <style scoped lang="scss">
