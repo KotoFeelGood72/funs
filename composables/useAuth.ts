@@ -85,6 +85,7 @@ export function useAuth(store?: any) {
     try {
       const response = await api.patch("/profiles", user.value);
       user.value = response.data;
+      console.log(user.value, 'Goo')
       toast.success("Профиль успешно обновлен");
     } catch (error) {
       console.error("Profile update error:", error);
@@ -136,5 +137,6 @@ export function useAuth(store?: any) {
     refresh,
     logout,
     setTokens,
+    getProfile
   };
 }

@@ -51,7 +51,9 @@ import Checkboxes from "~/components/ui/inputs/Checkboxes.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import { useAuth } from "~/composables/useAuth";
 
-const { updateProfile, user } = useAuth();
+const { updateProfile, user, getProfile } = useAuth();
+
+
 </script>
 
 <style scoped lang="scss">

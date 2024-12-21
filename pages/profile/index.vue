@@ -19,11 +19,17 @@ import support from "./tab/support.vue";
 import history from "./tab/history.vue";
 import settings from "./tab/settings.vue";
 import profile from "./tab/profile.vue";
+import { useAuth } from "~/composables/useAuth";
+
+const { getProfile } = useAuth();
+onMounted(() => {
+  getProfile();
+});
 </script>
 
 <style lang="scss" scoped>
 .profile {
   background-color: $blue;
-  padding: 8rem 0
+  padding: 8rem 0;
 }
 </style>
