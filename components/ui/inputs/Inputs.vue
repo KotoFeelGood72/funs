@@ -1,5 +1,5 @@
 <template>
-  <div class="input">
+  <div class="input" :class="{ active: localValue || isFocused }">
     <label :for="id">
       {{ label }}
     </label>
@@ -8,6 +8,8 @@
       v-model="localValue"
       :id="id"
       :placeholder="placeholder"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
     />
     <div
       class="input_ic"
@@ -48,7 +50,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits(["update:modelValue"]);
-
+const isFocused = ref<boolean>(false);
 const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
@@ -69,9 +71,18 @@ const togglePasswordVisibility = () => {
   position: relative;
   width: 100%;
   height: 4.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  border: 0.1rem solid transparent;
+  border-bottom: 0.1rem solid $blue;
+  transition: all 0.3s ease-in-out;
+
+  &.active {
+    border-color: $light;
+    border-radius: 0.5rem;
+    label {
+      top: -1rem;
+      background-color: $white;
+    }
+  }
 }
 
 label {
@@ -79,26 +90,26 @@ label {
   font-size: 1.4rem;
   color: $blue;
   pointer-events: none;
-  line-height: 1rem;
+  position: absolute;
+  top: -0.3rem;
+  left: 0.9rem;
+  padding: 0 0.7rem;
+  transition: all 0.3s ease-in-out;
 }
 
 input {
+  border-radius: 0.5rem;
   width: 100%;
   height: 100%;
-  padding: 0.3rem 1.6rem 0.6rem 1.6rem;
   font-size: 1.8rem;
   border: none;
-  border-bottom: 0.1rem solid $blue;
   outline: none;
+  padding: 1.1rem 1.6rem;
 
   &::-webkit-input-placeholder {
     opacity: 1;
     color: $dark;
   }
-}
-
-input:focus {
-  border-bottom: 0.1rem solid $blue;
 }
 
 .input_ic {
@@ -107,7 +118,6 @@ input:focus {
   right: 1.6rem;
   transform: translateY(-50%);
   cursor: pointer;
-
   @include flex-center;
 }
 </style>
