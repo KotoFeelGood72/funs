@@ -8,7 +8,6 @@ const props = defineProps<{
   class_type: string;
   adults: number;
   children: number;
-  infants: number;
 }>();
 
 // Эмитим изменения для синхронизации с родителем
@@ -16,14 +15,14 @@ const emit = defineEmits([
   "update:class_type",
   "update:adults",
   "update:children",
-  "update:infants",
+  "update:childrenAges",
 ]);
 
 // Локальные состояния
 const classType = ref(props.class_type || "ECONOMY");
 const adults = ref(props.adults || 1);
 const children = ref(props.children || 0);
-const infants = ref(props.infants || 0);
+const childrenAges = ref<number[]>([]);
 
 // Синхронизация локальных значений с v-model
 watch(classType, (newValue) => {
@@ -33,10 +32,21 @@ watch(adults, (newValue) => {
   emit("update:adults", newValue);
 });
 watch(children, (newValue) => {
+  // Устанавливаем массив возрастов в зависимости от количества детей
+  if (newValue > childrenAges.value.length) {
+    childrenAges.value = [
+      ...childrenAges.value,
+      ...Array(newValue - childrenAges.value.length).fill(5), // Значение по умолчанию
+    ];
+  } else {
+    childrenAges.value = childrenAges.value.slice(0, newValue);
+  }
+
   emit("update:children", newValue);
+  emit("update:childrenAges", childrenAges.value);
 });
-watch(infants, (newValue) => {
-  emit("update:infants", newValue);
+watch(childrenAges, (newValue) => {
+  emit("update:childrenAges", newValue);
 });
 
 const isDropdownVisible = ref(false);
@@ -82,17 +92,8 @@ const decreaseChildren = () => {
   if (children.value > 0) children.value--;
 };
 
-const increaseInfants = () => infants.value++;
-const decreaseInfants = () => {
-  if (infants.value > 0) infants.value--;
-};
-
 // Подтверждение выбора
 const confirmSelection = () => {
-  if (children.value > 0 && infants.value > children.value) {
-    alert("Количество младенцев не может превышать количество детей.");
-    return;
-  }
   isDropdownVisible.value = false;
 };
 </script>
@@ -149,19 +150,22 @@ const confirmSelection = () => {
             </div>
           </div>
 
-          <div class="counter">
-            <p>Младенцев</p>
-            <div class="counter-buttons">
-              <button @click="decreaseInfants">
-                <Icon name="f:minus" />
-              </button>
-              <span>{{ infants }}</span>
-              <button @click="increaseInfants">
-                <Icon name="f:plus" />
-              </button>
+          <!-- Компонент выбора возраста детей -->
+          <div v-if="children > 0" class="children-ages">
+            <p>Возраст детей</p>
+            <div
+              v-for="(age, index) in childrenAges"
+              :key="index"
+              class="child-age"
+            >
+              <Select
+                :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                v-model="childrenAges[index]"
+              />
             </div>
           </div>
         </div>
+
         <div class="people__bottom">
           <btn
             name="Готово"
@@ -178,6 +182,7 @@ const confirmSelection = () => {
 <style scoped lang="scss">
 .people-wrapper {
   position: relative;
+  width: 100%;
 }
 
 .header_ic {

@@ -1,102 +1,61 @@
-<template>
-  <div class="filters">
-    <div class="filter-group">
-      <SearchSelect
-        label="Город"
-        :options="places"
-        @selected="onSelect"
-        v-model="selectedCityFrom"
-      />
-    </div>
-    <div class="filter-group date">
-      <Calendar
-        v-model:startDate="selectedDateTo"
-        v-model:endDate="selectedDateFrom"
-      />
-    </div>
-    <div class="filter-group">
-      <Calendar
-        v-model:startDate="selectedDateTo"
-        v-model:endDate="selectedDateFrom"
-      />
-    </div>
-    <div class="filter-group">
-      <SelectPeople />
-    </div>
-    <btn name="Искать для визы" icon="right" @click="applyFilters" />
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
-import Select from "../inputs/Select.vue";
-import Calendar from "../inputs/Calendar.vue";
+import DatePicker from "../inputs/DatePicker.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useFiltersStore } from "~/store/useFilterStore";
+import Calendar from "../inputs/Calendar.vue";
 
 // Доступ к фильтрам через хранилище
-const {
-  airData,
-  places,
-  selectedCityFrom,
-  selectedCityTo,
-  selectedDateFrom,
-  selectedDateTo,
-  selectedPeople,
-} = useFiltersStoreRefs();
-const { fetchPlace, fetchTickets, clearPlace } = useFiltersStore();
-const emit = defineEmits();
+const { places, hotelData } = useFiltersStoreRefs();
+const { setHotelUser, fetchPlace } = useFiltersStore();
 
-// Применить фильтры
+watch(
+  () => hotelData.value.city,
+  (newValue) => {
+    if (newValue.name) fetchPlace(newValue.name);
+  }
+);
+// Метод для применения фильтров
 const applyFilters = () => {
-  // Собираем параметры из текущих значений
-  const queryParams = {
-    departure: selectedCityFrom.value?.value || "", // Код города отправления
-    arrival: selectedCityTo.value?.value || "", // Код города прибытия
-    date_forward: selectedDateFrom.value || "", // Дата отправления
-    date_backward: selectedDateTo.value || "", // Дата возвращения
-    class_type: "ECONOMY", // Тип класса (может быть динамическим)
-    adults: 1, // Количество взрослых (замените на динамическое значение)
-    children: 0, // Количество детей (замените на динамическое значение)
-    infants: 0, // Количество младенцев (замените на динамическое значение)
+  const data = {
+    city: hotelData.value.city || "",
+    check_in_date: hotelData.value.check_in_date || "",
+    check_out_date: hotelData.value.check_out_date || "",
+    num_adults: hotelData.value.num_adults || 1,
+    num_children: hotelData.value.num_children || 0,
+    hotel_class: hotelData.value.hotel_class || "ECONOMY",
   };
 
-  // Вызываем fetchTickets с параметрами
-  fetchTickets(queryParams);
-
-  // Если нужно, эмитим событие для других компонентов
-  emit("filter-applied", queryParams);
+  console.log("Отправляемые данные:", data);
+  setHotelUser(data);
 };
-
-const swapCities = () => {
-  const temp = selectedCityFrom.value;
-  selectedCityFrom.value = selectedCityTo.value;
-  selectedCityTo.value = temp;
-  clearPlace(); // Очищаем места после смены
-};
-
-// Логирование выбранного значения
-const onSelect = (value: string) => {
-  // console.log("Выбранный вариант:", value);
-};
-
-watch(
-  () => selectedCityFrom.value,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-
-watch(
-  () => selectedCityTo.value,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
 </script>
+
+<template>
+  <div class="filters">
+    <div class="filter-group">
+      <SearchSelect label="Город" :options="places" v-model="hotelData.city" />
+    </div>
+    <div class="filter-group date">
+      <Calendar
+        v-model:startDate="hotelData.check_in_date"
+        v-model:endDate="hotelData.check_out_date"
+        :isRange="true"
+      />
+    </div>
+    <div class="filter-group">
+      <SelectPeople
+        v-model:class_type="hotelData.hotel_class"
+        v-model:adults="hotelData.num_adults"
+        v-model:children="hotelData.num_children"
+      />
+    </div>
+    <btn name="Забронировать" icon="right" @click="applyFilters" />
+  </div>
+</template>
 
 <style scoped lang="scss">
 .filters {

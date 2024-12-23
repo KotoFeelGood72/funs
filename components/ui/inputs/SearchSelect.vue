@@ -1,5 +1,5 @@
 <template>
-  <div class="select">
+  <div class="select" :class="{ active: displayName || dropdownOpen }">
     <label :class="{ active: dropdownOpen || displayName }" class="label">
       {{ label }}
     </label>
@@ -19,7 +19,12 @@
         :class="{ selected: option.value === displayName }"
         @mousedown="selectOption(option)"
       >
-        {{ option.name }}
+        <p>
+          {{ option.name }}
+        </p>
+        <p class="val">
+          {{ option.value }}
+        </p>
       </li>
       <li v-if="options.length === 0" class="no-options">
         Нет доступных вариантов
@@ -74,7 +79,8 @@ const selectOption = (option: { name: string; value: string }) => {
 // Обработка ввода
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement; // Явное указание типа
-  const value = target.value;
+  const value = target.value.replace(/[^а-яА-ЯёЁ\s]/g, ""); // Убираем всё, кроме русских букв и пробелов
+  target.value = value; // Обновляем значение в поле ввода
   emit("update:modelValue", { name: value, value: "" }); // Устанавливаем значение
 };
 
@@ -134,6 +140,7 @@ onMounted(() => {
       color: $dark;
       cursor: pointer;
       transition: background-color 0.2s;
+      @include flex-space;
 
       &:hover {
         background-color: #f5f5f5;
@@ -150,5 +157,12 @@ onMounted(() => {
       color: #999;
     }
   }
+}
+
+.val {
+  font-size: 1.4rem;
+  font-family: $font_2;
+  color: $blue;
+  font-weight: 600;
 }
 </style>

@@ -6,12 +6,12 @@ import { api } from "~/api/api";
 export const useFiltersStore = defineStore("filters", {
   state: () => ({
     selectedCityFrom: {
-      value: "AAI",
-      name: "Arraias",
+      value: "",
+      name: "",
     },
     selectedCityTo: {
-      value: "OAE",
-      name: "Dubai",
+      value: "",
+      name: "",
     },
     filterData: {
       departure: '',
@@ -29,6 +29,15 @@ export const useFiltersStore = defineStore("filters", {
     },
     places: [] as any,
     tickets: [] as any,
+    hotelData: {
+      city: '' as string,
+      check_in_date: '' as string,
+      check_out_date: '' as string,
+      num_adults: 0 as number,
+      num_children: 0 as number,
+      adults: [] as any[],
+      children: [] as any[],
+    } as any
   }),
   actions: {
     async fetchTickets() {
@@ -47,11 +56,11 @@ export const useFiltersStore = defineStore("filters", {
         const response = await api.get("places", {
           params: {
             query, // Передаём строку в параметре query
-            locale: "en", // Язык локали
+            locale: "ru", // Язык локали
           },
         });
         this.places = response.data.map((item: any) => ({
-          name: item.city_name_en, // Отображаемое имя города
+          name: item.city_name_ru, // Отображаемое имя города
           value: item.code, // Код города
         }));
       } catch (error) {
@@ -63,6 +72,10 @@ export const useFiltersStore = defineStore("filters", {
       // console.log("clear");
       this.places = [];
     },
+
+     setHotelUser(data: any) {
+      this.hotelData = data
+    }
   },
 });
 

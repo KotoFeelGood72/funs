@@ -1,9 +1,79 @@
+<script setup lang="ts">
+import { computed } from "vue";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
+// Пропсы с дефолтными значениями
+const props = withDefaults(
+  defineProps<{
+    modelValue: string | null;
+    label?: string;
+    minDate?: string | null; // Минимальная дата
+    maxDate?: string | null; // Максимальная дата
+  }>(),
+  {
+    modelValue: null,
+    label: "Дата рождения",
+    minDate: null, // По умолчанию минимальное значение не задано
+    maxDate: null, // По умолчанию максимальное значение не задано
+  }
+);
+
+// Определяем событие для v-model
+const emit = defineEmits<{
+  (event: "update:modelValue", value: string | null): void;
+}>();
+
+// Функция для форматирования в ДД.ММ.ГГГГ
+const formatToDDMMYYYY = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+};
+
+// Функция для парсинга строки в формате ДД.ММ.ГГГГ в объект Date
+const parseDateFromDDMMYYYY = (dateString: string): Date | undefined => {
+  const [day, month, year] = dateString.split(".");
+  if (!day || !month || !year) return undefined;
+
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return isNaN(date.getTime()) ? undefined : date;
+};
+
+// Локальное значение, связанное с modelValue
+const localValue = computed<Date | undefined>({
+  get: () =>
+    props.modelValue ? parseDateFromDDMMYYYY(props.modelValue) : undefined,
+  set: (newValue) => {
+    emit("update:modelValue", newValue ? formatToDDMMYYYY(newValue) : null);
+  },
+});
+
+// Минимальная дата, преобразованная в объект Date
+const parsedMinDate = computed(() =>
+  props.minDate ? parseDateFromDDMMYYYY(props.minDate) : undefined
+);
+
+// Максимальная дата, преобразованная в объект Date
+const parsedMaxDate = computed(() =>
+  props.maxDate ? parseDateFromDDMMYYYY(props.maxDate) : undefined
+);
+
+// Функция для форматирования даты в поле
+const formatDate = (date: Date | undefined): string => {
+  return date ? formatToDDMMYYYY(date) : "ДД.ММ.ГГГГ";
+};
+</script>
+
 <template>
   <div class="air-date">
-    <label for="date-picker" class="label">Дата рождения</label>
+    <label for="date-picker" class="label">{{ label }}</label>
     <VueDatePicker
       id="date-picker"
       v-model="localValue"
+      :min-date="parsedMinDate"
+      :max-date="parsedMaxDate"
       :hide-navigation="['month', 'year', 'time']"
       :show-last-in-range="false"
       no-today
@@ -14,50 +84,13 @@
       placeholder="ДД.ММ.ГГГГ"
     >
       <template #input-icon>
-      <div class="ic">
-        <Icon name="f:calendar" />
-      </div>
+        <div class="ic">
+          <Icon name="f:calendar" />
+        </div>
       </template>
     </VueDatePicker>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, ref } from "vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
-
-const props = defineProps<{
-  modelValue: string | null;
-}>();
-
-const emit = defineEmits<{
-  (event: "update:modelValue", value: string | null): void;
-}>();
-
-const today = new Date();
-
-// Функция для форматирования в ДД.ММ.ГГГГ
-const formatToDDMMYYYY = (date: Date): string => {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}.${month}.${year}`;
-};
-
-// Локальное значение
-const localValue = computed<Date | null>({
-  get: () => (props.modelValue ? new Date(props.modelValue) : null),
-  set: (newValue) => {
-    emit("update:modelValue", newValue ? formatToDDMMYYYY(newValue) : null);
-  },
-});
-
-// Функция форматирования для отображения в поле
-const formatDate = (date: Date | null): string => {
-  return date ? formatToDDMMYYYY(date) : "ДД.ММ.ГГГГ";
-};
-</script>
 
 <style scoped lang="scss">
 .air-date {
@@ -78,7 +111,7 @@ const formatDate = (date: Date | null): string => {
   border-bottom: 0.1rem solid $blue;
   border-radius: 0 !important;
   font-size: 1.8rem;
-  padding: .85rem 1.6rem!important;
+  padding: 0.85rem 1.6rem !important;
   color: $black;
 
   &::-webkit-input-placeholder {

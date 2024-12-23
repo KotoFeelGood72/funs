@@ -73,10 +73,8 @@ const selectOption = (option: string | number) => {
 <style scoped lang="scss">
 .select {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  // gap: 0.5rem;
   cursor: pointer;
+  border: 0.1rem solid transparent;
   border-bottom: 0.1rem solid $blue;
 
   .label {
@@ -91,7 +89,7 @@ const selectOption = (option: string | number) => {
 
   .selected {
     font-family: $font_2;
-    padding: 1.4rem 1.6rem .3rem 1.6rem;
+    padding: 1.1rem 1.6rem;
     width: 100%;
     height: 100%;
     background: transparent;
@@ -119,8 +117,8 @@ const selectOption = (option: string | number) => {
       color: $dark;
       cursor: pointer;
       @include flex-space;
-      border-bottom: .1rem solid #A2D0FF6B;
-      transition: all .3s ease-in-out;
+      border-bottom: 0.1rem solid #a2d0ff6b;
+      transition: all 0.3s ease-in-out;
       font-family: $font_2;
 
       &:hover {

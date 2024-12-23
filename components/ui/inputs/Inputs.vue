@@ -105,6 +105,7 @@ input {
   border: none;
   outline: none;
   padding: 1.1rem 1.6rem;
+  font-size: 1.8rem;
 
   &::-webkit-input-placeholder {
     opacity: 1;
