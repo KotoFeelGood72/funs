@@ -1,39 +1,3 @@
-<script setup lang="ts">
-import { computed, watch } from "vue";
-import { useFiltersStoreRefs } from "~/store/useFilterStore";
-import SearchSelect from "../inputs/SearchSelect.vue";
-import DatePicker from "../inputs/DatePicker.vue";
-import SelectPeople from "../inputs/SelectPeople.vue";
-import btn from "../buttons/btn.vue";
-import { useFiltersStore } from "~/store/useFilterStore";
-import Calendar from "../inputs/Calendar.vue";
-
-// Доступ к фильтрам через хранилище
-const { places, hotelData } = useFiltersStoreRefs();
-const { setHotelUser, fetchPlace } = useFiltersStore();
-
-watch(
-  () => hotelData.value.city,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-// Метод для применения фильтров
-const applyFilters = () => {
-  const data = {
-    city: hotelData.value.city || "",
-    check_in_date: hotelData.value.check_in_date || "",
-    check_out_date: hotelData.value.check_out_date || "",
-    num_adults: hotelData.value.num_adults || 1,
-    num_children: hotelData.value.num_children || 0,
-    hotel_class: hotelData.value.hotel_class || "ECONOMY",
-  };
-
-  console.log("Отправляемые данные:", data);
-  setHotelUser(data);
-};
-</script>
-
 <template>
   <div class="filters">
     <div class="filter-group">
@@ -56,6 +20,45 @@ const applyFilters = () => {
     <btn name="Забронировать" icon="right" @click="applyFilters" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, watch } from "vue";
+import { useFiltersStoreRefs } from "~/store/useFilterStore";
+import SearchSelect from "../inputs/SearchSelect.vue";
+import DatePicker from "../inputs/DatePicker.vue";
+import SelectPeople from "../inputs/SelectPeople.vue";
+import btn from "../buttons/btn.vue";
+import { useFiltersStore } from "~/store/useFilterStore";
+import Calendar from "../inputs/Calendar.vue";
+import { useRouter } from "vue-router";
+
+// Доступ к фильтрам через хранилище
+const { places, hotelData } = useFiltersStoreRefs();
+const { setHotelUser, fetchPlace } = useFiltersStore();
+const router = useRouter();
+
+watch(
+  () => hotelData.value.city,
+  (newValue) => {
+    if (newValue.name) fetchPlace(newValue.name);
+  }
+);
+// Метод для применения фильтров
+const applyFilters = () => {
+  const data = {
+    city: hotelData.value.city || "",
+    check_in_date: hotelData.value.check_in_date || "",
+    check_out_date: hotelData.value.check_out_date || "",
+    num_adults: hotelData.value.num_adults || 1,
+    num_children: hotelData.value.num_children || 0,
+    hotel_class: hotelData.value.hotel_class || "ECONOMY",
+  };
+
+  console.log("Отправляемые данные:", data);
+  setHotelUser(data);
+  router.push("/hotel");
+};
+</script>
 
 <style scoped lang="scss">
 .filters {

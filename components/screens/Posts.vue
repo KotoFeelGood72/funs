@@ -3,7 +3,12 @@
     <div class="container">
       <div class="posts-head">
         <h3>Блог</h3>
-        <btn name="Смотреть все" icon="right" theme="transparent" />
+        <btn
+          name="Смотреть все"
+          icon="right"
+          theme="transparent"
+          @click="router.push('/articles')"
+        />
       </div>
       <div class="post__w">
         <ul class="posts-grid">
@@ -23,10 +28,13 @@
 <script setup lang="ts">
 import Post from "../ui/card/Post.vue";
 import btn from "../ui/buttons/btn.vue";
+import { useRouter } from "vue-router";
 
 defineProps<{
   posts: any;
 }>();
+
+const router = useRouter();
 </script>
 
 <style scoped lang="scss">

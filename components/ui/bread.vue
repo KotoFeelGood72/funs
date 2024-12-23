@@ -1,5 +1,11 @@
 <template>
   <nav aria-label="breadcrumbs" class="breadcrumbs">
+    <div class="first">
+      <NuxtLink to="/">
+        <p>Главная</p>
+        <Icon name="f:right" :size="16" />
+      </NuxtLink>
+    </div>
     <ul>
       <li v-for="(crumb, index) in breadcrumbs" :key="index">
         <!-- Если это не последний элемент, делаем ссылку -->
@@ -43,27 +49,23 @@ const breadcrumbs = computed(() => {
 });
 </script>
 
-<style scoped>
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
+<style scoped lang="scss">
+.first {
+  a {
+    @include flex-start;
+    gap: 1.6rem;
+    font-size: 1.8rem;
+    color: $blue;
+    font-family: $font_2;
+  }
 }
-.breadcrumbs ul {
-  list-style: none;
-  display: flex;
-  padding: 0;
-  margin: 0;
-}
-.breadcrumbs li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.breadcrumbs li + li::before {
-  content: "/";
-  margin: 0 8px;
-  color: #ccc;
+
+nav {
+  @include flex-start;
+  gap: 1.6rem;
+  span {
+    font-family: $font_3;
+    font-weight: 500;
+  }
 }
 </style>

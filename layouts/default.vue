@@ -20,6 +20,8 @@ import Modals from "~/components/modals/Modals.vue";
 import Coockies from "~/components/ui/Coockies.vue";
 import { useModalStore, useModalStoreRefs } from "~/store/useModalStore";
 import { useRoute, useRouter } from "vue-router";
+import { useAuth } from "~/composables/useAuth";
+const { getProfile } = useAuth();
 
 const { closeAllModals } = useModalStore();
 const { modals } = useModalStoreRefs();
@@ -36,12 +38,20 @@ watch(
     closeAllModals(router, route);
   }
 );
+
+onMounted(() => {
+  getProfile();
+});
 </script>
 
 <style scoped lang="scss">
 .footer__w {
   padding-top: 9.6rem;
   position: relative;
+}
+
+.layouts {
+  background-color: $blue;
 }
 
 .page-bg {

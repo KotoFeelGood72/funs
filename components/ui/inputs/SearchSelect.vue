@@ -40,7 +40,7 @@ import { useFiltersStore } from "~/store/useFilterStore";
 // Пропсы
 const props = defineProps<{
   options: Array<{ name: string; value: string }>; // Список опций
-  modelValue: { name: string; value: string }; // Текущее выбранное значение
+  modelValue: any;
   defaultIndex?: number; // Индекс для дефолтного значения
   label?: string; // Метка для поля
 }>();
@@ -96,18 +96,23 @@ onMounted(() => {
 <style scoped lang="scss">
 .select {
   position: relative;
-  display: flex;
-  flex-direction: column;
   width: 100%;
-  // gap: 0.5rem;
 
   .label {
-    padding-left: 1.6rem;
     pointer-events: none;
     font-family: $font_2;
     color: $blue;
-    font-size: 1.4rem;
-    margin-bottom: -1rem;
+    font-size: 1.8rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1.6rem;
+    transition: all 0.3s ease-in-out;
+
+    &.active {
+      top: 0;
+      font-size: 1.4rem;
+    }
   }
 
   .input {

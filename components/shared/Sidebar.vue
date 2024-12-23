@@ -35,7 +35,7 @@
         />
       </div>
     </div>
-    <PriceRange
+    <!-- <PriceRange
       :min="0"
       :max="10000"
       :step="100"
@@ -63,7 +63,7 @@
       :step="30"
       :minValue="timeMin"
       :maxValue="timeMax"
-    />
+    /> -->
   </div>
 </template>
 

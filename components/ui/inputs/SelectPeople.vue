@@ -5,7 +5,7 @@ import btn from "../buttons/btn.vue";
 
 // Пропсы для v-model
 const props = defineProps<{
-  class_type: string;
+  class_type: any;
   adults: number;
   children: number;
 }>();
@@ -117,14 +117,6 @@ const confirmSelection = () => {
       >
         <div class="counter-container">
           <div class="counter">
-            <p>Класс обслуживания</p>
-            <Select
-              :options="['ECONOMY', 'BUSINESS', 'FIRST']"
-              v-model="classType"
-            />
-          </div>
-
-          <div class="counter">
             <p>Взрослых</p>
             <div class="counter-buttons">
               <button @click="decreaseAdults">
@@ -149,16 +141,24 @@ const confirmSelection = () => {
               </button>
             </div>
           </div>
+          <div class="txt">
+            <p>Текст</p>
+            <span
+              >Чтобы найти подходящий вариант для вашей группы и показать
+              корректные цены, нам нужно знать возраст ваших детей на момент
+              отъезда.</span
+            >
+          </div>
 
           <!-- Компонент выбора возраста детей -->
           <div v-if="children > 0" class="children-ages">
-            <p>Возраст детей</p>
             <div
               v-for="(age, index) in childrenAges"
               :key="index"
               class="child-age"
             >
               <Select
+                label="Возраст детей"
                 :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
                 v-model="childrenAges[index]"
               />
@@ -228,6 +228,7 @@ const confirmSelection = () => {
   border: 0.1rem solid $gray-light;
   border-radius: 1rem;
   box-shadow: 0 0 1rem 0 #00000017;
+  max-width: 31.5rem;
   &.top {
     bottom: calc(100% + 2rem);
   }
@@ -254,16 +255,21 @@ const confirmSelection = () => {
   border-radius: 0.8rem;
   @include flex-center;
   gap: 1.6rem;
+  overflow: hidden;
 
   span {
     font-size: 1.8rem;
     font-family: $font_3;
   }
   button {
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
     cursor: pointer;
     @include flex-center;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      background-color: $gray-light;
+    }
   }
 }
 
@@ -293,5 +299,11 @@ const confirmSelection = () => {
     border-bottom: 0.1rem solid #0a66c225;
     width: 150%;
   }
+}
+
+.children-ages {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 </style>

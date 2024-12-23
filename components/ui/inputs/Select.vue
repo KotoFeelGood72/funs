@@ -1,11 +1,8 @@
 <template>
   <div class="select" @click="toggleDropdown" ref="selectRef">
-    <!-- Label -->
     <label :class="{ active: dropdownOpen || modelValue }" class="label">
       {{ label }}
     </label>
-
-    <!-- Placeholder или выбранное значение -->
     <div class="selected">
       <p class="selected-text">{{ modelValue || placeholder }}</p>
       <slot />
@@ -32,7 +29,7 @@ import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 // Пропсы
 const props = defineProps<{
   options: string[] | number[]; // Список опций
-  modelValue: string | number | null; // Текущее выбранное значение
+  modelValue: any; // Текущее выбранное значение
   label?: string; // Текст метки
   placeholder?: string; // Placeholder, если значение не выбрано
 }>();

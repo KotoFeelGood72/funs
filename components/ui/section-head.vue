@@ -1,7 +1,7 @@
 <template>
   <div class="section-head">
     <h3>{{ title }}</h3>
-    <btn name="Смотреть все" @click="onLink(link)" />
+    <btn v-if="link" name="Смотреть все" @click="onLink(link)" />
   </div>
 </template>
 
@@ -20,4 +20,15 @@ const onLink = (link: string) => {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.section-head {
+  @include flex-space;
+  gap: 4rem;
+
+  h3 {
+    font-size: 3.2rem;
+    font-weight: 500;
+    font-family: $font_2;
+  }
+}
+</style>

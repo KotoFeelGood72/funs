@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header" :class="{ isHome: route.name === 'index' }">
     <div class="container">
       <div class="header_main">
         <div class="logo">
@@ -36,12 +36,13 @@ import listLink from "../ui/list/list-link.vue";
 import btn from "../ui/buttons/btn.vue";
 import { useModalStore } from "~/store/useModalStore";
 import { useAuth } from "~/composables/useAuth";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { computed } from "vue";
 
 const { user, accessToken } = useAuth();
 const { openModal } = useModalStore();
 const router = useRouter();
+const route = useRoute();
 
 const nav = [
   { link: "/air", name: "Билеты" },
@@ -68,6 +69,13 @@ const goToProfile = () => {
 <style scoped lang="scss">
 .header {
   height: $header;
+  background-color: $white;
+  border-bottom-right-radius: 3.2rem;
+  border-bottom-left-radius: 3.2rem;
+  &.isHome {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
 .header_main {
   @include flex-space;

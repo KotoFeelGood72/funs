@@ -1,20 +1,7 @@
 <template>
   <div class="home">
     <div class="start">
-      <Hero>
-        <Tabs :tabs="tabList">
-          <template #tab-0>
-            <air />
-          </template>
-          <template #tab-1>
-            <hotel />
-          </template>
-          <template #tab-2>
-            <h2>Контент таба 3</h2>
-            <p>Это содержимое третьего таба.</p>
-          </template>
-        </Tabs>
-      </Hero>
+      <Hero />
       <Divider :height="8" />
       <Preview />
       <Divider :height="8" />
@@ -100,9 +87,6 @@
 
 <script setup lang="ts">
 import Hero from "~/components/screens/Hero.vue";
-import Tabs from "~/components/ui/Tabs.vue";
-import air from "~/components/ui/filters/air.vue";
-import hotel from "~/components/ui/filters/hotel.vue";
 import Preview from "~/components/screens/Preview.vue";
 import Faq from "~/components/screens/Faq.vue";
 import Divider from "~/components/ui/Divider.vue";
@@ -112,8 +96,6 @@ import Form from "~/components/shared/Form.vue";
 import { useFaqs } from "~/composables/useFaqs";
 
 const { fetchFaqs, faq } = useFaqs();
-
-const tabList = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA" }];
 
 const posts = ref<any>([
   {
@@ -156,7 +138,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .start {
   background: linear-gradient(180deg, #ffffff 0%, #a2d0ff 80%, #0a66c2 100%);
-  mix-blend-mode: multiply;
+  // mix-blend-mode: multiply;
 }
 
 .quote {
