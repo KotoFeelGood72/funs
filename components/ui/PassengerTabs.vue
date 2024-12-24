@@ -7,14 +7,14 @@
       class="tab-link"
       @click="$emit('update:activeTab', index)"
     >
-      Пассажир №{{ index + 1 }}, {{ tab.class }}
+      {{ tab.label }}
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-  tabs: Array<{ class: string }>; // Список пассажиров
+  tabs: any; // Список пассажиров
   activeTab: number; // Активная вкладка
 }>();
 
@@ -38,7 +38,7 @@ const emit = defineEmits(["update:activeTab"]); // Эмитим событие �
     cursor: pointer;
     &.active {
       color: $blue;
-      background-color: #A2D0FF4A;
+      background-color: #a2d0ff4a;
     }
   }
 }

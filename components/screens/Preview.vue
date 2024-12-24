@@ -31,7 +31,6 @@
           </div>
         </div>
         <div class="preview-video">
-          <!-- Добавлен :key для перерисовки -->
           <video autoplay muted loop :key="activeIndex">
             <source :src="list[activeIndex].video" type="video/webm" />
           </video>

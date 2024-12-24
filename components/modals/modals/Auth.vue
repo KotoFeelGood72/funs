@@ -7,18 +7,12 @@
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
       </div>
       <div class="auth_body">
-        <Inputs
-          v-model="email"
-          label="E-Mail"
-          id="auth-email"
-          placeholder="Ваш e-mail"
-        />
+        <Inputs v-model="email" label="E-Mail" id="auth-email" />
         <Inputs
           v-model="password"
           label="Пароль"
           id="auth-password"
           type="password"
-          placeholder="Ваш пароль"
         />
       </div>
       <div class="auth_bottom">
@@ -38,12 +32,13 @@ import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Close from "~/components/ui/Close.vue";
 import { useModalStore } from "~/store/useModalStore";
-import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useAuth } from "~/composables/useAuth";
 
 const store = useModalStore();
+const router = useRouter();
 
-const { email, password, login } = useAuth(store);
+const { email, password, login } = useAuth(store, router);
 </script>
 
 <style scoped lang="scss">

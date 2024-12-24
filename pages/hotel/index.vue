@@ -1,5 +1,6 @@
 <template>
-  <ContentView :title="'Отели в ' + hotelData.city.name">
+  <ClientOnly>
+    <ContentView :title="'Отели в ' + hotelData.city.name">
     <div class="header">
       <hotel />
     </div>
@@ -11,38 +12,38 @@
       />
       <div class="tab-content" v-if="tabs.length > 0">
         <div class="form-grid">
-          <Inputs
-            label="Введите фамилию как в загранпаспорте"
-            v-model="tabs[activeTab].last_name"
-            :id="'lastName' + activeTab"
-          />
-          <Inputs
-            label="Введите имя как в загранпаспорте"
-            v-model="tabs[activeTab].first_name"
-            :id="'firstName' + activeTab"
-          />
-          <DatePicker
-            :disablePast="true"
-            v-model="tabs[activeTab].birth_date"
-          />
-          <Inputs
-            label="Email"
-            type="email"
-            v-model="tabs[activeTab].email"
-            :id="'email' + activeTab"
-            icon="email"
-          />
-          <Select
-            :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="tabs[activeTab].citizenship"
-            label="Выберите объект проживания"
-          />
-          <Select
-            :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="tabs[activeTab].citizenship"
-            label="Выберите класс"
-          />
-        </div>
+            <Inputs
+              label="Введите фамилию как в загранпаспорте"
+              v-model="hotelData.adults[activeTab].last_name"
+              :id="'lastName' + activeTab"
+            />
+            <Inputs
+              label="Введите имя как в загранпаспорте"
+              v-model="hotelData.adults[activeTab].first_name"
+              :id="'firstName' + activeTab"
+            />
+            <DatePicker
+              :disablePast="true"
+              v-model="hotelData.adults[activeTab].birth_date"
+            />
+            <Inputs
+              label="Email"
+              type="email"
+              v-model="hotelData.adults[activeTab].email"
+              :id="'email' + activeTab"
+              icon="email"
+            />
+            <Select
+              :options="['Россия', 'Украина', 'Беларусь']"
+              v-model="hotelData.adults[activeTab].citizenship"
+              label="Выберите объект проживания"
+            />
+            <Select
+              :options="['Россия', 'Украина', 'Беларусь']"
+              v-model="hotelData.adults[activeTab].hotel_class"
+              label="Выберите класс"
+            />
+          </div>
         <div class="note">
           <p>Отель без полной предоплаты для подачи на визу.</p></br> <p>Проверяемое
             бронирование на срок до 14 дней.</p></br> Соответствует требованиям большинства
@@ -59,7 +60,7 @@
             size="normal"
             @click="
               router.push({
-                name: 'air-id-confirmId',
+                name: 'hotel-id-confirmId',
                 params: { id: 1, confirmId: 2 },
               })
             "
@@ -68,6 +69,7 @@
       </div>
     </div>
   </ContentView>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -79,7 +81,7 @@ import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import hotel from "~/components/ui/filters/hotel.vue";
 import { useRouter } from "vue-router";
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 
 const router = useRouter();
@@ -133,6 +135,9 @@ watch(
   margin: 0 auto;
   width: 100%;
   max-width: 94.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
 
   .tab-links {
     @include flex-start;

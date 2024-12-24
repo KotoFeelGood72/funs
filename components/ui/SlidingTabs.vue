@@ -1,33 +1,28 @@
 <template>
   <div class="container">
-  
-  <div class="tabs">
-    <!-- Список табов -->
-    <div class="tab-links">
-      <div
-        v-for="(tab, index) in tabs"
-        :key="index"
-        :class="{ active: activeTab === index }"
-        class="tab-link"
-        @click="setActiveTab(index)"
-        ref="tabRefs"
-      >
-        {{ tab.label }}
+    <div class="tabs">
+      <div class="tab-links">
+        <div
+          v-for="(tab, index) in tabs"
+          :key="index"
+          :class="{ active: activeTab === index }"
+          class="tab-link"
+          @click="setActiveTab(index)"
+          ref="tabRefs"
+        >
+          {{ tab.label }}
+        </div>
+        <div
+          class="slider"
+          :style="{ width: `${sliderWidth}px`, left: `${sliderLeft}px` }"
+        ></div>
       </div>
-      <div
-        class="slider"
-        :style="{ width: `${sliderWidth}px`, left: `${sliderLeft}px` }"
-      ></div>
+      <div class="tab-content">
+        <KeepAlive>
+          <component :is="tabs[activeTab].component" />
+        </KeepAlive>
+      </div>
     </div>
-
-    <!-- Кэшируем содержимое через KeepAlive -->
-    <div class="tab-content">
-    
-      <KeepAlive>
-        <component :is="tabs[activeTab].component" />
-      </KeepAlive>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -66,7 +61,11 @@ const updateSlider = () => {
 // Синхронизация вкладки с query параметром
 const syncTabWithQuery = () => {
   const tabFromQuery = parseInt(route.query.tab as string, 10);
-  if (!isNaN(tabFromQuery) && tabFromQuery >= 0 && tabFromQuery < props.tabs.length) {
+  if (
+    !isNaN(tabFromQuery) &&
+    tabFromQuery >= 0 &&
+    tabFromQuery < props.tabs.length
+  ) {
     activeTab.value = tabFromQuery;
   } else {
     activeTab.value = 0; // Устанавливаем по умолчанию первую вкладку
@@ -85,7 +84,9 @@ watch(activeTab, () => {
 // Обновляем полоску после монтирования
 onMounted(() => {
   nextTick(() => {
-    tabRefs.value = Array.from(document.querySelectorAll(".tab-link")) as HTMLElement[];
+    tabRefs.value = Array.from(
+      document.querySelectorAll(".tab-link")
+    ) as HTMLElement[];
     syncTabWithQuery();
   });
 });
@@ -103,7 +104,7 @@ onMounted(() => {
   .tab-links {
     display: flex;
     position: relative;
-    border-bottom: .1rem solid #B2B2B2;
+    border-bottom: 0.1rem solid #b2b2b2;
     max-width: 65.1rem;
     margin: 0 auto;
 
@@ -127,7 +128,7 @@ onMounted(() => {
 
     .slider {
       position: absolute;
-      bottom: -.1rem;
+      bottom: -0.1rem;
       height: 1px;
       background-color: $blue;
       transition: width 0.3s, left 0.3s;

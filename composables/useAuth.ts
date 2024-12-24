@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { api } from "~/api/api";
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
 const accessToken = ref<any>(null);
@@ -17,8 +17,8 @@ const user = ref<any>({
   receive_email_notifications: false,
   receive_sms_notifications: false,
 });
-export function useAuth(store?: any) {
-  const router = useRouter();
+export function useAuth(store?: any, router?: any) {
+  // const router = useRouter();
   const toast = useToast();
   // Состояние для хранения токенов
 

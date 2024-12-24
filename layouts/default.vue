@@ -21,7 +21,7 @@ import Coockies from "~/components/ui/Coockies.vue";
 import { useModalStore, useModalStoreRefs } from "~/store/useModalStore";
 import { useRoute, useRouter } from "vue-router";
 import { useAuth } from "~/composables/useAuth";
-const { getProfile } = useAuth();
+const { getProfile, accessToken } = useAuth();
 
 const { closeAllModals } = useModalStore();
 const { modals } = useModalStoreRefs();
@@ -40,7 +40,9 @@ watch(
 );
 
 onMounted(() => {
-  getProfile();
+  if (accessToken.value) {
+    getProfile();
+  }
 });
 </script>
 

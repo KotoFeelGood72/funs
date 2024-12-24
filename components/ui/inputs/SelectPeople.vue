@@ -111,7 +111,6 @@ const confirmSelection = () => {
   <div class="people-wrapper" ref="wrapper">
     <div class="header" @click="toggleDropdown">
       <div class="header_col">
-        <!-- <span>Параметры</span> -->
         <p>{{ headerText }}</p>
       </div>
       <div class="header_ic">
@@ -158,21 +157,6 @@ const confirmSelection = () => {
               отъезда.</span
             >
           </div>
-
-          <!-- Компонент выбора возраста детей -->
-          <!-- <div v-if="children > 0" class="children-ages">
-            <div
-              v-for="(age, index) in childrenAges"
-              :key="index"
-              class="child-age"
-            >
-              <Select
-                label="Возраст детей"
-                :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
-                v-model="childrenAges[index]"
-              />
-            </div>
-          </div> -->
         </div>
 
         <div class="people__bottom">

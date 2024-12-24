@@ -44,7 +44,7 @@ const { generatePassengerData } = usePassengerData();
 watch(
   () => hotelData.value.city,
   (newValue) => {
-    if (newValue?.name) fetchPlace(newValue.name);
+    if (newValue.name) fetchPlace(newValue.name);
   }
 );
 
@@ -66,20 +66,24 @@ const initializePassengers = () => {
 watch(
   () => [hotelData.value.num_adults, hotelData.value.num_children],
   ([newAdults, newChildren]) => {
-    try {
-      // Генерация данных пассажиров
-      const passengerData = generatePassengerData(
-        newAdults,
-        newChildren,
-        hotelData.value.hotel_class
-      );
+    if (process.client) {
+      try {
+        // Генерация данных пассажиров
+        const passengerData = generatePassengerData(
+          newAdults,
+          newChildren,
+          hotelData.value.hotel_class
+        );
 
-      // Обновляем данные пассажиров в hotelData
-      hotelData.value.adults = passengerData.adults;
-      hotelData.value.children = passengerData.children;
+        // Обновляем данные пассажиров в hotelData
+        hotelData.value.adults = passengerData.adults;
+        hotelData.value.children = passengerData.children;
 
-      console.log("Пассажиры обновлены:", passengerData);
-    } catch (error) {}
+        console.log("Пассажиры обновлены:", passengerData);
+      } catch (error) {
+        console.error("Ошибка обновления пассажиров:", error);
+      }
+    }
   },
   { immediate: true }
 );

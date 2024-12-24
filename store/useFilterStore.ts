@@ -27,7 +27,10 @@ export const useFiltersStore = defineStore("filters", {
     places: [] as any,
     tickets: [] as any,
     hotelData: {
-      city: "" as string,
+      city: {
+        name: '',
+        value: ''
+      },
       check_in_date: "" as string,
       check_out_date: "" as string,
       num_adults: 1 as number,
@@ -73,6 +76,10 @@ export const useFiltersStore = defineStore("filters", {
     setHotelUser(data: any) {
       this.hotelData = data;
     },
+  },
+  
+  persist: {
+    storage: piniaPluginPersistedstate.sessionStorage(),
   },
 });
 

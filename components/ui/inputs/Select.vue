@@ -8,7 +8,6 @@
       <slot />
     </div>
 
-    <!-- Dropdown options -->
     <ul v-if="dropdownOpen" class="options">
       <li
         v-for="(option, index) in options"
@@ -81,10 +80,11 @@ const selectOption = (option: string | number) => {
     transition: all 0.3s ease;
     pointer-events: none;
     font-family: $font_2;
-    color: $blue;
     top: 50%;
     transform: translateY(-50%);
+    color: $dark;
     &.active {
+      color: $blue;
       font-size: 1.4rem;
       top: 0;
       // top: -0.5rem;

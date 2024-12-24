@@ -3,10 +3,10 @@
     <div class="container">
       <div class="area_main">
         <div class="area__head">
-          <div class="area-back">
+          <div class="area-back" v-if="back" @click="router.back()">
             <Icon name="f:left" />
           </div>
-          <h3>{{ title }}</h3>
+          <h3 v-if="title">{{ title }}</h3>
           <div class="square"></div>
         </div>
         <div class="area__layout">
@@ -18,16 +18,19 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 const props = withDefaults(
   defineProps<{
-    title: string;
+    title?: string;
     back?: boolean;
   }>(),
   {
     title: "",
-    back: false,
+    back: true,
   }
 );
+
+const router = useRouter();
 </script>
 
 <style scoped lang="scss">

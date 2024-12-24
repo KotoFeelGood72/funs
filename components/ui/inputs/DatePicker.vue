@@ -19,6 +19,8 @@ const props = withDefaults(
   }
 );
 
+const isFocus = ref<boolean>(false);
+
 // Определяем событие для v-model
 const emit = defineEmits<{
   (event: "update:modelValue", value: string | null): void;
@@ -68,7 +70,9 @@ const formatDate = (date: Date | undefined): string => {
 
 <template>
   <div class="air-date">
-    <label for="date-picker" class="label">{{ label }}</label>
+    <label for="date-picker" :class="['label', { active: !!localValue }]">{{
+      label
+    }}</label>
     <VueDatePicker
       id="date-picker"
       v-model="localValue"
@@ -135,6 +139,15 @@ const formatDate = (date: Date | undefined): string => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  color: $dark;
+  font-family: $font_2;
+  transition: all 0.3s ease-in-out;
+
+  &.active {
+    color: $blue;
+    font-size: 1.4rem;
+    top: 0;
+  }
 }
 
 .ic {

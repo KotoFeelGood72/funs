@@ -79,6 +79,7 @@ const togglePasswordVisibility = () => {
     label {
       top: 0;
       font-size: 1.4rem;
+      color: $blue;
     }
   }
 }
@@ -93,6 +94,8 @@ label {
   left: 0.9rem;
   padding: 0 0.7rem;
   transition: all 0.3s ease-in-out;
+  font-family: $font_2;
+  color: $dark;
 }
 
 input {
