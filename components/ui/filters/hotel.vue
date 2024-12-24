@@ -22,29 +22,74 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
-import DatePicker from "../inputs/DatePicker.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useFiltersStore } from "~/store/useFilterStore";
 import Calendar from "../inputs/Calendar.vue";
 import { useRouter } from "vue-router";
+import { usePassengerData } from "~/composables/usePassengerData";
 
 // Доступ к фильтрам через хранилище
 const { places, hotelData } = useFiltersStoreRefs();
 const { setHotelUser, fetchPlace } = useFiltersStore();
 const router = useRouter();
 
+// Подключаем функцию из composable
+const { generatePassengerData } = usePassengerData();
+
+// Следим за изменением города
 watch(
   () => hotelData.value.city,
   (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
+    if (newValue?.name) fetchPlace(newValue.name);
   }
 );
-// Метод для применения фильтров
-const applyFilters = () => {
+
+// Функция для инициализации данных пассажиров
+const initializePassengers = () => {
+  const passengerData = generatePassengerData(
+    hotelData.value.num_adults || 1,
+    hotelData.value.num_children || 0,
+    hotelData.value.hotel_class
+  );
+
+  hotelData.value.adults = passengerData.adults;
+  hotelData.value.children = passengerData.children;
+
+  console.log("Инициализация пассажиров:", passengerData);
+};
+
+// Следим за изменением количества взрослых и детей
+watch(
+  () => [hotelData.value.num_adults, hotelData.value.num_children],
+  ([newAdults, newChildren]) => {
+    try {
+      // Генерация данных пассажиров
+      const passengerData = generatePassengerData(
+        newAdults,
+        newChildren,
+        hotelData.value.hotel_class
+      );
+
+      // Обновляем данные пассажиров в hotelData
+      hotelData.value.adults = passengerData.adults;
+      hotelData.value.children = passengerData.children;
+
+      console.log("Пассажиры обновлены:", passengerData);
+    } catch (error) {}
+  },
+  { immediate: true }
+);
+
+// Инициализация данных при загрузке компонента
+onMounted(() => {
+  initializePassengers();
+});
+
+const applyFilters = async () => {
   const data = {
     city: hotelData.value.city || "",
     check_in_date: hotelData.value.check_in_date || "",
@@ -54,9 +99,22 @@ const applyFilters = () => {
     hotel_class: hotelData.value.hotel_class || "ECONOMY",
   };
 
-  console.log("Отправляемые данные:", data);
-  setHotelUser(data);
-  router.push("/hotel");
+  try {
+    // Создание полезной нагрузки
+    const payload = {
+      ...data,
+      adults: hotelData.value.adults,
+      children: hotelData.value.children,
+    };
+
+    console.log("Отправляемые данные:", payload);
+
+    // Обновляем данные в хранилище
+    setHotelUser(payload);
+
+    // Переход на страницу отеля
+    await router.push("/hotel");
+  } catch (error) {}
 };
 </script>
 

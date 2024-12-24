@@ -70,28 +70,26 @@ const togglePasswordVisibility = () => {
 .input {
   position: relative;
   width: 100%;
-  height: 4.8rem;
+  height: 4.2rem;
   border: 0.1rem solid transparent;
   border-bottom: 0.1rem solid $blue;
   transition: all 0.3s ease-in-out;
 
   &.active {
-    border-color: $light;
-    border-radius: 0.5rem;
     label {
-      top: -1rem;
-      background-color: $white;
+      top: 0;
+      font-size: 1.4rem;
     }
   }
 }
 
 label {
   padding-left: 1.6rem;
-  font-size: 1.4rem;
   color: $blue;
   pointer-events: none;
   position: absolute;
-  top: -0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
   left: 0.9rem;
   padding: 0 0.7rem;
   transition: all 0.3s ease-in-out;

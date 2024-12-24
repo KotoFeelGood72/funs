@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from "vue";
-import Select from "./Select.vue";
 import btn from "../buttons/btn.vue";
 
 // Пропсы для v-model
@@ -55,7 +54,17 @@ const wrapper = ref<HTMLElement | null>(null);
 const dropdown = ref<HTMLElement | null>(null);
 
 const headerText = computed(() => {
-  return `Взрослый — ${adults.value}, Детей — ${children.value}`;
+  let text = "";
+
+  if (adults.value > 0) {
+    text += `Взрослый — ${adults.value}`;
+  }
+
+  if (children.value > 0) {
+    text += `${adults.value > 0 ? ", " : ""}Детей — ${children.value}`;
+  }
+
+  return text || "Не указано";
 });
 
 const toggleDropdown = async () => {
@@ -102,7 +111,7 @@ const confirmSelection = () => {
   <div class="people-wrapper" ref="wrapper">
     <div class="header" @click="toggleDropdown">
       <div class="header_col">
-        <span>Параметры</span>
+        <!-- <span>Параметры</span> -->
         <p>{{ headerText }}</p>
       </div>
       <div class="header_ic">
@@ -130,7 +139,7 @@ const confirmSelection = () => {
           </div>
 
           <div class="counter">
-            <p>Детей</p>
+            <p>Дети до 12 лет</p>
             <div class="counter-buttons">
               <button @click="decreaseChildren">
                 <Icon name="f:minus" />
@@ -151,7 +160,7 @@ const confirmSelection = () => {
           </div>
 
           <!-- Компонент выбора возраста детей -->
-          <div v-if="children > 0" class="children-ages">
+          <!-- <div v-if="children > 0" class="children-ages">
             <div
               v-for="(age, index) in childrenAges"
               :key="index"
@@ -163,7 +172,7 @@ const confirmSelection = () => {
                 v-model="childrenAges[index]"
               />
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div class="people__bottom">
@@ -183,6 +192,10 @@ const confirmSelection = () => {
 .people-wrapper {
   position: relative;
   width: 100%;
+  min-height: 4.1rem;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
 }
 
 .header_ic {

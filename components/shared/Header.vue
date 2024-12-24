@@ -9,15 +9,14 @@
         </div>
         <div class="right">
           <listLink :list="nav" />
-          <!-- Если пользователь авторизован -->
           <btn
-            v-if="isUser"
-            :name="user.email"
+            v-if="isUser !== null"
+            :name="isUser ? user.email ?? 'e-mail не указан' : 'Личный кабинет'"
             icon="user"
             theme="primary"
-            @click="goToProfile"
+            @click="isUser ? goToProfile : openModal('auth')"
           />
-          <!-- Если пользователь не авторизован -->
+
           <btn
             v-else
             name="Личный кабинет"

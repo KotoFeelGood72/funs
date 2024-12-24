@@ -1,9 +1,9 @@
 <template>
   <div class="air-date">
-    <label for="date-picker" class="label">Дата поездки</label>
     <VueDatePicker
       v-model="localValue"
       :range="isRange"
+      :state="isError"
       :hide-navigation="['month', 'year', 'time']"
       :min-date="today"
       :show-last-in-range="false"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
@@ -31,6 +31,7 @@ const props = defineProps<{
   endDate?: string | null;
   isRange?: boolean;
   label?: string;
+  isError?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -38,7 +39,7 @@ const emit = defineEmits<{
   (event: "update:endDate", value: string | null): void;
 }>();
 
-const localValue = ref<Date | Date[] | null>(null);
+const localValue = ref<any>(null);
 const today = new Date();
 
 const formatToYYYYMMDD = (date: Date): string => {
@@ -47,22 +48,23 @@ const formatToYYYYMMDD = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-
-// Следим за внешними значениями и обновляем локальное состояние
 watch(
   () => [props.startDate, props.endDate],
   ([newStart, newEnd]) => {
     if (props.isRange) {
-      localValue.value =
-        newStart && newEnd ? [new Date(newStart), new Date(newEnd)] : null;
+      // Устанавливаем начальную дату на сегодня, если ничего не задано
+      localValue.value = [
+        newStart ? new Date(newStart) : today,
+        newEnd ? new Date(newEnd) : null,
+      ];
     } else {
-      localValue.value = newStart ? new Date(newStart) : null;
+      // Для одиночного выбора
+      localValue.value = newStart ? new Date(newStart) : today; // Используем текущую дату
     }
   },
   { immediate: true }
 );
 
-// Следим за изменением локального значения и эмитим события
 watch(
   () => localValue.value,
   (newValue) => {
@@ -81,11 +83,12 @@ watch(
         emit("update:endDate", null);
       }
     } else {
+      // Одиночный выбор
       emit(
         "update:startDate",
         newValue instanceof Date ? formatToYYYYMMDD(newValue) : null
       );
-      emit("update:endDate", null); // Для одиночного календаря endDate всегда null
+      emit("update:endDate", null); // endDate всегда null
     }
   }
 );
@@ -101,8 +104,8 @@ const formatDate = (date: Date | null) => {
 };
 
 const formatDateRange = (range: Date[] | null) => {
-  if (!range || range.length !== 2 || !range[0] || !range[1]) {
-    return "Выбрать даты";
+  if (!range || range.length === 0 || !range[0]) {
+    return "Выбрать даты"; // Если ничего не выбрано
   }
 
   const [start, end] = range;
@@ -115,11 +118,14 @@ const formatDateRange = (range: Date[] | null) => {
     });
   };
 
-  const sameYear = start.getFullYear() === end.getFullYear();
-  const formattedStart = format(start, !sameYear); // Скрываем год, если он совпадает с годом конечной даты
-  const formattedEnd = format(end);
+  // Проверяем, совпадают ли года
+  const sameYear = start?.getFullYear() === end?.getFullYear();
+  const formattedStart = start ? format(start, false) : "Начало";
+  const formattedEnd = end ? format(end, true) : "";
 
-  return `${formattedStart} — ${formattedEnd}`;
+  return sameYear
+    ? `${formattedStart} — ${formattedEnd}`
+    : `${format(start, true)} — ${formattedEnd}`;
 };
 </script>
 
@@ -171,5 +177,17 @@ const formatDateRange = (range: Date[] | null) => {
 
 .ic {
   color: $blue;
+}
+
+:deep(.dp__input) {
+  border-bottom: 0.1rem solid $blue;
+  border-radius: 0 !important;
+}
+
+:deep(.dp__input_valid) {
+  box-shadow: none !important;
+}
+:deep(.dp__input_invalid) {
+  box-shadow: none !important;
 }
 </style>

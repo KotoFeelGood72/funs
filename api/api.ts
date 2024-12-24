@@ -38,7 +38,7 @@ api.interceptors.response.use(
           await refresh(); // Обновляем токен
           return api.request(error.config); // Повторяем запрос с новым токеном
         } catch (refreshError) {
-          console.error("Token refresh failed:", refreshError);
+          // console.error("Token refresh failed:", refreshError);
           toast.error("Сессия истекла. Выполните вход снова.");
           localStorage.removeItem("user");
           window.location.href = "/"; // Редирект на главную страницу

@@ -3,8 +3,8 @@ import { api } from "~/api/api";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
-const accessToken = ref<string | null>(null);
-const refreshToken = ref<string | null>(null);
+const accessToken = ref<any>(null);
+const refreshToken = ref<any>(null);
 const user = ref<any>({
   id: 0,
   email: "",
@@ -22,7 +22,7 @@ export function useAuth(store?: any) {
   const toast = useToast();
   // Состояние для хранения токенов
 
-  console.log(accessToken);
+  // console.log(accessToken);
 
   // Состояние для email и password
   const email = ref<string>("");
@@ -85,7 +85,7 @@ export function useAuth(store?: any) {
     try {
       const response = await api.patch("/profiles", user.value);
       user.value = response.data;
-      console.log(user.value, 'Goo')
+      // console.log(user.value, 'Goo')
       toast.success("Профиль успешно обновлен");
     } catch (error) {
       console.error("Profile update error:", error);
@@ -137,6 +137,6 @@ export function useAuth(store?: any) {
     refresh,
     logout,
     setTokens,
-    getProfile
+    getProfile,
   };
 }

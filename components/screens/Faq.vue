@@ -67,7 +67,7 @@ const props = defineProps<{
   faqs: any;
 }>();
 
-console.log(props.faqs);
+// console.log(props.faqs);
 
 const questions = [
   {

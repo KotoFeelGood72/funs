@@ -23,6 +23,7 @@
         v-model:startDate="filterData.date_backward"
         v-model:endDate="filterData.date_forward"
         :isRange="true"
+        :isError="true"
       />
     </div>
     <div class="filter-group">

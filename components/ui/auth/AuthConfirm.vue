@@ -66,7 +66,7 @@ const onBackspace = (index: number) => {
 // Проверка OTP
 const verifyOtp = () => {
   const code = otp.value.join("");
-  console.log("OTP код:", code);
+  // console.log("OTP код:", code);
   // Логика проверки кода
 };
 </script>

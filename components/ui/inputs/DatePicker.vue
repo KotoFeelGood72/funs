@@ -62,7 +62,7 @@ const parsedMaxDate = computed(() =>
 
 // Функция для форматирования даты в поле
 const formatDate = (date: Date | undefined): string => {
-  return date ? formatToDDMMYYYY(date) : "ДД.ММ.ГГГГ";
+  return date ? formatToDDMMYYYY(date) : "дд.мм.гггг";
 };
 </script>
 
@@ -81,7 +81,6 @@ const formatDate = (date: Date | undefined): string => {
       cancel-text="Отменить"
       select-text="Выбрать"
       :format="formatDate"
-      placeholder="ДД.ММ.ГГГГ"
     >
       <template #input-icon>
         <div class="ic">
@@ -95,6 +94,7 @@ const formatDate = (date: Date | undefined): string => {
 <style scoped lang="scss">
 .air-date {
   width: 100%;
+  position: relative;
 }
 
 :deep(.dp__menu_inner) {
@@ -124,19 +124,17 @@ const formatDate = (date: Date | undefined): string => {
   right: 1.6rem;
   left: auto;
   color: var(--blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
 }
 
 .label {
   display: block;
-  font-size: 1.4rem;
   padding-left: 1.6rem;
-  margin-bottom: -1rem;
-  position: relative;
   z-index: 22;
   color: $blue;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .ic {

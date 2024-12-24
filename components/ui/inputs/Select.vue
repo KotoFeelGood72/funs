@@ -73,6 +73,7 @@ const selectOption = (option: string | number) => {
   cursor: pointer;
   border: 0.1rem solid transparent;
   border-bottom: 0.1rem solid $blue;
+  height: 4.2rem;
 
   .label {
     position: absolute;
@@ -81,19 +82,24 @@ const selectOption = (option: string | number) => {
     pointer-events: none;
     font-family: $font_2;
     color: $blue;
-    font-size: 1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    &.active {
+      font-size: 1.4rem;
+      top: 0;
+      // top: -0.5rem;
+    }
   }
 
   .selected {
     font-family: $font_2;
-    padding: 1.1rem 1.6rem;
+    padding: 0.5rem 1.6rem;
     width: 100%;
     height: 100%;
     background: transparent;
     z-index: 1;
     font-size: 1.8rem;
     color: $dark;
-
     @include flex-space;
   }
 
@@ -102,7 +108,7 @@ const selectOption = (option: string | number) => {
     top: calc(100% + 0.5rem);
     left: 0;
     width: 100%;
-    max-height: 200px;
+    max-height: 20rem;
     overflow-y: auto;
     background: $white;
     box-shadow: 0 0 1rem 0 #00000012;

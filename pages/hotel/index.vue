@@ -1,76 +1,67 @@
 <template>
-  <ContentView title="Москва — Амстердам, 11 ноя — 9 дек, 2024">
+  <ContentView :title="'Отели в ' + hotelData.city.name">
     <div class="header">
       <hotel />
     </div>
     <div class="passenger-form">
       <PassengerTabs
-        :tabs="passengers"
+        :tabs="tabs"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
-      <div class="tab-content">
+      <div class="tab-content" v-if="tabs.length > 0">
         <div class="form-grid">
           <Inputs
-            label="Фамилия"
-            placeholder="Введите фамилию как в загранпаспорте"
-            v-model="passengers[activeTab].lastName"
+            label="Введите фамилию как в загранпаспорте"
+            v-model="tabs[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
-            label="Имя"
-            placeholder="Введите имя как в загранпаспорте"
-            v-model="passengers[activeTab].firstName"
+            label="Введите имя как в загранпаспорте"
+            v-model="tabs[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
-          <DatePicker :disablePast="true" v-model="passengers[activeTab].dateOfBirth" />
-          <Select
-            :options="['Мужчина', 'Женщина']"
-            v-model="passengers[activeTab].gender"
-            label="Пол"
-            placeholder="Выберите пол"
-          />
-          <Inputs
-            label="Серия загранпаспорта"
-            placeholder="Введите серию"
-            v-model="passengers[activeTab].passportSeries"
-            :id="'passportSeries' + activeTab"
-          />
-          <Inputs
-            label="Номер загранпаспорта"
-            placeholder="Введите номер"
-            v-model="passengers[activeTab].passportNumber"
-            :id="'passportNumber' + activeTab"
-          />
-          <Select
-            :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="passengers[activeTab].citizenship"
-            label="Гражданство"
-            placeholder="Выберите страну"
+          <DatePicker
+            :disablePast="true"
+            v-model="tabs[activeTab].birth_date"
           />
           <Inputs
             label="Email"
             type="email"
-            placeholder="Введите email"
-            v-model="passengers[activeTab].email"
+            v-model="tabs[activeTab].email"
             :id="'email' + activeTab"
             icon="email"
           />
+          <Select
+            :options="['Россия', 'Украина', 'Беларусь']"
+            v-model="tabs[activeTab].citizenship"
+            label="Выберите объект проживания"
+          />
+          <Select
+            :options="['Россия', 'Украина', 'Беларусь']"
+            v-model="tabs[activeTab].citizenship"
+            label="Выберите класс"
+          />
         </div>
         <div class="note">
-          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
+          <p>Отель без полной предоплаты для подачи на визу.</p></br> <p>Проверяемое
+            бронирование на срок до 14 дней.</p></br> Соответствует требованиям большинства
+          консульств о предоставлении листа бронирования
         </div>
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">550 ₽</p>
+            <p class="price">550</p>
           </div>
           <btn
             name="Далее"
             theme="primary"
             size="normal"
             @click="
-              router.push({ name: 'air-id-confirmId', params: { id: 1, confirmId: 2 } })
+              router.push({
+                name: 'air-id-confirmId',
+                params: { id: 1, confirmId: 2 },
+              })
             "
           />
         </div>
@@ -86,49 +77,55 @@ import btn from "~/components/ui/buttons/btn.vue";
 import DatePicker from "~/components/ui/inputs/DatePicker.vue";
 import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
-import { useRouter } from "vue-router";
 import hotel from "~/components/ui/filters/hotel.vue";
-import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { ref, watch, computed } from "vue";
+import { useFiltersStoreRefs } from "~/store/useFilterStore";
 
 const router = useRouter();
+const { hotelData } = useFiltersStoreRefs();
 
-// Массив пассажиров
-const passengers = ref([
-  {
-    lastName: "",
-    firstName: "",
-    dateOfBirth: null,
-    gender: "",
-    passportSeries: "",
-    passportNumber: "",
-    citizenship: "",
-    email: "",
-    class: "эконом",
-  },
-  {
-    lastName: "",
-    firstName: "",
-    dateOfBirth: null,
-    gender: "",
-    passportSeries: "",
-    passportNumber: "",
-    citizenship: "",
-    email: "",
-    class: "эконом",
-  },
-]);
+const tabs = ref<any>([]);
+const activeTab = ref<any>(0);
 
-// Активная вкладка
-const activeTab = ref(0);
-
-// Устанавливаем активный таб
 const setActiveTab = (index: number) => {
   activeTab.value = index;
 };
+
+// Функция для обновления вкладок
+const updateTabs = () => {
+  tabs.value = [];
+
+  // Добавляем взрослых
+  hotelData.value.adults.forEach((adult: any, index: any) => {
+    tabs.value.push({
+      ...adult,
+      type: "adult",
+      label: `Взрослый ${index + 1}`,
+    });
+  });
+
+  // Добавляем детей
+  hotelData.value.children.forEach((child: any, index: any) => {
+    tabs.value.push({
+      ...child,
+      type: "child",
+      label: `Ребёнок ${index + 1}`,
+    });
+  });
+};
+
+// Следим за изменениями данных
+watch(
+  () => [hotelData.value.adults, hotelData.value.children],
+  () => {
+    updateTabs();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">
-
 .header {
   margin-bottom: 3.2rem;
 }
@@ -136,6 +133,7 @@ const setActiveTab = (index: number) => {
   margin: 0 auto;
   width: 100%;
   max-width: 94.8rem;
+
   .tab-links {
     @include flex-start;
     gap: 0.4rem;
@@ -187,9 +185,20 @@ const setActiveTab = (index: number) => {
       }
       p {
         font-size: 3.2rem;
-        font-weight: bold;
+        font-weight: 500;
+        font-family: $font_2;
+        
       }
     }
+  }
+}
+
+.price {
+  position: relative;
+  &:after {
+    font-family: 'Arial';
+    content: ' ₽';
+    font-weight: 500;
   }
 }
 </style>
