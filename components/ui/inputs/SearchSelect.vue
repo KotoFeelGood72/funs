@@ -101,15 +101,16 @@ onMounted(() => {
   .label {
     pointer-events: none;
     font-family: $font_2;
-    color: $blue;
     font-size: 1.8rem;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     left: 1.6rem;
     transition: all 0.3s ease-in-out;
+    color: $dark;
 
     &.active {
+      color: $blue;
       top: 0;
       font-size: 1.4rem;
     }
