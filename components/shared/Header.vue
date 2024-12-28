@@ -14,15 +14,7 @@
             :name="isUser ? user.email ?? 'e-mail не указан' : 'Личный кабинет'"
             icon="user"
             theme="primary"
-            @click="isUser ? goToProfile : openModal('auth')"
-          />
-
-          <btn
-            v-else
-            name="Личный кабинет"
-            icon="user"
-            theme="primary"
-            @click="openModal('auth')"
+            @click="goToProfile"
           />
         </div>
       </div>
@@ -45,7 +37,7 @@ const route = useRoute();
 
 const nav = [
   { link: "/air", name: "Билеты" },
-  { link: "/hotel", name: "Отели" },
+  { link: "/hotels", name: "Отели" },
   { link: "/", name: "ETA" },
 ];
 
@@ -61,7 +53,11 @@ const isUser = computed(() => {
 
 // Переход в личный кабинет
 const goToProfile = () => {
-  router.push("/profile");
+  if (isUser.value === null) {
+    openModal("auth");
+  } else {
+    router.push("/profile");
+  }
 };
 </script>
 
@@ -71,6 +67,7 @@ const goToProfile = () => {
   background-color: $white;
   border-bottom-right-radius: 3.2rem;
   border-bottom-left-radius: 3.2rem;
+  transition: all 0.3s ease-in-out;
   &.isHome {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;

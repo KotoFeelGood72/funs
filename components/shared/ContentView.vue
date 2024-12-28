@@ -2,7 +2,7 @@
   <section class="area">
     <div class="container">
       <div class="area_main">
-        <div class="area__head">
+        <div class="area__head" v-if="title">
           <div class="area-back" v-if="back" @click="router.back()">
             <Icon name="f:left" />
           </div>
@@ -10,7 +10,17 @@
           <div class="square"></div>
         </div>
         <div class="area__layout">
-          <slot />
+          <transition name="fade" mode="out-in">
+            <ClientOnly v-if="!isLoading && $slots.default" key="content">
+              <slot />
+            </ClientOnly>
+            <div v-else class="area__empty" key="loading">
+              <img src="~/assets/img/loader.png" alt="Загрузка" />
+              <p>
+                Загрузка<span class="dots">{{ animatedDots }}</span>
+              </p>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -18,19 +28,37 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+
 const props = withDefaults(
   defineProps<{
-    title?: string;
+    title?: any;
     back?: boolean;
+    isLoading?: boolean;
   }>(),
   {
     title: "",
     back: true,
+    isLoading: true,
   }
 );
 
 const router = useRouter();
+
+// Реактивное свойство для точек
+const dots = ref<string>("");
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    dots.value = dots.value.length < 3 ? dots.value + "." : "";
+  }, 500);
+
+  // Очистка интервала при размонтировании
+  onUnmounted(() => clearInterval(interval));
+});
+
+const animatedDots = computed(() => dots.value);
 </script>
 
 <style scoped lang="scss">
@@ -49,7 +77,6 @@ const router = useRouter();
   @include flex-space;
   gap: 1rem;
   margin-bottom: 3.2rem;
-  // padding-top: 3.2rem;
   h3 {
     font-size: 2.4rem;
     font-family: $font_2;
@@ -66,5 +93,30 @@ const router = useRouter();
 .square {
   width: 4.8rem;
   height: 4.8rem;
+}
+
+.area__empty {
+  @include flex-center;
+  flex-direction: column;
+  font-size: 2.4rem;
+  gap: 1.6rem;
+  height: 100%;
+  padding: 15rem 0;
+  p {
+    width: 12rem;
+  }
+  img {
+    max-width: 40rem;
+    @include flex-center;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

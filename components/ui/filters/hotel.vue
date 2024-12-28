@@ -117,7 +117,7 @@ const applyFilters = async () => {
     setHotelUser(payload);
 
     // Переход на страницу отеля
-    await router.push("/hotel");
+    await router.push("/hotels");
   } catch (error) {}
 };
 </script>

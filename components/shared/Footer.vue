@@ -58,7 +58,7 @@
 const nav = ref<any>([
   { name: "Личный кабинет", link: "/profile" },
   { name: "Забронировать авиабилет", link: "/air" },
-  { name: "Забронировать отель", link: "/hotel" },
+  { name: "Забронировать отель", link: "/hotels" },
   { name: "Забронировать ETA", link: "/" },
   { name: "О сервисе", link: "/" },
   { name: "Условия использования", link: "/" },

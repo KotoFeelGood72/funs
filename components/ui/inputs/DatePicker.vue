@@ -3,68 +3,60 @@ import { computed } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
-// Пропсы с дефолтными значениями
 const props = withDefaults(
   defineProps<{
     modelValue: string | null;
     label?: string;
-    minDate?: string | null; // Минимальная дата
-    maxDate?: string | null; // Максимальная дата
+    minDate?: string | null;
+    maxDate?: string | null;
   }>(),
   {
     modelValue: null,
     label: "Дата рождения",
-    minDate: null, // По умолчанию минимальное значение не задано
-    maxDate: null, // По умолчанию максимальное значение не задано
+    minDate: null,
+    maxDate: null,
   }
 );
 
 const isFocus = ref<boolean>(false);
 
-// Определяем событие для v-model
 const emit = defineEmits<{
   (event: "update:modelValue", value: string | null): void;
 }>();
 
-// Функция для форматирования в ДД.ММ.ГГГГ
-const formatToDDMMYYYY = (date: Date): string => {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+const formatToYYYYMMDD = (date: Date): string => {
   const year = date.getFullYear();
-  return `${day}.${month}.${year}`;
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
-// Функция для парсинга строки в формате ДД.ММ.ГГГГ в объект Date
-const parseDateFromDDMMYYYY = (dateString: string): Date | undefined => {
-  const [day, month, year] = dateString.split(".");
+const parseDateFromYYYYMMDD = (dateString: string): Date | undefined => {
+  const [year, month, day] = dateString.split("-");
   if (!day || !month || !year) return undefined;
 
   const date = new Date(Number(year), Number(month) - 1, Number(day));
   return isNaN(date.getTime()) ? undefined : date;
 };
 
-// Локальное значение, связанное с modelValue
 const localValue = computed<Date | undefined>({
   get: () =>
-    props.modelValue ? parseDateFromDDMMYYYY(props.modelValue) : undefined,
+    props.modelValue ? parseDateFromYYYYMMDD(props.modelValue) : undefined,
   set: (newValue) => {
-    emit("update:modelValue", newValue ? formatToDDMMYYYY(newValue) : null);
+    emit("update:modelValue", newValue ? formatToYYYYMMDD(newValue) : null);
   },
 });
 
-// Минимальная дата, преобразованная в объект Date
 const parsedMinDate = computed(() =>
-  props.minDate ? parseDateFromDDMMYYYY(props.minDate) : undefined
+  props.minDate ? parseDateFromYYYYMMDD(props.minDate) : undefined
 );
 
-// Максимальная дата, преобразованная в объект Date
 const parsedMaxDate = computed(() =>
-  props.maxDate ? parseDateFromDDMMYYYY(props.maxDate) : undefined
+  props.maxDate ? parseDateFromYYYYMMDD(props.maxDate) : undefined
 );
 
-// Функция для форматирования даты в поле
 const formatDate = (date: Date | undefined): string => {
-  return date ? formatToDDMMYYYY(date) : "дд.мм.гггг";
+  return date ? formatToYYYYMMDD(date) : "гггг-мм-дд";
 };
 </script>
 

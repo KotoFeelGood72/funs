@@ -35,6 +35,11 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ["@vuepic/vue-datepicker", "vue-toastification", "pinia-plugin-persistedstate"],
-    
   },
+  app: {
+    pageTransition: {
+      name: "fade",
+      mode: "out-in",
+    }  
+  }
 });

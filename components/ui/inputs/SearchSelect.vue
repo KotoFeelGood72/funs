@@ -1,36 +1,38 @@
 <template>
-  <div class="select" :class="{ active: displayName || dropdownOpen }">
-    <label :class="{ active: dropdownOpen || displayName }" class="label">
-      {{ label }}
-    </label>
-    <input
-      type="text"
-      :value="displayName"
-      @focus="toggleDropdown(true)"
-      @blur="toggleDropdown(false)"
-      @input="onInput($event)"
-      class="input"
-    />
+  <ClientOnly>
+    <div class="select" :class="{ active: displayName || dropdownOpen }">
+      <label :class="{ active: dropdownOpen || displayName }" class="label">
+        {{ label }}
+      </label>
+      <input
+        type="text"
+        :value="displayName"
+        @focus="toggleDropdown(true)"
+        @blur="toggleDropdown(false)"
+        @input="onInput($event)"
+        class="input"
+      />
 
-    <ul v-if="dropdownOpen && options.length > 0" class="options">
-      <li
-        v-for="(option, index) in options"
-        :key="index"
-        :class="{ selected: option.value === displayName }"
-        @mousedown="selectOption(option)"
-      >
-        <p>
-          {{ option.name }}
-        </p>
-        <p class="val">
-          {{ option.value }}
-        </p>
-      </li>
-      <li v-if="options.length === 0" class="no-options">
-        Нет доступных вариантов
-      </li>
-    </ul>
-  </div>
+      <ul v-if="dropdownOpen && options.length > 0" class="options">
+        <li
+          v-for="(option, index) in options"
+          :key="index"
+          :class="{ selected: option.value === displayName }"
+          @mousedown="selectOption(option)"
+        >
+          <p>
+            {{ option.name }}
+          </p>
+          <p class="val">
+            {{ option.value }}
+          </p>
+        </li>
+        <li v-if="options.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
+      </ul>
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
