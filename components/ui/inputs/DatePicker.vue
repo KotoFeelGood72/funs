@@ -145,4 +145,7 @@ const formatDate = (date: Date | undefined): string => {
 .ic {
   color: $blue;
 }
+:deep(.dp--clear-btn) {
+  display: none !important;
+}
 </style>

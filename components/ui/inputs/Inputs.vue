@@ -22,9 +22,9 @@
             ? isPasswordVisible
               ? 'fluent:eye-16-filled'
               : 'fluent:eye-off-16-filled'
-            : ''
+            : icon
         "
-        :size="18"
+        :size="22"
       />
     </div>
   </div>

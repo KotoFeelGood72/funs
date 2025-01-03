@@ -1,5 +1,8 @@
 <template>
   <div class="air-date">
+    <label for="date-picker" :class="['label', { active: !!localValue }]">{{
+      label
+    }}</label>
     <VueDatePicker
       v-model="localValue"
       :range="isRange"
@@ -22,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
@@ -133,6 +136,7 @@ const formatDateRange = (range: Date[] | null) => {
 <style scoped lang="scss">
 .air-date {
   width: 100%;
+  position: relative;
 }
 :deep(.dp__menu_inner) {
   font-size: 1.6rem;
@@ -168,12 +172,21 @@ const formatDateRange = (range: Date[] | null) => {
 
 .label {
   display: block;
-  font-size: 1.4rem;
   padding-left: 1.6rem;
-  margin-bottom: -1rem;
-  position: relative;
   z-index: 22;
-  color: $blue;
+  color: $dark;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $dark;
+  font-family: $font_2;
+  transition: all 0.3s ease-in-out;
+
+  &.active {
+    color: $blue;
+    font-size: 1.4rem;
+    top: 0;
+  }
 }
 
 .ic {
@@ -190,5 +203,23 @@ const formatDateRange = (range: Date[] | null) => {
 }
 :deep(.dp__input_invalid) {
   box-shadow: none !important;
+}
+:deep(.dp__action_button) {
+  padding: 0.5rem 1rem;
+  // border-radius: 2rem;
+}
+
+:deep(.dp__arrow_bottom) {
+  display: none;
+}
+:deep(.dp--clear-btn) {
+  display: none !important;
+}
+:deep(.dp__input_icon) {
+  color: $blue;
+}
+:deep(.dp__menu) {
+  border: 0 !important;
+  box-shadow: 0 0 1rem 0 #0000001f;
 }
 </style>

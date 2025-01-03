@@ -52,21 +52,21 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-onMounted(() => {
-  const currentDate = getCurrentDate(); // Получаем текущую дату
+// onMounted(() => {
+//   const currentDate = getCurrentDate(); // Получаем текущую дату
 
-  // Передаем текущую дату в fetchTickets
-  fetchTickets({
-    departure: "MOW",
-    arrival: "HAM",
-    date_forward: currentDate, // Текущая дата
-    date_backward: currentDate, // Текущая дата
-    adults: 1,
-    class_type: "ECONOMY",
-    children: 0,
-    infants: 0,
-  });
-});
+//   // Передаем текущую дату в fetchTickets
+//   fetchTickets({
+//     departure: "MOW",
+//     arrival: "HAM",
+//     date_forward: currentDate, // Текущая дата
+//     date_backward: currentDate, // Текущая дата
+//     adults: 1,
+//     class_type: "ECONOMY",
+//     children: 0,
+//     infants: 0,
+//   });
+// });
 </script>
 
 <style scoped lang="scss">

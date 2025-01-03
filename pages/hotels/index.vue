@@ -3,46 +3,50 @@
     <div class="header">
       <hotel />
     </div>
-    <div class="passenger-form" v-if="tabs.length > 0">
+    <div
+      class="passenger-form"
+      v-if="hotelData.adults.length > 0 || hotelData.children.length > 0"
+    >
       <PassengerTabs
-        :tabs="tabs"
+        :tabs="computedTabs"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
       <div class="tab-content">
-        <div class="form-grid">
+        <div class="form-grid" v-if="activeTabData">
           <Inputs
             label="Введите фамилию как в загранпаспорте"
-            v-model="hotelData.adults[activeTab].last_name"
+            v-model="activeTabData.last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Введите имя как в загранпаспорте"
-            v-model="hotelData.adults[activeTab].first_name"
+            v-model="activeTabData.first_name"
             :id="'firstName' + activeTab"
           />
-          <DatePicker
-            :disablePast="true"
-            v-model="hotelData.adults[activeTab].birth_date"
-          />
+          <DatePicker :disablePast="true" v-model="activeTabData.birth_date" />
           <Inputs
             label="Email"
             type="email"
-            v-model="hotelData.adults[activeTab].email"
+            v-model="activeTabData.email"
             :id="'email' + activeTab"
-            icon="email"
+            icon="f:email"
+            v-if="activeTabData.type === 'adult'"
           />
           <Select
             :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="hotelData.adults[activeTab].citizenship"
+            v-model="activeTabData.citizenship"
             label="Выберите объект проживания"
+            v-if="activeTabData.type === 'adult'"
           />
           <Select
             :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="hotelData.adults[activeTab].hotel_class"
+            v-model="activeTabData.hotel_class"
             label="Выберите класс"
+            v-if="activeTabData.type === 'adult'"
           />
         </div>
+
         <div class="note">
           <p>Отель без полной предоплаты для подачи на визу.</p>
           <p>Проверяемое бронирование на срок до 14 дней.</p>
@@ -82,55 +86,58 @@ import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import hotel from "~/components/ui/filters/hotel.vue";
 import { useRouter } from "vue-router";
-import { ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 
 const isLoading = ref<boolean>(true);
 const router = useRouter();
 const { hotelData } = useFiltersStoreRefs();
 
-const tabs = ref<any>([]);
-const activeTab = ref<any>(0);
+const activeTab = ref<number>(0);
 
 const setActiveTab = (index: number) => {
   activeTab.value = index;
 };
 
 const isHotelCity = computed(() => {
-  "Отели в " + hotelData.value.city.name;
+  return hotelData.value && hotelData.value.city
+    ? `Отели в ${hotelData.value.city.name}`
+    : "Отели";
 });
 
-// Функция для обновления вкладок
-const updateTabs = () => {
-  tabs.value = [];
+const computedTabs = computed(() => {
+  const tabs: any = [];
 
-  // Добавляем взрослых
-  hotelData.value.adults.forEach((adult: any, index: any) => {
-    tabs.value.push({
-      ...adult,
-      type: "adult",
+  hotelData.value.adults.forEach((adult: any, index: number) => {
+    tabs.push({
       label: `Взрослый ${index + 1}`,
+      type: "adult",
+      index,
     });
   });
 
-  // Добавляем детей
-  hotelData.value.children.forEach((child: any, index: any) => {
-    tabs.value.push({
-      ...child,
-      type: "child",
+  hotelData.value.children.forEach((child: any, index: number) => {
+    tabs.push({
       label: `Ребёнок ${index + 1}`,
+      type: "child",
+      index,
     });
   });
-};
 
-// Следим за изменениями данных
-watch(
-  () => [hotelData.value.adults, hotelData.value.children],
-  () => {
-    updateTabs();
-  },
-  { immediate: true }
-);
+  return tabs;
+});
+
+const activeTabData = computed(() => {
+  const currentTab = computedTabs.value[activeTab.value];
+  if (currentTab) {
+    if (currentTab.type === "adult") {
+      return hotelData.value.adults[currentTab.index];
+    } else if (currentTab.type === "child") {
+      return hotelData.value.children[currentTab.index];
+    }
+  }
+  return null;
+});
 
 onMounted(() => {
   setTimeout(() => {
@@ -152,22 +159,22 @@ onMounted(() => {
   gap: 2.4rem;
 
   .tab-links {
-    @include flex-start;
+    display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
     font-size: 1.8rem;
-    font-family: $font_2;
     margin-bottom: 2.4rem;
 
     .tab-link {
-      background-color: $gray-light;
+      background-color: #e0e0e0;
       border-radius: 0.8rem;
-      color: $dark;
-      padding: 1rem 0.8rem 0.8rem 0.8rem;
+      color: #6a6a6a;
+      padding: 1rem 0.8rem;
       cursor: pointer;
+
       &.active {
-        color: $blue;
-        background-color: #a2d0ff4a;
+        color: #007bff;
+        background-color: rgba(173, 216, 230, 0.5);
       }
     }
   }
@@ -203,7 +210,6 @@ onMounted(() => {
       p {
         font-size: 3.2rem;
         font-weight: 500;
-        font-family: $font_2;
       }
     }
   }
@@ -212,7 +218,6 @@ onMounted(() => {
 .price {
   position: relative;
   &:after {
-    font-family: "Arial";
     content: " ₽";
     font-weight: 500;
   }

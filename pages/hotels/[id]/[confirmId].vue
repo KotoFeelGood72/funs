@@ -39,7 +39,7 @@
                 type="email"
                 v-model="tab.email"
                 :id="'email' + index"
-                icon="email"
+                icon="f:email"
               />
               <Select
                 :options="['Россия', 'Украина', 'Беларусь']"
@@ -72,7 +72,7 @@
       <div class="row">
         <div class="price">
           <span>Общая стоимость</span>
-          <p>600 ₽</p>
+          <p>600</p>
         </div>
         <btn name="Оплатить" theme="primary" @click="payHotel()" />
       </div>
@@ -166,7 +166,7 @@ const leave = (el: any) => {
   margin-bottom: 3.2rem;
 }
 .passenger-form {
-  margin: 0 auto;
+  margin: 0 auto 2.4rem auto;
   width: 100%;
   max-width: 94.8rem;
   display: flex;
@@ -209,63 +209,72 @@ const leave = (el: any) => {
     font-size: 1.4rem;
   }
 
-  .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 1.6rem;
-
-    .total {
-      span {
-        font-size: 1.4rem;
-        color: #999;
-        display: block;
-        margin-bottom: 0.8rem;
-      }
-      p {
-        font-size: 3.2rem;
-        font-weight: 500;
-        font-family: $font_2;
-      }
+  .price {
+    position: relative;
+    &:after {
+      font-family: "Arial";
+      content: " ₽";
+      font-weight: 500;
     }
   }
-}
 
-.price {
-  position: relative;
-  &:after {
-    font-family: "Arial";
-    content: " ₽";
-    font-weight: 500;
+  .accordion-header {
+    @include flex-space;
+    font-size: 1.8rem;
+    font-family: $font_3;
+    cursor: pointer;
+  }
+
+  .acc_icon {
+    @include flex-center;
+    color: $blue;
+    transition: all 0.3s ease-in-out;
+    &.active {
+      transform: rotate(180deg);
+    }
+  }
+
+  .accordion-item {
+    padding: 2.4rem;
+    border: 0.1rem solid $light;
+    border-radius: 1.6rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+    gap: 2.4rem;
+    padding: 3rem 0 0 0;
   }
 }
-
-.accordion-header {
-  @include flex-space;
-  font-size: 1.8rem;
-  font-family: $font_3;
-  cursor: pointer;
-}
-
-.acc_icon {
-  @include flex-center;
-  color: $blue;
-  transition: all 0.3s ease-in-out;
-  &.active {
-    transform: rotate(180deg);
-  }
-}
-
-.accordion-item {
-  padding: 2.4rem;
-  border: 0.1rem solid $light;
-  border-radius: 1.6rem;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+.bottom {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 94.8rem;
+  display: flex;
+  flex-direction: column;
   gap: 2.4rem;
-  padding: 3rem 0 0 0;
+
+  p {
+    font-size: 1.4rem;
+  }
+
+  :deep(.checkbox) {
+    font-size: 1.4rem;
+  }
+  .row {
+    @include flex-space;
+    span {
+      font-size: 1.4rem;
+      color: #999;
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+    p {
+      font-size: 3.2rem;
+      font-weight: 500;
+      font-family: $font_2;
+    }
+  }
 }
 </style>

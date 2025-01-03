@@ -5,6 +5,7 @@
     </div>
     <div class="filter-group date">
       <Calendar
+        label="Дата заезда"
         v-model:startDate="hotelData.check_in_date"
         v-model:endDate="hotelData.check_out_date"
         :isRange="true"
@@ -104,19 +105,12 @@ const applyFilters = async () => {
   };
 
   try {
-    // Создание полезной нагрузки
     const payload = {
       ...data,
       adults: hotelData.value.adults,
       children: hotelData.value.children,
     };
-
-    console.log("Отправляемые данные:", payload);
-
-    // Обновляем данные в хранилище
     setHotelUser(payload);
-
-    // Переход на страницу отеля
     await router.push("/hotels");
   } catch (error) {}
 };
@@ -132,6 +126,7 @@ const applyFilters = async () => {
   @include flex-start;
   gap: 2.4rem;
   flex-grow: 1;
+  width: 33%;
 }
 
 .people-ic {
