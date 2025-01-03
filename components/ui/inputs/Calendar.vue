@@ -41,6 +41,7 @@ const emit = defineEmits<{
 
 const localValue = ref<any>(null);
 const today = new Date();
+today.setHours(0, 0, 0, 0);
 
 const formatToYYYYMMDD = (date: Date): string => {
   const year = date.getFullYear();

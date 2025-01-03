@@ -102,6 +102,10 @@ export function useAuth(store?: any, router?: any) {
       });
       setTokens(response.data.access_token, response.data.refresh_token);
       await getProfile();
+
+      if (response.status === 401) {
+        console.log("ss");
+      }
     } catch (error) {
       console.error("Token refresh error:", error);
       logout(); // Очистка состояния при неудаче

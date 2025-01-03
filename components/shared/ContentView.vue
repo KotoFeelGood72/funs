@@ -6,7 +6,7 @@
           <div class="area-back" v-if="back" @click="router.back()">
             <Icon name="f:left" />
           </div>
-          <h3 v-if="title">{{ title }}</h3>
+          <h3 v-if="title && !isLoading">{{ title }}</h3>
           <div class="square"></div>
         </div>
         <div class="area__layout">
@@ -88,6 +88,7 @@ const animatedDots = computed(() => dots.value);
   @include flex-center;
   width: 4.8rem;
   height: 4.8rem;
+  cursor: pointer;
 }
 
 .square {

@@ -10,7 +10,6 @@
         <div class="right">
           <listLink :list="nav" />
           <btn
-            v-if="isUser !== null"
             :name="isUser ? user.email ?? 'e-mail не указан' : 'Личный кабинет'"
             icon="user"
             theme="secondary"

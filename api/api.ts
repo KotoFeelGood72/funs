@@ -2,7 +2,7 @@ import axios from "axios";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
-
+let isRefreshing = false;
 const api = axios.create({
   baseURL: "https://funbooking.ru/api/",
 });
@@ -24,25 +24,67 @@ api.interceptors.request.use(
 );
 
 // Интерсептор ответов
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error && error.response) {
+//       const status = error.response.status;
+
+//       if (status === 401) {
+//         try {
+//           const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт
+//           const { refresh, logout } = useAuth();
+
+//           await refresh(); // Обновляем токен
+//           return api.request(error.config); // Повторяем запрос с новым токеном
+//         } catch (refreshError) {
+//           localStorage.removeItem("user");
+//           window.location.href = "/"; // Редирект на главную страницу
+//         }
+//       } else {
+//         const message = error.response.data?.message || "Произошла ошибка";
+//         toast.error(`Ошибка ${status}: ${message}`);
+//       }
+//     } else {
+//       toast.error("Ошибка сети. Проверьте подключение к интернету.");
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error && error.response) {
       const status = error.response.status;
 
-      if (status === 401) {
+      if (status === 401 && !isRefreshing) {
+        // Проверяем статус 401 и флаг обновления токена
+        isRefreshing = true; // Устанавливаем флаг
+
         try {
           const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт
           const { refresh, logout } = useAuth();
 
-          await refresh(); // Обновляем токен
+          await refresh(); // Пытаемся обновить токен
+          isRefreshing = false; // Сбрасываем флаг при успешной попытке
           return api.request(error.config); // Повторяем запрос с новым токеном
         } catch (refreshError) {
-          // console.error("Token refresh failed:", refreshError);
-          toast.error("Сессия истекла. Выполните вход снова.");
-          localStorage.removeItem("user");
-          // window.location.href = "/"; // Редирект на главную страницу
+          isRefreshing = false; // Сбрасываем флаг при ошибке
+          toast.error("Сессия истекла. Пожалуйста, войдите заново.");
+          const { useAuth } = await import("~/composables/useAuth");
+          const { logout } = useAuth();
+          logout(); // Выход из системы
+          return Promise.reject(refreshError);
         }
+      } else if (status === 401 && isRefreshing) {
+        // Если уже была попытка обновления токена, но ошибка осталась, выходим
+        toast.error("Сессия истекла. Пожалуйста, войдите заново.");
+        const { useAuth } = await import("~/composables/useAuth");
+        const { logout } = useAuth();
+        logout();
+        return Promise.reject(error);
       } else {
         const message = error.response.data?.message || "Произошла ошибка";
         toast.error(`Ошибка ${status}: ${message}`);
