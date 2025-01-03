@@ -62,7 +62,7 @@
             size="normal"
             @click="
               router.push({
-                name: 'hotel-id-confirmId',
+                name: 'hotels-id-confirmId',
                 params: { id: 1, confirmId: 2 },
               })
             "

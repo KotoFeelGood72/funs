@@ -13,7 +13,7 @@
             v-if="isUser !== null"
             :name="isUser ? user.email ?? 'e-mail не указан' : 'Личный кабинет'"
             icon="user"
-            theme="primary"
+            theme="secondary"
             @click="goToProfile"
           />
         </div>

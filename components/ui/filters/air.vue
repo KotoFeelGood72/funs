@@ -34,7 +34,12 @@
         v-model:infants="filterData.infants"
       />
     </div>
-    <btn name="Искать для визы" icon="right" @click="applyFilters" />
+    <btn
+      name="Искать для визы"
+      icon="right"
+      @click="applyFilters"
+      theme="primary"
+    />
   </div>
 </template>
 

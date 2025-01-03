@@ -1,5 +1,8 @@
 <template>
-  <ContentView title="Проверьте правильность введённых данных">
+  <ContentView
+    title="Проверьте правильность введённых данных"
+    :is-loading="false"
+  >
     <div class="passenger-form">
       <div v-for="(tab, index) in tabs" :key="index" class="accordion-item">
         <div
