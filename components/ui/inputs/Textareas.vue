@@ -51,9 +51,9 @@ label {
   left: 1.6rem;
   top: 1rem;
   font-size: 1.8rem;
-  color: $blue;
   pointer-events: none;
   transition: all 0.2s ease-in-out;
+  font-family: $font_2;
 }
 
 textarea {

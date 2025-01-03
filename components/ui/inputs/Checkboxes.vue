@@ -70,6 +70,7 @@ label {
   padding-left: 2.8rem;
   cursor: pointer;
   user-select: none;
+  font-size: 1.4rem;
   &:hover {
     &:before {
       border-color: $blue;

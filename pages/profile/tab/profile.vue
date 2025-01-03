@@ -58,9 +58,9 @@ const { updateProfile, user, getProfile } = useAuth();
 }
 
 .profile {
-  :deep(label) {
-    font-size: 1.4rem;
-  }
+  // :deep(label) {
+  //   font-size: 1.4rem;
+  // }
 }
 
 .footer {

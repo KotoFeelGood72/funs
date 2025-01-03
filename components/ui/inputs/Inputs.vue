@@ -95,6 +95,7 @@ label {
   padding: 0 0.7rem;
   transition: all 0.3s ease-in-out;
   font-family: $font_2;
+  font-size: 1.8rem;
   color: $dark;
 }
 

@@ -31,9 +31,10 @@
           </div>
         </div>
         <div class="preview-video">
-          <video autoplay muted loop :key="activeIndex">
+          <img src="~/assets/img/faq.jpg" alt="" />
+          <!-- <video autoplay muted loop :key="activeIndex">
             <source :src="list[activeIndex].video" type="video/webm" />
-          </video>
+          </video> -->
         </div>
       </div>
     </div>
