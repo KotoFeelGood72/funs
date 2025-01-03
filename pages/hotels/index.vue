@@ -33,6 +33,7 @@
             icon="f:email"
             v-if="activeTabData.type === 'adult'"
           />
+
           <Select
             :options="['Россия', 'Украина', 'Беларусь']"
             v-model="activeTabData.citizenship"
@@ -110,6 +111,7 @@ const computedTabs = computed(() => {
 
   hotelData.value.adults.forEach((adult: any, index: number) => {
     tabs.push({
+      ...adult,
       label: `Взрослый ${index + 1}`,
       type: "adult",
       index,
