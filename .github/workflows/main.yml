@@ -1,0 +1,31 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main # Деплой срабатывает при пуше в ветку main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1. Клонирование репозитория
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Шаг 2. Подключение к серверу и выполнение команд
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 62.217.179.191
+          username: root
+          password: j7W_cT%8SAtt
+          port: 22
+          script: |
+            cd /var/www/frontend
+            git pull origin main
+            docker build -t frontend-app .
+            docker stop frontend-app || true
+            docker rm frontend-app || true
+            docker run -d -p 3000:3000 --name frontend-app frontend-app
