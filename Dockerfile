@@ -1,5 +1,5 @@
 # Используем официальный образ Node.js
-FROM node:18
+FROM node:22
 
 # Устанавливаем рабочую директорию
 WORKDIR /usr/src/app
@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Копируем остальной код проекта
 COPY . .
