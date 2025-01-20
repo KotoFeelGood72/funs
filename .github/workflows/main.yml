@@ -23,13 +23,5 @@ jobs:
           password: j7W_cT%8SAtt
           port: 22
           script: |
-            # Убедиться, что директория существует
-            mkdir -p /var/www/frontend
             cd /var/www/frontend
-
-            # Клонировать репозиторий, если его нет
-            if [ ! -d ".git" ]; then
-              git clone git@github.com:username/repository.git .
-            else
-              git pull origin master
-            fi
+            git pull origin master
