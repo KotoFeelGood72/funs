@@ -23,5 +23,5 @@ jobs:
           password: j7W_cT%8SAtt
           port: 22
           script: |
-            cd /var/www/frontend
+            cd /var/www/frontend/funs
             git pull origin master
