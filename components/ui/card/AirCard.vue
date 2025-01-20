@@ -2,13 +2,18 @@
   <div class="air">
     <div class="air_action">
       <div class="price">600 ₽</div>
-      <div class="badge">
+      <div class="badge" v-if="false">
         <p>Багаж</p>
         <div class="ic">
           <Icon name="f:tright" :size="16" />
         </div>
       </div>
-      <btn name="Бронировать для визы" @click="nextToAir()" theme="primary" size="normal"/>
+      <btn
+        name="Бронировать для визы"
+        @click="nextToAir()"
+        theme="primary"
+        size="normal"
+      />
     </div>
     <div class="air-content">
       <AirHead title="TURKISH AIRLINES" logo="" />
@@ -23,11 +28,16 @@ import AirHead from "../air/AirHead.vue";
 import AirInfo from "../air/AirInfo.vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
 const nextToAir = () => {
-  router.push('/air/1')
-}
+  router.push("/air/1");
+};
+
+const props = defineProps<{
+  title: string;
+  logo: string;
+}>();
 </script>
 
 <style scoped lang="scss">

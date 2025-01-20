@@ -197,7 +197,6 @@ nextTick(() => calculateHeights());
   p {
     padding: 2rem 0;
     font-size: 1.8rem;
-    color: $blue;
     font-family: $font_2;
   }
 }

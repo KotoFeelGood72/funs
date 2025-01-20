@@ -111,31 +111,56 @@ const computedTabs = computed(() => {
 
   hotelData.value.adults.forEach((adult: any, index: number) => {
     tabs.push({
-      ...adult,
-      label: `Взрослый ${index + 1}`,
+      label: `Пассажир №${index + 1}, эконом`, // Добавление номера и класса
       type: "adult",
       index,
+      ...adult,
     });
   });
 
   hotelData.value.children.forEach((child: any, index: number) => {
     tabs.push({
-      label: `Ребёнок ${index + 1}`,
+      label: `Пассажир №${index + hotelData.value.adults.length + 1}, эконом`, // Продолжение нумерации для детей
       type: "child",
       index,
+      ...child,
     });
   });
 
   return tabs;
 });
 
+// const activeTabData = computed(() => {
+//   const currentTab = computedTabs.value[activeTab.value];
+//   if (currentTab) {
+//     if (currentTab.type === "adult") {
+//       return { ...hotelData.value.adults[currentTab.index], type: "adult" };
+//     } else if (currentTab.type === "child") {
+//       return { ...hotelData.value.children[currentTab.index], type: "child" };
+//     }
+//   }
+//   return null;
+// });
+
+// const activeTabData = computed(() => {
+//   const currentTab = computedTabs.value[activeTab.value];
+//   if (currentTab) {
+//     if (currentTab.type === "adult") {
+//       return hotelData.value.adults[currentTab.index];
+//     } else if (currentTab.type === "child") {
+//       return hotelData.value.children[currentTab.index];
+//     }
+//   }
+//   return null;
+// });
+
 const activeTabData = computed(() => {
   const currentTab = computedTabs.value[activeTab.value];
   if (currentTab) {
     if (currentTab.type === "adult") {
-      return hotelData.value.adults[currentTab.index];
+      return hotelData.value.adults[currentTab.index]; // Возвращаем ссылку на объект
     } else if (currentTab.type === "child") {
-      return hotelData.value.children[currentTab.index];
+      return hotelData.value.children[currentTab.index]; // Возвращаем ссылку на объект
     }
   }
   return null;
