@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - master # Деплой срабатывает при пуше в ветку main
+      - master # Деплой срабатывает при пуше в ветку master
 
 jobs:
   deploy:
@@ -23,9 +23,13 @@ jobs:
           password: j7W_cT%8SAtt
           port: 22
           script: |
+            # Убедиться, что директория существует
+            mkdir -p /var/www/frontend
             cd /var/www/frontend
-            git pull origin main
-            docker build -t frontend-app .
-            docker stop frontend-app || true
-            docker rm frontend-app || true
-            docker run -d -p 3000:3000 --name frontend-app frontend-app
+
+            # Клонировать репозиторий, если его нет
+            if [ ! -d ".git" ]; then
+              git clone git@github.com:username/repository.git .
+            else
+              git pull origin master
+            fi
