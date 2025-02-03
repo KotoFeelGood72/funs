@@ -1,13 +1,13 @@
 <template>
   <div class="air">
-    <div class="air_action">
-      <div class="price">600 ₽</div>
-      <div class="badge" v-if="false">
+    <div class="air_action" v-if="price">
+      <div class="price">{{ card.price }} €</div>
+      <!-- <div class="badge" v-if="false">
         <p>Багаж</p>
         <div class="ic">
           <Icon name="f:tright" :size="16" />
         </div>
-      </div>
+      </div> -->
       <btn
         name="Бронировать для визы"
         @click="nextToAir()"
@@ -16,8 +16,15 @@
       />
     </div>
     <div class="air-content">
-      <AirHead title="TURKISH AIRLINES" logo="" />
-      <AirInfo start="" end="" :count="1" />
+      <AirHead
+        :title="card?.airline"
+        :logo="card?.itineraries[0].segments[0].carrier_logo"
+      />
+      <AirInfo
+        v-for="(item, i) in card?.itineraries"
+        :key="'card-itineraries' + i"
+        :info="item"
+      />
     </div>
   </div>
 </template>
@@ -31,13 +38,19 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const nextToAir = () => {
-  router.push("/air/1");
+  router.push(`/air/${props.card.id}`);
 };
 
-const props = defineProps<{
-  title: string;
-  logo: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    card?: any;
+    price?: boolean;
+  }>(),
+  {
+    price: true,
+    card: {},
+  }
+);
 </script>
 
 <style scoped lang="scss">

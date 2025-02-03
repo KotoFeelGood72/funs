@@ -4,6 +4,7 @@
       <label :class="{ active: dropdownOpen || displayName }" class="label">
         {{ label }}
       </label>
+
       <input
         type="text"
         :value="displayName"
@@ -37,18 +38,21 @@
 
 <script setup lang="ts">
 import { ref, computed, defineEmits, onMounted } from "vue";
-import { useFiltersStore } from "~/store/useFilterStore";
+// import { useFiltersStore } from "~/store/useFilterStore";
+import { useTicketAirStore } from "~/store/useTicketAirStore";
 
 // Пропсы
 const props = defineProps<{
-  options: Array<{ name: string; value: string }>; // Список опций
+  options: Array<{ name: string; value: string }>;
   modelValue: any;
-  defaultIndex?: number; // Индекс для дефолтного значения
-  label?: string; // Метка для поля
+  defaultIndex?: number;
+  label?: string;
+  type?: "air" | "eta" | "hotel";
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
-const { clearPlace } = useFiltersStore();
+// const { clearPlace } = useFiltersStore();
+const { clearPlace } = useTicketAirStore();
 
 const localValue = computed({
   get: () => props.modelValue,
@@ -81,7 +85,8 @@ const selectOption = (option: { name: string; value: string }) => {
 // Обработка ввода
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement; // Явное указание типа
-  const value = target.value.replace(/[^а-яА-ЯёЁ\s]/g, ""); // Убираем всё, кроме русских букв и пробелов
+  const value = target.value;
+  // const value = target.value.replace(/[^а-яА-ЯёЁ\s]/g, ""); // Убираем всё, кроме русских букв и пробелов
   target.value = value; // Обновляем значение в поле ввода
   emit("update:modelValue", { name: value, value: "" }); // Устанавливаем значение
 };

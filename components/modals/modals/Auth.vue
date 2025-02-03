@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import AuthConfirm from "~/components/ui/auth/AuthConfirm.vue";
+// import AuthConfirm from "~/components/ui/auth/AuthConfirm.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Close from "~/components/ui/Close.vue";
@@ -51,7 +51,7 @@ const { email, password, login } = useAuth(store, router);
   padding: 3.2rem;
   text-align: center;
   width: 62.6rem;
-  //   width: 100%;
+  transition: all 0.3s ease-in-out;
   position: relative;
 
   h3 {

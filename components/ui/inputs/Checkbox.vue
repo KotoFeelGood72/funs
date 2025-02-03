@@ -82,6 +82,7 @@ label {
   padding-left: 2.8rem;
   cursor: pointer;
   user-select: none;
+  display: block;
   &:hover {
     &:before {
       border-color: $blue;
@@ -91,8 +92,9 @@ label {
     content: "";
     border-radius: 0.4rem;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    // top: 50%;
+    top: 0.2rem;
+    // transform: translateY(-50%);
     left: 0;
     width: 1.6rem;
     height: 1.6rem;
@@ -102,9 +104,10 @@ label {
 
   .ic-check {
     position: absolute;
-    top: 50%;
+    top: 0.2rem;
+    // top: 50%;
+    // transform: translateY(-50%);
     left: 0.05rem;
-    transform: translateY(-50%);
     @include flex-center;
     width: 1.5rem;
     height: 1.5rem;

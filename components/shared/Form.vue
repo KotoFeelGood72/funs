@@ -9,14 +9,15 @@
     />
     <Textareas
       id="form-descriptiion"
-      v-model="formData.textarea"
+      v-model="formData.text"
       label="Обращение"
     />
     <btn
-      name="Отправить"
+      :name="isLoadingFormAnonim ? 'Отправляется...' : 'Отправить'"
       icon="right"
-      @click="sendForm"
+      @click="sendFormAnonim"
       style="width: 100%; justify-content: center"
+      :loading="isLoadingFormAnonim"
     />
   </div>
 </template>
@@ -27,7 +28,7 @@ import Textareas from "../ui/inputs/Textareas.vue";
 import { useFormSend } from "~/composables/useFormSend";
 import btn from "../ui/buttons/btn.vue";
 
-const { sendForm, formData } = useFormSend();
+const { sendFormAnonim, formData, isLoadingFormAnonim } = useFormSend();
 </script>
 
 <style scoped lang="scss">

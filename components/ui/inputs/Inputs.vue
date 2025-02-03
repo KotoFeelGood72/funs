@@ -1,5 +1,8 @@
 <template>
-  <div class="input" :class="{ active: localValue || isFocused }">
+  <div
+    class="input"
+    :class="{ active: localValue || isFocused || type === 'date' }"
+  >
     <label :for="id">
       {{ label }}
     </label>
@@ -7,13 +10,13 @@
       :type="isPasswordVisible ? 'text' : type"
       v-model="localValue"
       :id="id"
-      :placeholder="placeholder"
+      :placeholder="type === 'date' ? '' : placeholder"
       @focus="isFocused = true"
       @blur="isFocused = false"
     />
     <div
+      v-if="type !== 'date' && (type === 'password' || icon)"
       class="input_ic"
-      v-if="type === 'password' || icon"
       @click="togglePasswordVisibility"
     >
       <Icon
@@ -33,9 +36,9 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    modelValue: any;
+    modelValue?: any;
     id?: string;
-    type?: "text" | "email" | "password";
+    type?: "text" | "email" | "password" | "date" | "tel";
     label: string;
     icon?: string;
     placeholder?: string;
@@ -122,5 +125,9 @@ input {
   transform: translateY(-50%);
   cursor: pointer;
   @include flex-center;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none; /* Скрываем иконку календаря */
 }
 </style>

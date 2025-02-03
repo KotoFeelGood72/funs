@@ -5,7 +5,7 @@
         <h3>Текущие заказы</h3>
       </div>
       <div class="body">
-        <AirCard v-for="(item, i) in 7" :key="'air-items-' + i" />
+        <!-- <AirCard v-for="(item, i) in 7" :key="'air-items-' + i" /> -->
       </div>
     </div>
   </div>

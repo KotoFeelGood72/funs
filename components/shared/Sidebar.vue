@@ -2,96 +2,83 @@
   <div class="sidebar">
     <div class="sidebar-head">
       <p>Фильтры</p>
-      <div class="clear">
+      <div class="clear" @click="resetFilters">
         <p>Сбросить</p>
         <div class="ic"><Icon name="f:close" /></div>
       </div>
     </div>
+
+    <!-- Фильтр по пересадкам -->
     <div class="row">
       <div class="row-head">Пересадки</div>
       <div class="list">
         <Checkboxes
           :id="'transfer-item-' + i"
           :label="item"
-          :value="item"
+          :value="parseInt(item)"
           v-for="(item, i) in transfer"
           :key="'transfer-item-' + i"
-          v-model="selectedTransfer"
+          v-model="localValueTransfers"
           name="transfers"
         />
       </div>
     </div>
+
     <div class="row">
       <div class="row-head">Авиакомпании</div>
       <div class="list">
         <Checkboxes
-          :id="'avia-item-' + i"
+          :id="'airline-item-' + i"
           :label="item"
           :value="item"
-          v-for="(item, i) in avia"
-          :key="'avia-item-' + i"
-          v-model="selectedAvia"
-          name="avia"
+          v-for="(item, i) in airlines"
+          :key="'airline-item-' + i"
+          v-model="localValueAirline"
+          name="airline"
         />
       </div>
     </div>
-    <!-- <PriceRange
-      :min="0"
-      :max="10000"
-      :step="100"
-      format="currency"
-      v-model:min-value="priceMin"
-      v-model:max-value="priceMax"
-    />
-    <TimeRange
-      :min="0"
-      :max="3510"
-      :step="30"
-      :minValue="timeMin"
-      :maxValue="timeMax"
-    />
-    <TimeRange
-      :min="0"
-      :max="3510"
-      :step="30"
-      :minValue="timeMin"
-      :maxValue="timeMax"
-    />
-    <TimeRange
-      :min="0"
-      :max="3510"
-      :step="30"
-      :minValue="timeMin"
-      :maxValue="timeMax"
-    /> -->
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import Checkboxes from "../ui/inputs/Checkboxes.vue";
-import PriceRange from "../ui/inputs/PriceRange.vue";
-import TimeRange from "../ui/inputs/TimeRange.vue";
 
-const priceMin = ref(1000);
-const priceMax = ref(9000);
+// Принимаем проп modelValue из родительского компонента
+const props = defineProps<{
+  airlines?: any;
+  modelValue: {
+    transfer: number[];
+    airline: string[];
+  };
+}>();
 
-const timeMin = ref(1470); // 24ч 30м
-const timeMax = ref(3510); // 58ч 30м
+const emit = defineEmits(["update:modelValue"]);
 
-const transfer = ["1 пересадка", "2 пересадка", "3 пересадка"];
-const avia = [
-  "Все",
-  "Аэрофлот",
-  "Уральские Авиалинии",
-  "Qatar",
-  "Emirates",
-  "Азимут",
-  "Pegasus Airlines",
-  "Белавиа",
-  "Georgian Airways",
-];
-const selectedTransfer = ref<any>();
-const selectedAvia = ref<any>();
+const transfer = ["1 пересадка", "2 пересадки", "3 пересадки"];
+
+// Локальные значения, которые синхронизируются с родительским v-model
+const localValueTransfers = ref<number[]>(props.modelValue.transfer || []);
+const localValueAirline = ref<string[]>(props.modelValue.airline || []);
+
+// Следим за изменениями и обновляем родительский v-model
+watch(
+  () => [localValueTransfers.value, localValueAirline.value],
+  () => {
+    emit("update:modelValue", {
+      transfer: localValueTransfers.value,
+      airline: localValueAirline.value,
+    });
+  },
+  { deep: true }
+);
+
+// Функция сброса фильтров
+const resetFilters = () => {
+  localValueTransfers.value = [];
+  localValueAirline.value = [];
+};
 </script>
 
 <style scoped lang="scss">
@@ -104,10 +91,15 @@ const selectedAvia = ref<any>();
   border-radius: 0.8rem;
   width: 100%;
   max-width: 29rem;
+  position: sticky;
+  top: 3rem;
+  left: 0;
 }
 
 .sidebar-head {
-  @include flex-start;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 1.2rem;
 
   & > p {
@@ -117,7 +109,8 @@ const selectedAvia = ref<any>();
 }
 
 .clear {
-  @include flex-center;
+  display: flex;
+  align-items: center;
   background-color: $gray-light;
   padding: 0.5rem;
   border-radius: 0.8rem;
@@ -128,7 +121,9 @@ const selectedAvia = ref<any>();
 }
 
 .ic {
-  @include flex-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .row-head {

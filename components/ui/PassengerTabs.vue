@@ -7,7 +7,7 @@
       class="tab-link"
       @click="$emit('update:activeTab', index)"
     >
-      {{ tab.label }}
+      Пассажир № {{ index + 1 }}
     </li>
   </ul>
 </template>

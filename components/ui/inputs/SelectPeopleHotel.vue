@@ -20,7 +20,7 @@
             <button @click="decreaseAdults">
               <Icon name="f:minus" />
             </button>
-            <span>{{ ticket.adults }}</span>
+            <span>{{ ticketHotel.adults }}</span>
             <button @click="increaseAdults">
               <Icon name="f:plus" />
             </button>
@@ -33,49 +33,43 @@
             <button @click="decreaseChildren">
               <Icon name="f:minus" />
             </button>
-            <span>{{ ticket.children }}</span>
+            <span>{{ ticketHotel.children }}</span>
             <button @click="increaseChildren">
               <Icon name="f:plus" />
             </button>
           </div>
         </div>
-        <Checkbox
-          id="isBusinessClass"
-          label="Бизнес класс"
-          value="BUSINESS"
-          v-model="ticket.class_type"
-          name="isBusinessClass"
-        />
+        <div class="counter">
+          <p>Кол-во звезд</p>
+          <div class="counter-buttons">
+            <button @click="decreaseHotelClass">
+              <Icon name="f:minus" />
+            </button>
+            <span>{{ ticketHotel.hotel_class }}</span>
+            <button @click="increaseHotelClass">
+              <Icon name="f:plus" />
+            </button>
+          </div>
+        </div>
       </div>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import Checkbox from "./Checkbox.vue";
-import {
-  useTicketAirStore,
-  useTicketAirStoreRefs,
-} from "~/store/useTicketAirStore";
+import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 
-const { createPassengers } = useTicketAirStore();
-const { ticket } = useTicketAirStoreRefs();
+const { createPassengersHotel } = useHotelStore();
+const { ticketHotel } = useHotelStoreRefs();
 
 const isDropdownVisible = ref(false);
 const dropdownPosition = ref("bottom");
 const wrapper = ref<HTMLElement | null>(null);
 
-const classTypeTranslation: any = {
-  ECONOMY: "Эконом",
-  BUSINESS: "Бизнес",
-};
-
 // Текст с правильными склонениями
 const passengerText = computed(() => {
-  const total = ticket.value.adults + ticket.value.children;
-  return `${total} пассажир${total === 1 ? "" : "а"} (${
-    classTypeTranslation[ticket.value.class_type]
-  })`;
+  const total = ticketHotel.value.adults + ticketHotel.value.children;
+  return `${total} пассажир${total === 1 ? "" : "а"}`;
 });
 
 const toggleDropdown = async () => {
@@ -86,15 +80,6 @@ const toggleDropdown = async () => {
   }
 };
 
-watch(
-  () => ticket.value.class_type,
-  (newValue) => {
-    if (!newValue) {
-      ticket.value.class_type = "ECONOMY";
-    }
-  }
-);
-// Закрыть, если кликнули вне области
 const closeDropdown = (event: MouseEvent) => {
   if (
     isDropdownVisible.value &&
@@ -117,20 +102,30 @@ const calculateDropdownPosition = () => {
 };
 
 const increaseAdults = () => {
-  ticket.value.adults++;
-
-  createPassengers();
+  ticketHotel.value.adults++;
+  createPassengersHotel();
 };
 
 const decreaseAdults = () => {
-  if (ticket.value.adults > 1) {
-    ticket.value.adults--;
-    createPassengers();
+  if (ticketHotel.value.adults > 1) {
+    ticketHotel.value.adults--;
+    createPassengersHotel();
   }
 };
-const increaseChildren = () => ticket.value.children++;
+const increaseChildren = () => ticketHotel.value.children++;
 const decreaseChildren = () =>
-  ticket.value.children > 0 && ticket.value.children--;
+  ticketHotel.value.children > 0 && ticketHotel.value.children--;
+const increaseHotelClass = () => {
+  if (ticketHotel.value.hotel_class < 5) {
+    ticketHotel.value.hotel_class++;
+  }
+};
+
+const decreaseHotelClass = () => {
+  if (ticketHotel.value.hotel_class > 1) {
+    ticketHotel.value.hotel_class--;
+  }
+};
 
 // Слушатели событий
 onMounted(() => document.addEventListener("click", closeDropdown));

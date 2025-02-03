@@ -26,12 +26,7 @@
       />
     </div>
     <div class="filter-group">
-      <SelectPeople
-        v-model:class_type="filterData.class_type"
-        v-model:adults="filterData.adults"
-        v-model:children="filterData.children"
-        v-model:infants="filterData.infants"
-      />
+      <SelectPeopleETA />
     </div>
     <btn name="Искать для визы" icon="right" @click="applyFilters" />
   </div>
@@ -42,7 +37,7 @@ import { ref, watch } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
-import SelectPeople from "../inputs/SelectPeople.vue";
+import SelectPeopleETA from "../inputs/SelectPeopleETA.vue";
 import btn from "../buttons/btn.vue";
 import { useFiltersStore } from "~/store/useFilterStore";
 

@@ -1,21 +1,23 @@
 <template>
-  <div class="post">
-    <div class="post_img">
-      <img :src="post.img" />
-    </div>
-    <div class="post_content">
-      <h3>{{ post.title }}</h3>
-      <div class="desc">
-        <p>{{ post.txt }}</p>
+  <NuxtLink :to="'/articles/' + post.slug">
+    <div class="post">
+      <div class="post_img">
+        <img :src="post.image" />
       </div>
-      <div class="post_link">
-        <p>Подробнее</p>
-        <div class="ic">
-          <Icon name="f:right" />
+      <div class="post_content">
+        <h3>{{ post.title }}</h3>
+        <div class="desc">
+          <p>{{ post.body }}</p>
+        </div>
+        <div class="post_link">
+          <p>Подробнее</p>
+          <div class="ic">
+            <Icon name="f:right" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">

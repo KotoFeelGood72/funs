@@ -7,12 +7,16 @@
         </div>
       </div>
       <div class="info_start__col">
-        <h3 class="time">22:35</h3>
-        <p class="city">Москва 11 ноя, пн</p>
-        <span class="tags">MSK</span>
+        <h3 class="time">
+          {{ formatDate(info.segments[0].departure_time, "time") }}
+        </h3>
+        <p class="city">
+          {{ formatDate(info.segments[0].departure_time, "date") }}
+        </p>
+        <span class="tags">{{ info.segments[0].departure_airport }}</span>
       </div>
     </div>
-    <AirLine :num="count" />
+    <AirLine :num="info.stops" :time="info.duration" />
     <div class="info-end">
       <div class="info_end__col">
         <div class="info-ic">
@@ -20,9 +24,13 @@
         </div>
       </div>
       <div class="info_end__col">
-        <h3 class="time">01:30</h3>
-        <p class="city">Амстердам 9 дек, пн</p>
-        <span class="tags">AMS</span>
+        <h3 class="time">
+          {{ formatDate(info.segments[1].arrival_time, "time") }}
+        </h3>
+        <p class="city">
+          {{ formatDate(info.segments[1].arrival_time, "date") }}
+        </p>
+        <span class="tags">{{ info.segments[0].arrival_airport }}</span>
       </div>
     </div>
   </div>
@@ -30,10 +38,10 @@
 
 <script setup lang="ts">
 import AirLine from "./AirLine.vue";
-defineProps<{
-  start: any;
-  end: any;
-  count: number;
+// @ts-ignore
+import { formatDate } from "../../utils/formatDate.js";
+const props = defineProps<{
+  info?: any;
 }>();
 </script>
 

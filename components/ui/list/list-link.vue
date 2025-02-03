@@ -24,6 +24,10 @@ defineProps<{
   @include flex-start;
   gap: 2.4rem;
 
+  @include bp($point_2) {
+    display: none;
+  }
+
   a {
     @include flex-center;
     padding: 1.4rem 2.4rem;

@@ -10,6 +10,7 @@
         <div class="right">
           <listLink :list="nav" />
           <btn
+            class="header_profile"
             :name="isUser ? user.email ?? 'e-mail не указан' : 'Личный кабинет'"
             icon="user"
             theme="secondary"
@@ -37,7 +38,7 @@ const route = useRoute();
 const nav = [
   { link: "/air", name: "Билеты" },
   { link: "/hotels", name: "Отели" },
-  { link: "/", name: "ETA" },
+  // { link: "/", name: "ETA" },
 ];
 
 // Проверка, что пользователь авторизован
@@ -75,9 +76,31 @@ const goToProfile = () => {
 .header_main {
   @include flex-space;
   padding: 3.2rem 0;
+  @include bp($point_2) {
+    padding: 1.5rem 0;
+  }
 }
 .right {
   @include flex-end;
   gap: 3.2rem;
+}
+
+:deep(.btn p) {
+  @include bp($point_2) {
+    font-size: 1.4rem;
+  }
+}
+
+.logo {
+  @include bp($point_2) {
+    max-width: 15rem;
+    @include flex-center;
+  }
+
+  img {
+    @include bp($point_2) {
+      width: 100%;
+    }
+  }
 }
 </style>

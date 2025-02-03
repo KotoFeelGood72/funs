@@ -8,7 +8,7 @@
     </div>
     <Faq :faqs="faq" />
     <Divider :height="8" :color="true" />
-    <Posts :posts="posts" />
+    <Posts :posts="blogs" />
     <Divider :height="8" :color="true" />
     <section class="quote blue">
       <div class="container">
@@ -94,8 +94,10 @@ import Posts from "~/components/screens/Posts.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Form from "~/components/shared/Form.vue";
 import { useFaqs } from "~/composables/useFaqs";
+import { useBlogs } from "~/composables/useBlogs";
 
 const { fetchFaqs, faq } = useFaqs();
+const { fetchBlogs, blogs } = useBlogs();
 
 const posts = ref<any>([
   {
@@ -132,6 +134,7 @@ const posts = ref<any>([
 
 onMounted(() => {
   fetchFaqs();
+  fetchBlogs("featured");
 });
 </script>
 

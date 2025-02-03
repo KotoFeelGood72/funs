@@ -1,9 +1,7 @@
 <template>
   <div class="line__w">
-    <div class="top-label">в пути: 2ч 55м</div>
-    <div class="bottom-label">
-      {{ num }} {{ isCountTxt }}
-    </div>
+    <div class="top-label">в пути: {{ time }}</div>
+    <div class="bottom-label">{{ num }} {{ isCountTxt }}</div>
     <div class="line">
       <span
         class="marker"
@@ -17,7 +15,8 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  num: number; // Количество пересадок
+  num: number;
+  time: string;
 }>();
 
 const isCountTxt = computed(() => {
@@ -46,7 +45,7 @@ const isCountTxt = computed(() => {
 .line {
   position: relative;
   width: 100%;
-  height: .2rem;
+  height: 0.2rem;
   background: transparent;
   display: flex;
   justify-content: center;
@@ -62,7 +61,7 @@ const isCountTxt = computed(() => {
   transform: translateY(-50%);
   width: 1.6rem;
   height: 1.6rem;
-  border: .2rem solid $light;
+  border: 0.2rem solid $light;
   border-radius: 50%;
   background-color: $white;
   transform: translate(-50%, -50%);

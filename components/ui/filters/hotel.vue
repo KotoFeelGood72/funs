@@ -1,125 +1,73 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Город" :options="places" v-model="hotelData.city" />
+      <SearchSelect
+        label="Город"
+        :options="places"
+        v-model="ticketHotel.city"
+      />
     </div>
     <div class="filter-group date">
       <Calendar
         label="Дата заезда"
-        v-model:startDate="hotelData.check_in_date"
-        v-model:endDate="hotelData.check_out_date"
+        v-model:startDate="ticketHotel.check_in_date"
+        v-model:endDate="ticketHotel.check_out_date"
         :isRange="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeople
-        v-model:class_type="hotelData.hotel_class"
-        v-model:adults="hotelData.num_adults"
-        v-model:children="hotelData.num_children"
-      />
+      <SelectPeopleHotel />
     </div>
-    <btn name="Забронировать" icon="right" @click="applyFilters" />
+    <btn name="Забронировать" icon="right" @click="nextHotelBooking" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
-import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
-import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
-import { useFiltersStore } from "~/store/useFilterStore";
 import Calendar from "../inputs/Calendar.vue";
-import { useRouter } from "vue-router";
-import { usePassengerData } from "~/composables/usePassengerData";
+import { useRouter, useRoute } from "vue-router";
+import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
+import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
 
-// Доступ к фильтрам через хранилище
-const { places, hotelData } = useFiltersStoreRefs();
-const { setHotelUser, fetchPlace } = useFiltersStore();
+const { fillHotelTicketFromQuery, fetchPlaceHotel } = useHotelStore();
+const { ticketHotel, places } = useHotelStoreRefs();
+
 const router = useRouter();
+const route = useRoute();
 
-// Подключаем функцию из composable
-const { generatePassengerData } = usePassengerData();
-
-// Следим за изменением города
 watch(
-  () => hotelData.value.city,
+  () => ticketHotel.value.city,
   (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
+    if (newValue.name) fetchPlaceHotel(newValue.name);
   }
 );
 
-// Функция для инициализации данных пассажиров
-const initializePassengers = () => {
-  const passengerData = generatePassengerData(
-    hotelData.value.num_adults || 1,
-    hotelData.value.num_children || 0,
-    hotelData.value.hotel_class
-  );
-
-  hotelData.value.adults = passengerData.adults;
-  hotelData.value.children = passengerData.children;
-
-  console.log("Инициализация пассажиров:", passengerData);
-};
-
-// Следим за изменением количества взрослых и детей
-watch(
-  () => [hotelData.value.num_adults, hotelData.value.num_children],
-  ([newAdults, newChildren]) => {
-    if (process.client) {
-      try {
-        // Генерация данных пассажиров
-        const passengerData = generatePassengerData(
-          newAdults,
-          newChildren,
-          hotelData.value.hotel_class
-        );
-
-        // Обновляем данные пассажиров в hotelData
-        hotelData.value.adults = passengerData.adults;
-        hotelData.value.children = passengerData.children;
-
-        console.log("Пассажиры обновлены:", passengerData);
-      } catch (error) {
-        console.error("Ошибка обновления пассажиров:", error);
-      }
-    }
-  },
-  { immediate: true }
-);
-
-// Инициализация данных при загрузке компонента
-onMounted(() => {
-  initializePassengers();
-});
-
-const applyFilters = async () => {
-  const data = {
-    city: hotelData.value.city || "",
-    check_in_date: hotelData.value.check_in_date || "",
-    check_out_date: hotelData.value.check_out_date || "",
-    num_adults: hotelData.value.num_adults || 1,
-    num_children: hotelData.value.num_children || 0,
-    hotel_class: hotelData.value.hotel_class || "ECONOMY",
+const nextHotelBooking = async () => {
+  const query = {
+    cityName: ticketHotel.value.city.name,
+    cityValue: ticketHotel.value.city.value,
+    check_in_date: ticketHotel.value.check_in_date || "",
+    check_out_date: ticketHotel.value.check_out_date || "",
+    adults: ticketHotel.value.adults.toString(),
+    hotel_class: ticketHotel.value.hotel_class,
   };
-
-  try {
-    const payload = {
-      ...data,
-      adults: hotelData.value.adults,
-      children: hotelData.value.children,
-    };
-    setHotelUser(payload);
-    await router.push("/hotels");
-  } catch (error) {}
+  router.push({ name: "hotels", query });
 };
+
+onMounted(() => {
+  fillHotelTicketFromQuery(route.query);
+});
 </script>
 
 <style scoped lang="scss">
 .filters {
   @include flex-space;
   gap: 2.4rem;
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .filter-group {
@@ -127,6 +75,9 @@ const applyFilters = async () => {
   gap: 2.4rem;
   flex-grow: 1;
   width: 33%;
+  @include bp($point_2) {
+    width: 100%;
+  }
 }
 
 .people-ic {

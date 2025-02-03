@@ -40,6 +40,7 @@ const router = useRouter();
 <style scoped lang="scss">
 .post__w {
   @include flex-start;
+  align-items: flex-start;
 }
 .posts {
   background-color: $blue;
@@ -65,7 +66,7 @@ const router = useRouter();
     border-radius: 3.2rem;
     padding: 3.2rem;
     color: $dark;
-
+    width: 100%;
     &:nth-child(1) {
       max-width: calc(50% - 3.2rem);
     }

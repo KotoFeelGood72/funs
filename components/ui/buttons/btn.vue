@@ -1,11 +1,11 @@
 <template>
-  <div class="btn" :class="[isColorTheme, isSize]">
+  <div class="btn" :class="[isColorTheme, isSize, { disabled: disabled }]">
+    <p>{{ name }}</p>
+    <div class="icon" v-if="icon && !loading">
+      <Icon :name="'f:' + icon" :size="15" />
+    </div>
     <div class="loading" v-if="loading">
       <Icon name="svg-spinners:eclipse" />
-    </div>
-    <p>{{ name }}</p>
-    <div class="icon" v-if="icon">
-      <Icon :name="'f:' + icon" :size="15" />
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@ const props = defineProps<{
   icon?: string;
   theme?: string;
   size?: string;
+  disabled?: boolean;
 }>();
 
 const isColorTheme = computed(() => {
@@ -56,6 +57,14 @@ const isSize = computed(() => {
   color: $blue;
   font-family: $font_3;
   transition: all 0.3s ease-in-out;
+
+  &.disabled {
+    pointer-events: none;
+    border-color: $gray-light !important;
+    background-color: $gray-light !important;
+    color: $gray !important;
+    cursor: none;
+  }
 
   p {
     margin-bottom: -0.3rem;

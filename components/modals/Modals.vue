@@ -51,7 +51,7 @@ const modalTransitionName = computed(() => {
 <style lang="scss">
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 .slide-up-enter-from {
@@ -74,7 +74,7 @@ const modalTransitionName = computed(() => {
 
 .slide-right-enter-active,
 .slide-right-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 .slide-right-enter-from {
@@ -121,5 +121,6 @@ const modalTransitionName = computed(() => {
   transform: translate(-50%, -50%);
   z-index: 115;
   @include flex-center;
+  transition: all 0.3s ease-in-out;
 }
 </style>

@@ -1,8 +1,12 @@
 <template>
-  <ContentView title="Москва — Амстердам, 11 ноя — 9 дек, 2024">
-    <div class="passenger-form">
+  <ContentView
+    :title="currentTicket?.departure_name + ' - ' + currentTicket?.arrival_name"
+    :isLoading="isLoading"
+  >
+    <div class="passenger-form" v-if="ticket.passengers.length > 0">
+      <PaymentForm />
       <PassengerTabs
-        :tabs="passengers"
+        :tabs="ticket.passengers"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
@@ -10,51 +14,46 @@
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            placeholder="Введите фамилию как в загранпаспорте"
-            v-model="passengers[activeTab].lastName"
+            v-model="ticket.passengers[activeTab].lastName"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            placeholder="Введите имя как в загранпаспорте"
-            v-model="passengers[activeTab].firstName"
+            v-model="ticket.passengers[activeTab].firstName"
             :id="'firstName' + activeTab"
           />
-          <DatePicker
-            :disablePast="true"
-            v-model="passengers[activeTab].dateOfBirth"
+          <Inputs
+            type="date"
+            label="Дата рождения"
+            v-model="ticket.passengers[activeTab].birthDate"
+            :id="'birthDate' + activeTab"
           />
+
           <Select
             :options="['Мужчина', 'Женщина']"
-            v-model="passengers[activeTab].gender"
+            v-model="ticket.passengers[activeTab].gender"
             label="Пол"
-            placeholder="Выберите пол"
           />
           <Inputs
             label="Серия загранпаспорта"
-            placeholder="Введите серию"
-            v-model="passengers[activeTab].passportSeries"
+            v-model="ticket.passengers[activeTab].seriaPassport"
             :id="'passportSeries' + activeTab"
           />
           <Inputs
             label="Номер загранпаспорта"
-            placeholder="Введите номер"
-            v-model="passengers[activeTab].passportNumber"
+            v-model="ticket.passengers[activeTab].numberPassport"
             :id="'passportNumber' + activeTab"
           />
           <Select
             :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="passengers[activeTab].citizenship"
+            v-model="ticket.passengers[activeTab].nationality"
             label="Гражданство"
-            placeholder="Выберите страну"
           />
           <Inputs
-            label="Email"
-            type="email"
-            placeholder="Введите email"
-            v-model="passengers[activeTab].email"
-            :id="'email' + activeTab"
-            icon="email"
+            type="date"
+            label="Срок действия"
+            v-model="ticket.passengers[activeTab].validityPeriod"
+            :id="'validityPeriod' + activeTab"
           />
         </div>
         <div class="note">
@@ -64,16 +63,17 @@
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">550 ₽</p>
+            <p class="price">{{ currentTicket.price }} €</p>
           </div>
           <btn
             name="Далее"
             theme="primary"
             size="normal"
+            :disabled="!isFormValid"
             @click="
               router.push({
                 name: 'air-id-confirmId',
-                params: { id: 1, confirmId: 2 },
+                params: { id: route.params.id, confirmId: 'checkout' },
               })
             "
           />
@@ -87,47 +87,59 @@
 import ContentView from "~/components/shared/ContentView.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
-import DatePicker from "~/components/ui/inputs/DatePicker.vue";
 import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
+import {
+  useTicketAirStoreRefs,
+  useTicketAirStore,
+} from "~/store/useTicketAirStore";
+import PaymentForm from "~/components/shared/PaymentForm.vue";
 
+const { ticket, currentTicket } = useTicketAirStoreRefs();
+const { createPassengers, fetchTickedId } = useTicketAirStore();
+const route = useRoute();
 const router = useRouter();
 
-// Массив пассажиров
-const passengers = ref([
-  {
-    lastName: "",
-    firstName: "",
-    dateOfBirth: null,
-    gender: "",
-    passportSeries: "",
-    passportNumber: "",
-    citizenship: "",
-    email: "",
-    class: "эконом",
-  },
-  {
-    lastName: "",
-    firstName: "",
-    dateOfBirth: null,
-    gender: "",
-    passportSeries: "",
-    passportNumber: "",
-    citizenship: "",
-    email: "",
-    class: "эконом",
-  },
-]);
-
-// Активная вкладка
+const isLoading = ref(true);
 const activeTab = ref(0);
 
-// Устанавливаем активный таб
 const setActiveTab = (index: number) => {
   activeTab.value = index;
 };
+
+const loadData = () => {
+  isLoading.value = true;
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 300);
+};
+onMounted(() => {
+  fetchTickedId(route.params.id.toString());
+  createPassengers();
+  loadData();
+});
+
+const isFormValid = computed(() => {
+  // Проверяем, что в ticket.passengers есть хотя бы один пассажир
+  // и что у каждого пассажира заполнены ВСЕ нужные поля
+  return (
+    ticket.value.passengers.length > 0 &&
+    ticket.value.passengers.every((p) => {
+      return (
+        p.lastName &&
+        p.firstName &&
+        p.birthDate &&
+        p.gender &&
+        p.seriaPassport &&
+        p.numberPassport &&
+        p.nationality &&
+        p.validityPeriod
+      );
+    })
+  );
+});
 </script>
 
 <style scoped lang="scss">

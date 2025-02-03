@@ -100,6 +100,10 @@ const toggleActive = (index: number) => {
   display: flex;
   height: 68rem;
   gap: 2.4rem;
+  @include bp($point_2) {
+    flex-direction: column;
+    height: auto;
+  }
 }
 
 .preview-video {
@@ -108,10 +112,16 @@ const toggleActive = (index: number) => {
   height: 100%;
   border-radius: 3.2rem;
   overflow: hidden;
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  @include bp($point_2) {
+    order: 0;
+    max-width: 100%;
+  }
+
+  img {
+    @include bp($point_2) {
+      width: 100%;
+      height: auto;
+    }
   }
 }
 
@@ -123,10 +133,18 @@ const toggleActive = (index: number) => {
   max-height: 100%;
   display: flex;
   flex-direction: column;
+  @include bp($point_2) {
+    order: 1;
+    padding: 2rem 1rem;
+    border-radius: 1rem;
+  }
   h3 {
     font-size: 3.2rem;
     color: $light;
     font-family: $font_1;
+    @include bp($point_2) {
+      font-size: 1.8rem;
+    }
   }
 }
 
@@ -137,6 +155,9 @@ const toggleActive = (index: number) => {
   opacity: 0.5;
   transition: all 0.3s;
   flex-grow: 0;
+  @include bp($point_2) {
+    padding: 1.5rem 0;
+  }
   &:not(:last-child) {
     border-bottom: 0.1rem solid $light;
   }
@@ -164,5 +185,10 @@ const toggleActive = (index: number) => {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @include bp($point_2) {
+    width: 2rem;
+    height: 2rem;
+  }
 }
 </style>

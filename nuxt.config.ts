@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     "~/plugins/outside.client.ts",
     "~/plugins/toast.js",
   ],
-  modules: ["@nuxt/icon", "@pinia/nuxt", "pinia-plugin-persistedstate/nuxt"],
+  modules: ["@nuxt/icon", "@pinia/nuxt"],
 
   icon: {
     // provider: "server",
@@ -34,12 +34,16 @@ export default defineNuxtConfig({
   },
 
   build: {
-    transpile: ["@vuepic/vue-datepicker", "vue-toastification", "pinia-plugin-persistedstate"],
+    transpile: [
+      "@vuepic/vue-datepicker",
+      "vue-toastification",
+      "pinia-plugin-persistedstate",
+    ],
   },
   app: {
     pageTransition: {
       name: "fade",
       mode: "out-in",
-    }  
-  }
+    },
+  },
 });

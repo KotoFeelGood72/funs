@@ -22,9 +22,9 @@
             <template #tab-1>
               <hotel />
             </template>
-            <template #tab-2>
+            <!-- <template #tab-2>
               <eta />
-            </template>
+            </template> -->
           </Tabs>
         </div>
       </div>
@@ -46,7 +46,11 @@ const props = withDefaults(
   }
 );
 
-const list = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA" }];
+const list = [
+  { label: "Билеты" },
+  { label: "Отели" },
+  // { label: "ETA" }
+];
 </script>
 
 <style scoped lang="scss">
@@ -58,6 +62,16 @@ const list = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA"
   h2 {
     font-size: 10rem;
     line-height: 9.5rem;
+    @include bp($point_2) {
+      font-size: 3.8rem;
+      line-height: 4.5rem;
+    }
+  }
+
+  img {
+    @include bp($point_2) {
+      max-width: 10rem;
+    }
   }
 }
 
@@ -66,6 +80,10 @@ const list = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA"
   h1 {
     font-size: 10rem;
     line-height: 9.5rem;
+    @include bp($point_2) {
+      font-size: 3rem;
+      line-height: 4.5rem;
+    }
     b {
       font-family: $font_5;
       font-style: italic;
@@ -77,6 +95,9 @@ const list = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA"
   padding: 2rem 0 3.2rem 0;
   font-size: 2.4rem;
   color: $dark;
+  @include bp($point_2) {
+    font-size: 1.4rem;
+  }
 }
 
 .hero__content {

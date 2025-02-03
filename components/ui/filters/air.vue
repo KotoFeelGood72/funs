@@ -4,7 +4,7 @@
       <SearchSelect
         label="Откуда"
         :options="places"
-        v-model="selectedCityFrom"
+        v-model="ticket.departure"
       />
     </div>
     <div class="filter-change" @click="swapCities">
@@ -16,23 +16,18 @@
       </div>
     </div>
     <div class="filter-group">
-      <SearchSelect label="Куда" :options="places" v-model="selectedCityTo" />
+      <SearchSelect label="Куда" :options="places" v-model="ticket.arrival" />
     </div>
     <div class="filter-group">
       <Calendar
-        v-model:startDate="filterData.date_backward"
-        v-model:endDate="filterData.date_forward"
+        v-model:startDate="ticket.date_forward"
+        v-model:endDate="ticket.date_backward"
         :isRange="true"
         :isError="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeople
-        v-model:class_type="filterData.class_type"
-        v-model:adults="filterData.adults"
-        v-model:children="filterData.children"
-        v-model:infants="filterData.infants"
-      />
+      <SelectPeople />
     </div>
     <btn
       name="Искать для визы"
@@ -40,60 +35,95 @@
       @click="applyFilters"
       theme="primary"
     />
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
-import { useFiltersStore } from "~/store/useFilterStore";
+import {
+  useTicketAirStore,
+  useTicketAirStoreRefs,
+} from "~/store/useTicketAirStore";
+import { useRouter, useRoute } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
-// Доступ к фильтрам через хранилище
-const { places, filterData, selectedCityFrom, selectedCityTo } =
-  useFiltersStoreRefs();
-const { fetchPlace, fetchTickets, clearPlace } = useFiltersStore();
+const route = useRoute();
+const router = useRouter();
+
+const { ticket, places } = useTicketAirStoreRefs();
+const { fetchPlace, fetchTickets, clearPlace, createPassengers } =
+  useTicketAirStore();
 const emit = defineEmits();
 
+const errorMessage = ref("");
+
 const applyFilters = () => {
-  fetchTickets();
+  if (
+    !ticket.value.departure.name ||
+    !ticket.value.arrival.name ||
+    !ticket.value.date_forward
+  ) {
+    toast.error("Заполните все поля перед поиском!");
+    errorMessage.value = "";
+    return;
+  }
+  errorMessage.value = "";
+  fetchTickets(router, route);
 };
 
 const swapCities = () => {
-  const temp = selectedCityFrom.value;
-  selectedCityFrom.value = selectedCityTo.value;
-  selectedCityTo.value = temp;
+  const temp = ticket.value.arrival;
+  ticket.value.arrival = ticket.value.departure;
+  ticket.value.departure = temp;
   clearPlace();
 };
 
 watch(
-  () => selectedCityFrom.value,
+  () => ticket.value.departure,
   (newValue) => {
     if (newValue.name) fetchPlace(newValue.name);
   }
 );
 
 watch(
-  () => selectedCityTo.value,
+  () => ticket.value.arrival,
   (newValue) => {
     if (newValue.name) fetchPlace(newValue.name);
   }
 );
+
+onMounted(() => {
+  if (route.name === "air") {
+    // fetchTickets(router, route, route.query);
+  }
+});
+
+createPassengers();
 </script>
 
 <style scoped lang="scss">
 .filters {
   @include flex-space;
   gap: 2.4rem;
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .filter-group {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  @include bp($point_2) {
+    width: 100%;
+  }
 }
 
 .people-ic {
@@ -106,6 +136,10 @@ watch(
   flex-direction: column;
   gap: 0.4rem;
   cursor: pointer;
+
+  @include bp($point_2) {
+    display: none;
+  }
 }
 
 .filter-change__ic {
