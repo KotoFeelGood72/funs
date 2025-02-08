@@ -11,6 +11,7 @@
         @focus="toggleDropdown(true)"
         @blur="toggleDropdown(false)"
         @input="onInput($event)"
+        @keydown="handleKeyDown"
         class="input"
       />
 
@@ -18,7 +19,7 @@
         <li
           v-for="(option, index) in options"
           :key="index"
-          :class="{ selected: option.value === displayName }"
+          :class="{ selected: index === selectedIndex }"
           @mousedown="selectOption(option)"
         >
           <p>
@@ -38,10 +39,8 @@
 
 <script setup lang="ts">
 import { ref, computed, defineEmits, onMounted } from "vue";
-// import { useFiltersStore } from "~/store/useFilterStore";
 import { useTicketAirStore } from "~/store/useTicketAirStore";
 
-// Пропсы
 const props = defineProps<{
   options: Array<{ name: string; value: string }>;
   modelValue: any;
@@ -51,7 +50,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
-// const { clearPlace } = useFiltersStore();
 const { clearPlace } = useTicketAirStore();
 
 const localValue = computed({
@@ -59,42 +57,54 @@ const localValue = computed({
   set: (value) => emit("update:modelValue", value),
 });
 
-// Отображаемое имя
 const displayName = computed(() => localValue.value?.name || "");
-
-// Состояние dropdown
 const dropdownOpen = ref(false);
+const selectedIndex = ref(-1);
 
-// Переключение dropdown
 const toggleDropdown = (open: boolean) => {
   setTimeout(() => {
     dropdownOpen.value = open;
     if (!open) {
       clearPlace();
+      selectedIndex.value = -1;
     }
   }, 50);
 };
 
-// Выбор опции
 const selectOption = (option: { name: string; value: string }) => {
-  emit("update:modelValue", option); // Устанавливаем выбранное значение
+  emit("update:modelValue", option);
   clearPlace();
   toggleDropdown(false);
 };
 
-// Обработка ввода
 const onInput = (event: Event) => {
-  const target = event.target as HTMLInputElement; // Явное указание типа
+  const target = event.target as HTMLInputElement;
   const value = target.value;
-  // const value = target.value.replace(/[^а-яА-ЯёЁ\s]/g, ""); // Убираем всё, кроме русских букв и пробелов
-  target.value = value; // Обновляем значение в поле ввода
-  emit("update:modelValue", { name: value, value: "" }); // Устанавливаем значение
+  target.value = value;
+  emit("update:modelValue", { name: value, value: "" });
+  selectedIndex.value = -1; // Сброс выбранного индекса при вводе
+};
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    selectedIndex.value = Math.min(
+      selectedIndex.value + 1,
+      props.options.length - 1
+    );
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    selectedIndex.value = Math.max(selectedIndex.value - 1, 0);
+  } else if (event.key === "Enter" && selectedIndex.value !== -1) {
+    event.preventDefault();
+    selectOption(props.options[selectedIndex.value]);
+  }
 };
 
 onMounted(() => {
   if (!localValue.value?.value && props.options.length > 0) {
     const defaultOption =
-      props.options[props.defaultIndex || 0] || props.options[0]; // Значение по индексу или первое
+      props.options[props.defaultIndex || 0] || props.options[0];
     emit("update:modelValue", defaultOption);
   }
 });
@@ -116,10 +126,17 @@ onMounted(() => {
     transition: all 0.3s ease-in-out;
     color: $dark;
 
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
+
     &.active {
       color: $blue;
       top: 0;
       font-size: 1.4rem;
+      @include bp($point_2) {
+        font-size: 1rem;
+      }
     }
   }
 
@@ -133,6 +150,9 @@ onMounted(() => {
     border-bottom: 0.1rem solid $blue;
     font-size: 1.8rem;
     cursor: pointer;
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
   }
 
   .options {
@@ -154,6 +174,9 @@ onMounted(() => {
       cursor: pointer;
       transition: background-color 0.2s;
       @include flex-space;
+      @include bp($point_2) {
+        font-size: 1.2rem;
+      }
 
       &:hover {
         background-color: #f5f5f5;
@@ -177,5 +200,8 @@ onMounted(() => {
   font-family: $font_2;
   color: $blue;
   font-weight: 600;
+  @include bp($point_2) {
+    font-size: 1.2rem;
+  }
 }
 </style>

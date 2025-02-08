@@ -58,6 +58,10 @@ const toggleAnswer = (index: number) => {
 <style scoped lang="scss">
 .faq {
   padding-top: 3.2rem;
+
+  @include bp($point_2) {
+    padding-top: 0;
+  }
   &-title {
     text-align: center;
     font-size: 2.4rem;
@@ -72,6 +76,10 @@ const toggleAnswer = (index: number) => {
 
     overflow: hidden;
 
+    @include bp($point_2) {
+      border-radius: 1.6rem;
+    }
+
     .faq-question {
       padding: 1.5rem 1.6rem;
       cursor: pointer;
@@ -80,6 +88,10 @@ const toggleAnswer = (index: number) => {
       font-size: 1.8rem;
       font-family: $font_2;
       position: relative;
+
+      @include bp($point_2) {
+        font-size: 1.4rem;
+      }
     }
 
     .faq-answer {
@@ -88,6 +100,10 @@ const toggleAnswer = (index: number) => {
       font-weight: 500;
       color: $gray;
       padding: 0 1.6rem 1.6rem 1.6rem;
+
+      @include bp($point_2) {
+        font-size: 1.4rem;
+      }
     }
   }
 }
@@ -97,6 +113,10 @@ const toggleAnswer = (index: number) => {
   flex-direction: column;
   gap: 3.2rem;
   margin-bottom: 3.2rem;
+
+  @include bp($point_2) {
+    gap: 1rem;
+  }
 }
 
 .faq-icon {
@@ -114,6 +134,9 @@ const toggleAnswer = (index: number) => {
     font-size: 1.8rem;
     color: $dark;
     margin-bottom: 2.4rem;
+    @include bp($point_2) {
+      font-size: 1.6rem;
+    }
   }
 }
 </style>

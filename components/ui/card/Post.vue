@@ -40,14 +40,28 @@ withDefaults(
   @include flex-start;
   gap: 3.2rem;
 
+  @include bp($point_2) {
+    gap: 1rem;
+  }
+
   h3 {
     font-size: 2.4rem;
+    @include bp($point_2) {
+      font-size: 1.6rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .desc {
     max-height: 6rem;
     overflow: hidden;
     padding: 0.8rem 0 1.6rem 0;
+
+    @include bp($point_2) {
+      margin-bottom: 1rem;
+    }
   }
 }
 .post_img {
@@ -56,6 +70,10 @@ withDefaults(
   @include flex-center;
   border-radius: 0.8rem;
   overflow: hidden;
+
+  @include bp($point_2) {
+    height: 10rem;
+  }
   img {
     width: 100%;
     height: 100%;
@@ -78,6 +96,10 @@ withDefaults(
   p {
     font-size: 1.8rem;
     font-family: $font_2;
+
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
   }
   .ic {
     transform: rotate(45deg);

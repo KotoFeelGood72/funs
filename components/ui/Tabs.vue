@@ -40,6 +40,10 @@ const setActiveTab = (index: number) => {
   display: flex;
   flex-direction: column;
   gap: 2.3rem;
+
+  // @include bp($point_2) {
+  //   overflow: hidden;
+  // }
 }
 
 .tabs-list {
@@ -68,6 +72,10 @@ const setActiveTab = (index: number) => {
   @include flex-center;
   position: relative;
   cursor: pointer;
+
+  @include bp($point_2) {
+    padding: 1rem 2rem;
+  }
 
   &:nth-child(2) {
     border-left: 0.1rem solid $blue;

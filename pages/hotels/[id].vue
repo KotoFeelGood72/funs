@@ -181,6 +181,10 @@ const leave = (el: any) => {
     font-family: $font_2;
     margin-bottom: 2.4rem;
 
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
+
     .tab-link {
       background-color: $gray-light;
       border-radius: 0.8rem;

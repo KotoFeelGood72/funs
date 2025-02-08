@@ -26,14 +26,14 @@ export const useTicketAirStore = defineStore("air-ticket", {
       children: 0 as any,
       class_type: "ECONOMY",
       passengers: [] as Array<{
-        firstName: string;
-        lastName: string;
-        birthDate: string;
+        first_name: string;
+        last_name: string;
+        birth_date: string;
         gender: string;
-        seriaPassport: string;
-        numberPassport: string;
+        seria_passport: string;
+        number_passport: string;
         nationality: string;
-        validityPeriod: string;
+        validity_period: string;
       }>,
     },
   }),
@@ -42,14 +42,14 @@ export const useTicketAirStore = defineStore("air-ticket", {
       this.ticket.passengers = Array.from(
         { length: this.ticket.adults },
         () => ({
-          firstName: "",
-          lastName: "",
-          birthDate: "",
+          first_name: "",
+          last_name: "",
+          birth_date: "",
           gender: "",
-          seriaPassport: "",
-          numberPassport: "",
+          seria_passport: "",
+          number_passport: "",
           nationality: "",
-          validityPeriod: "",
+          validity_period: "",
         })
       );
     },

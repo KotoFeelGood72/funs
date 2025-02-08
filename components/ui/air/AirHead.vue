@@ -35,6 +35,11 @@ const props = defineProps<{
   // height: 4rem;
   // border-radius: 100rem;
   overflow: hidden;
+
+  @include bp($point_2) {
+    width: auto;
+    max-width: 15rem;
+  }
   img {
     width: 100%;
     height: 100%;

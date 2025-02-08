@@ -18,6 +18,10 @@ import AirCard from "~/components/ui/card/AirCard.vue";
 <style scoped lang="scss">
 .orders {
   padding: 3.2rem 0 0 0;
+
+  @include bp($point_2) {
+    padding: 0;
+  }
 }
 
 .header {
@@ -27,6 +31,9 @@ import AirCard from "~/components/ui/card/AirCard.vue";
     font-size: 2.4rem;
     font-family: $font_2;
     font-weight: 500;
+    @include bp($point_2) {
+      font-size: 2rem;
+    }
   }
 }
 </style>

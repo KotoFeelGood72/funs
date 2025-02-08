@@ -114,6 +114,10 @@ a {
   max-width: 94.8rem;
   padding: 0 2rem;
   margin: 0 auto;
+
+  @include bp($point_2) {
+    padding: 0;
+  }
 }
 
 img {
@@ -125,4 +129,46 @@ img {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(32%, 1fr));
   grid-gap: 2.4rem;
+}
+
+.page {
+  padding: 8rem 0;
+  .container {
+    background-color: $white;
+    border-radius: 3.2rem;
+    padding: 4rem;
+  }
+
+  span {
+    display: block;
+  }
+}
+.c18.doc-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.c14 {
+  font-size: 3.6rem;
+  padding: 2rem 0;
+}
+
+.c17 .c1 {
+  color: $gray;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.c0 {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $dark;
+}
+
+.c8,
+.c5 {
+  font-size: 2.4rem;
+  padding: 2rem 0;
+  font-weight: 600;
 }

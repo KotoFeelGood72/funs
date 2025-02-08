@@ -40,6 +40,11 @@ const isCountTxt = computed(() => {
   color: $gray;
   margin-bottom: 0.8rem;
   font-family: $font_2;
+
+  @include bp($point_2) {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
 }
 
 .line {
@@ -51,8 +56,7 @@ const isCountTxt = computed(() => {
   justify-content: center;
   align-items: center;
   background-image: linear-gradient(to right, #cce4ff 50%, transparent 50%);
-  background-size: 2rem 0.2rem; /* Длина и промежуток пунктиров */
-  // margin: 1rem 0;
+  background-size: 2rem 0.2rem;
 }
 
 .marker {
@@ -72,5 +76,9 @@ const isCountTxt = computed(() => {
   font-size: 1.4rem;
   font-family: $font_2;
   margin-bottom: 1rem;
+
+  @include bp($point_2) {
+    font-size: 1.2rem;
+  }
 }
 </style>

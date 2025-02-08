@@ -150,6 +150,9 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 .header_ic {
   @include flex-center;
   margin-right: 1rem;
+  @include bp($point_2) {
+    margin-right: 0;
+  }
 }
 .header {
   @include flex-space;
@@ -158,6 +161,10 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
   border-bottom: 0.1rem solid $blue;
   padding-bottom: 1rem;
   cursor: pointer;
+
+  @include bp($point_2) {
+    padding: 0.85rem 1.6rem !important;
+  }
 
   span {
     font-size: 1.4rem;
@@ -171,6 +178,9 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
     color: $dark;
     font-family: $font_2;
     line-height: 1.6rem;
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
   }
 }
 
@@ -190,6 +200,10 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @include bp($point_2) {
+    padding: 1.6rem;
+  }
   &.top {
     bottom: calc(100% + 2rem);
   }
@@ -203,11 +217,19 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
   grid-gap: 1.6rem;
 
+  @include bp($point_2) {
+    grid-gap: 1rem;
+  }
+
   p {
     font-size: 1.6rem;
     font-family: $font_3;
     @include flex-start;
     color: $dark;
+
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
   }
 }
 
@@ -221,6 +243,9 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
   span {
     font-size: 1.8rem;
     font-family: $font_3;
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
   }
   button {
     flex-grow: 1;
@@ -228,6 +253,10 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
     cursor: pointer;
     @include flex-center;
     transition: all 0.3s ease-in-out;
+
+    @include bp($point_2) {
+      height: 3rem;
+    }
     &:hover {
       background-color: $gray-light;
     }

@@ -92,9 +92,7 @@ label {
     content: "";
     border-radius: 0.4rem;
     position: absolute;
-    // top: 50%;
     top: 0.2rem;
-    // transform: translateY(-50%);
     left: 0;
     width: 1.6rem;
     height: 1.6rem;

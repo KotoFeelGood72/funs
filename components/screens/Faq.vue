@@ -160,6 +160,9 @@ nextTick(() => calculateHeights());
     flex-direction: column;
     gap: 2.4rem;
     position: relative;
+    @include bp($point_2) {
+      gap: 1.5rem;
+    }
   }
 }
 
@@ -174,6 +177,9 @@ nextTick(() => calculateHeights());
   border-radius: 1.2rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  @include bp($point_2) {
+    padding: 1.5rem;
+  }
 }
 
 .faq-question {
@@ -183,6 +189,10 @@ nextTick(() => calculateHeights());
     font-size: 2.4rem;
     color: $dark;
     font-weight: 500;
+
+    @include bp($point_2) {
+      font-size: 1.8rem;
+    }
   }
 }
 
@@ -198,6 +208,10 @@ nextTick(() => calculateHeights());
     padding: 2rem 0;
     font-size: 1.8rem;
     font-family: $font_2;
+    @include bp($point_2) {
+      padding: 1rem 0;
+      font-size: 1.4rem;
+    }
   }
 }
 

@@ -33,6 +33,14 @@
               </li>
             </ul>
           </div>
+          <div class="air-empty" v-else>
+            <h3>Рейсов не найдено 😔</h3>
+            <p>
+              К сожалению, мы не нашли подходящих авиабилетов по вашему запросу.
+              Попробуйте изменить параметры поиска: выберите другие даты,
+              аэропорты или пересмотрите фильтры. ✈️💙
+            </p>
+          </div>
         </div>
       </div>
     </ContentView>
@@ -64,8 +72,8 @@ const router = useRouter();
 
 // Список сортировки
 const sort = ref([
-  { name: "Новые", val: "new" },
-  { name: "Популярные", val: "popular" },
+  // { name: "Новые", val: "new" },
+  // { name: "Популярные", val: "popular" },
   { name: "Сначала дешевле", val: "downprice" },
   { name: "Сначала дороже", val: "upprice" },
 ]);
@@ -170,12 +178,20 @@ onMounted(() => {
   @include flex-start;
   align-items: flex-start;
   gap: 3.2rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+  }
 }
 
 .top-content {
   @include flex-space;
   gap: 1.6rem;
   padding-bottom: 4.8rem;
+
+  @include bp($point_2) {
+    display: none;
+  }
 }
 
 .content-col,
@@ -197,5 +213,22 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.air-empty {
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+  gap: 2rem;
+  min-height: 50rem;
+
+  h3 {
+    font-size: 4rem;
+  }
+  p {
+    max-width: 50rem;
+    font-size: 1.4rem;
+    color: $gray;
+  }
 }
 </style>

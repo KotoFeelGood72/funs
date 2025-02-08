@@ -38,5 +38,9 @@ const { ticket } = useTicketAirStoreRefs();
   margin-bottom: 2rem;
   font-size: 2rem;
   font-family: $font_2;
+
+  @include bp($point_2) {
+    font-size: 1.6rem;
+  }
 }
 </style>

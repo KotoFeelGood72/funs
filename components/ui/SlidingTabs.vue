@@ -100,6 +100,10 @@ onMounted(() => {
   background-color: $white;
   border-radius: 3.2rem;
   padding: 3.2rem;
+  @include bp($point_2) {
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+  }
 
   .tab-links {
     display: flex;
@@ -107,6 +111,18 @@ onMounted(() => {
     border-bottom: 0.1rem solid #b2b2b2;
     max-width: 65.1rem;
     margin: 0 auto;
+
+    @include bp($point_2) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      scrollbar-width: none; /* Для Firefox */
+      -ms-overflow-style: none; /* Для IE и Edge */
+
+      &::-webkit-scrollbar {
+        display: none; /* Для Chrome, Safari и Opera */
+      }
+    }
 
     .tab-link {
       position: relative;
@@ -116,6 +132,10 @@ onMounted(() => {
       font-family: $font_3;
       color: $gray;
       cursor: pointer;
+
+      @include bp($point_2) {
+        font-size: 1.4rem;
+      }
 
       &.active {
         color: $blue;
@@ -129,7 +149,7 @@ onMounted(() => {
     .slider {
       position: absolute;
       bottom: -0.1rem;
-      height: 1px;
+      height: 0.1rem;
       background-color: $blue;
       transition: width 0.3s, left 0.3s;
     }
@@ -137,6 +157,10 @@ onMounted(() => {
 
   .tab-content {
     margin-top: 1rem;
+
+    @include bp($point_2) {
+      margin-top: 3rem;
+    }
   }
 }
 </style>

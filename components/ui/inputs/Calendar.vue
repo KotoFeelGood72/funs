@@ -155,6 +155,10 @@ const formatDateRange = (range: Date[] | null) => {
   padding: 0.85rem 1.6rem !important;
   color: $black;
 
+  @include bp($point_2) {
+    font-size: 1.4rem;
+  }
+
   &::-webkit-input-placeholder {
     opacity: 1;
     color: var(--dark);

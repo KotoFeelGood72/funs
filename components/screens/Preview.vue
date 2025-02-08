@@ -115,6 +115,7 @@ const toggleActive = (index: number) => {
   @include bp($point_2) {
     order: 0;
     max-width: 100%;
+    border-radius: 1.6rem;
   }
 
   img {

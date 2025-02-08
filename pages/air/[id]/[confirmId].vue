@@ -30,18 +30,18 @@
             <div v-if="activeTab === index" class="accordion_item__body">
               <Inputs
                 label="Фамилия"
-                v-model="passenger.lastName"
+                v-model="passenger.last_name"
                 :id="route.params.id + 'lastName' + index"
               />
               <Inputs
                 label="Имя"
-                v-model="passenger.firstName"
+                v-model="passenger.first_name"
                 :id="route.params.id + 'firstName' + index"
               />
               <Inputs
                 type="date"
                 label="Дата рождения"
-                v-model="passenger.birthDate"
+                v-model="passenger.birth_date"
                 :id="route.params.id + 'birthDate' + index"
               />
               <Select
@@ -51,12 +51,12 @@
               />
               <Inputs
                 label="Серия загранпаспорта"
-                v-model="passenger.seriaPassport"
+                v-model="passenger.seria_passport"
                 :id="route.params.id + 'passportSeries' + index"
               />
               <Inputs
                 label="Номер загранпаспорта"
-                v-model="passenger.numberPassport"
+                v-model="passenger.number_passport"
                 :id="route.params.id + 'passportNumber' + index"
               />
               <Select
@@ -67,7 +67,7 @@
               <Inputs
                 type="date"
                 label="Срок действия"
-                v-model="passenger.validityPeriod"
+                v-model="passenger.validity_period"
                 :id="route.params.id + 'validityPeriod' + index"
               />
             </div>
@@ -162,6 +162,11 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
   gap: 3.2rem;
+
+  @include bp($point_2) {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 3rem;
+  }
 }
 
 .accordion_item__body {
@@ -174,6 +179,10 @@ onMounted(() => {
   @include flex-space;
   align-items: flex-end;
   gap: 2rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+  }
 
   .col {
     p {

@@ -33,6 +33,9 @@
                 </a>
               </li>
             </ul>
+            <div class="payment">
+              <img src="@/assets/img/payment.png" alt="" />
+            </div>
           </div>
         </div>
         <div class="footer__navigation">
@@ -73,6 +76,10 @@ const nav = ref<any>([
   background-color: $white;
   border-top-left-radius: 3.2rem;
   border-top-right-radius: 3.2rem;
+
+  @include bp($point_2) {
+    padding: 6rem 0 2rem 0;
+  }
   &:after {
     position: absolute;
     left: 0;
@@ -102,22 +109,36 @@ const nav = ref<any>([
 .footer_main {
   @include flex-start;
   gap: 3.2rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 2rem;
+  }
 }
 
 .footer_info {
   background-color: $blue;
-  padding: 3.2rem;
+  padding: 1.6rem 3.2rem;
   border-radius: 3.2rem;
   color: $white;
+
+  @include bp($point_2) {
+    order: 1;
+    width: 100%;
+  }
 }
 
 .footer_mini__logo {
-  margin-bottom: 3.2rem;
+  margin-bottom: 1.6rem;
 }
 
 .footer__top {
   font-size: 1.8rem;
-  min-height: 13.6rem;
+  // min-height: 13.6rem;
+
+  @include bp($point_2) {
+    min-height: auto;
+  }
 }
 
 .footer_bottom {
@@ -139,6 +160,9 @@ const nav = ref<any>([
   border: 0.1rem solid $light;
   border-radius: 3.2rem;
   overflow: hidden;
+  @include bp($point_2) {
+    order: 0;
+  }
   nav {
     width: 100%;
     a {
@@ -160,6 +184,18 @@ const nav = ref<any>([
 .footer_logo {
   position: relative;
   z-index: 22;
+
+  @include bp($point_2) {
+    margin-bottom: 3rem;
+  }
+  img {
+    width: 100%;
+  }
+}
+
+.payment {
+  max-width: 15rem;
+  margin: 2rem 0 0 0;
   img {
     width: 100%;
   }

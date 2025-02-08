@@ -60,6 +60,10 @@ const props = withDefaults(
   border-radius: 0.8rem;
   display: flex;
   gap: 1.6rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+  }
 }
 
 .price {
@@ -92,5 +96,9 @@ const props = withDefaults(
 
 .air_action {
   min-width: 25.7rem;
+  @include bp($point_2) {
+    min-width: 100%;
+    order: 1;
+  }
 }
 </style>

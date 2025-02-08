@@ -58,6 +58,11 @@ const isSize = computed(() => {
   font-family: $font_3;
   transition: all 0.3s ease-in-out;
 
+  @include bp($point_2) {
+    width: 100%;
+    justify-content: center;
+  }
+
   &.disabled {
     pointer-events: none;
     border-color: $gray-light !important;
@@ -67,7 +72,9 @@ const isSize = computed(() => {
   }
 
   p {
-    margin-bottom: -0.3rem;
+    @include bp($point_2, $direction: min) {
+      margin-bottom: -0.3rem;
+    }
   }
 
   &.small-btn {

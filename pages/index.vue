@@ -150,14 +150,31 @@ onMounted(() => {
   font-family: $font_1;
   line-height: 16rem;
 
+  @include bp($point_2) {
+    font-size: 5rem;
+    line-height: 120%;
+    text-align: center;
+    margin-bottom: 8rem;
+  }
+
   img {
     height: 18rem;
     width: 40rem;
+
+    @include bp($point_2) {
+      width: auto;
+      height: auto;
+      max-width: 10rem;
+      flex-grow: 1;
+    }
   }
 
   h3 {
     font-family: $font_5;
     font-style: italic;
+    @include bp($point_2) {
+      font-size: 4rem;
+    }
   }
 
   p {
@@ -165,16 +182,25 @@ onMounted(() => {
     font-family: $font_1;
     color: $light;
     text-align: center;
+    @include bp($point_2) {
+      font-size: 2rem;
+    }
   }
 }
 
 .qoute_row {
   @include flex-start;
+  gap: 2rem;
 }
 
 .services_main {
   @include flex-center;
   gap: 3.2rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
   :deep(.btn) {
     justify-content: center;
@@ -185,6 +211,11 @@ onMounted(() => {
   padding: 3.2rem;
   border-radius: 3.2rem;
   background-color: $white;
+
+  @include bp($point_2) {
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+  }
   h3 {
     font-size: 2.4rem;
     margin-bottom: 0.8rem;
@@ -231,10 +262,20 @@ onMounted(() => {
   @include flex-start;
   align-items: flex-start;
 
+  @include bp($point_2) {
+    flex-direction: column;
+    border-radius: 1.6rem;
+    gap: 3rem;
+  }
+
   h3 {
     font-size: 6.4rem;
     margin-bottom: 2.4rem;
     line-height: 100%;
+
+    @include bp($point_2) {
+      font-size: 2.6rem;
+    }
   }
 }
 .callback__content {

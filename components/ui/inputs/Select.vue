@@ -74,6 +74,10 @@ const selectOption = (option: string | number) => {
   border-bottom: 0.1rem solid $blue;
   height: 4.2rem;
 
+  @include bp($point_2) {
+    height: 3rem;
+  }
+
   .label {
     position: absolute;
     left: 1.6rem;
@@ -83,10 +87,14 @@ const selectOption = (option: string | number) => {
     top: 50%;
     transform: translateY(-50%);
     color: $dark;
+
     &.active {
       color: $blue;
       font-size: 1.4rem;
       top: 0;
+      @include bp($point_2) {
+        font-size: 1rem;
+      }
       // top: -0.5rem;
     }
   }
@@ -101,6 +109,9 @@ const selectOption = (option: string | number) => {
     font-size: 1.8rem;
     color: $dark;
     @include flex-space;
+    @include bp($point_2) {
+      font-size: 1.2rem;
+    }
   }
 
   .options {
@@ -123,6 +134,11 @@ const selectOption = (option: string | number) => {
       border-bottom: 0.1rem solid #a2d0ff6b;
       transition: all 0.3s ease-in-out;
       font-family: $font_2;
+
+      @include bp($point_2) {
+        padding: 1rem;
+        font-size: 1.2rem;
+      }
 
       &:hover {
         color: $light-blue;

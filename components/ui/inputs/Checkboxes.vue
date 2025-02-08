@@ -71,6 +71,10 @@ label {
   cursor: pointer;
   user-select: none;
   font-size: 1.4rem;
+
+  @include bp($point_2) {
+    display: block;
+  }
   &:hover {
     &:before {
       border-color: $blue;

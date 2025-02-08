@@ -78,11 +78,19 @@ const togglePasswordVisibility = () => {
   border-bottom: 0.1rem solid $blue;
   transition: all 0.3s ease-in-out;
 
+  @include bp($point_2) {
+    height: 3rem;
+  }
+
   &.active {
     label {
       top: 0;
       font-size: 1.4rem;
       color: $blue;
+      @include bp($point_2) {
+        font-size: 1rem;
+        top: -0.2rem;
+      }
     }
   }
 }
@@ -100,6 +108,11 @@ label {
   font-family: $font_2;
   font-size: 1.8rem;
   color: $dark;
+
+  @include bp($point_2) {
+    font-size: 1.4rem;
+    padding: 0;
+  }
 }
 
 input {
@@ -111,6 +124,11 @@ input {
   outline: none;
   padding: 1.1rem 1.6rem;
   font-size: 1.8rem;
+
+  @include bp($point_2) {
+    font-size: 1.4rem;
+    padding: 1rem;
+  }
 
   &::-webkit-input-placeholder {
     opacity: 1;
@@ -128,6 +146,6 @@ input {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none; /* Скрываем иконку календаря */
+  display: none;
 }
 </style>

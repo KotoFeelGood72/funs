@@ -18,7 +18,12 @@
     <div class="filter-group">
       <SelectPeopleHotel />
     </div>
-    <btn name="Забронировать" icon="right" @click="nextHotelBooking" />
+    <btn
+      name="Забронировать"
+      icon="right"
+      @click="nextHotelBooking"
+      theme="primary"
+    />
   </div>
 </template>
 

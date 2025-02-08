@@ -59,6 +59,9 @@ const list = [
   background-color: $white;
   padding: 3.2rem;
   border-radius: 3.2rem;
+  @include bp($point_2) {
+    border-radius: 1.6rem;
+  }
   h2 {
     font-size: 10rem;
     line-height: 9.5rem;

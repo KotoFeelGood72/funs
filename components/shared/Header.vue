@@ -68,6 +68,12 @@ const goToProfile = () => {
   border-bottom-right-radius: 3.2rem;
   border-bottom-left-radius: 3.2rem;
   transition: all 0.3s ease-in-out;
+
+  @include bp($point_2) {
+    height: 8rem;
+    border-bottom-right-radius: 1.6rem;
+    border-bottom-left-radius: 1.6rem;
+  }
   &.isHome {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;

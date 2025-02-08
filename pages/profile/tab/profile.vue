@@ -42,11 +42,18 @@ const { updateProfile, user, getProfile } = useAuth();
 .header {
   margin-bottom: 3.2rem;
   padding-top: 3.2rem;
+  @include bp($point_2) {
+    padding-top: 0;
+  }
   h3 {
     font-family: $font_2;
     font-weight: 500;
     font-size: 2.4rem;
     text-align: center;
+
+    @include bp($point_2) {
+      font-size: 2rem;
+    }
   }
 }
 
@@ -55,6 +62,11 @@ const { updateProfile, user, getProfile } = useAuth();
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
   grid-gap: 2.4rem;
   margin-bottom: 2.4rem;
+
+  @include bp($point_2) {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    grid-gap: 2rem;
+  }
 }
 
 .profile {
@@ -67,5 +79,9 @@ const { updateProfile, user, getProfile } = useAuth();
   @include flex-end;
   gap: 1.6rem;
   padding-top: 2.4rem;
+
+  @include bp($point_2) {
+    justify-content: space-between;
+  }
 }
 </style>

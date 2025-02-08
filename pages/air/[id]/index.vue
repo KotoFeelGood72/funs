@@ -1,6 +1,8 @@
 <template>
   <ContentView
-    :title="currentTicket?.departure_name + ' - ' + currentTicket?.arrival_name"
+    :title="
+      currentTicket?.start_city_name + ' - ' + currentTicket?.final_city_name
+    "
     :isLoading="isLoading"
   >
     <div class="passenger-form" v-if="ticket.passengers.length > 0">
@@ -14,18 +16,18 @@
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            v-model="ticket.passengers[activeTab].lastName"
+            v-model="ticket.passengers[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            v-model="ticket.passengers[activeTab].firstName"
+            v-model="ticket.passengers[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
           <Inputs
             type="date"
             label="Дата рождения"
-            v-model="ticket.passengers[activeTab].birthDate"
+            v-model="ticket.passengers[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
 
@@ -36,12 +38,12 @@
           />
           <Inputs
             label="Серия загранпаспорта"
-            v-model="ticket.passengers[activeTab].seriaPassport"
+            v-model="ticket.passengers[activeTab].seria_passport"
             :id="'passportSeries' + activeTab"
           />
           <Inputs
             label="Номер загранпаспорта"
-            v-model="ticket.passengers[activeTab].numberPassport"
+            v-model="ticket.passengers[activeTab].number_passport"
             :id="'passportNumber' + activeTab"
           />
           <Select
@@ -52,7 +54,7 @@
           <Inputs
             type="date"
             label="Срок действия"
-            v-model="ticket.passengers[activeTab].validityPeriod"
+            v-model="ticket.passengers[activeTab].validity_period"
             :id="'validityPeriod' + activeTab"
           />
         </div>
@@ -128,14 +130,14 @@ const isFormValid = computed(() => {
     ticket.value.passengers.length > 0 &&
     ticket.value.passengers.every((p) => {
       return (
-        p.lastName &&
-        p.firstName &&
-        p.birthDate &&
+        p.last_name &&
+        p.first_name &&
+        p.birth_date &&
         p.gender &&
-        p.seriaPassport &&
-        p.numberPassport &&
+        p.seria_passport &&
+        p.number_passport &&
         p.nationality &&
-        p.validityPeriod
+        p.validity_period
       );
     })
   );
@@ -154,6 +156,9 @@ const isFormValid = computed(() => {
     font-size: 1.8rem;
     font-family: $font_2;
     margin-bottom: 2.4rem;
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
 
     .tab-link {
       background-color: $gray-light;
@@ -161,6 +166,10 @@ const isFormValid = computed(() => {
       color: $dark;
       padding: 1rem 0.8rem 0.8rem 0.8rem;
       cursor: pointer;
+
+      @include bp($point_2) {
+        padding: 1rem 1.5rem;
+      }
       &.active {
         color: $blue;
         background-color: #a2d0ff4a;
@@ -188,6 +197,10 @@ const isFormValid = computed(() => {
     justify-content: space-between;
     align-items: flex-end;
     gap: 1.6rem;
+
+    @include bp($point_2) {
+      flex-direction: column;
+    }
 
     .total {
       span {

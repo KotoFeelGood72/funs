@@ -38,6 +38,10 @@ const localValue = computed({
 .radios {
   @include flex-start;
   gap: 0.8rem;
+
+  @include bp($point_2) {
+    display: none;
+  }
 }
 
 .radio {

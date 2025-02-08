@@ -41,6 +41,11 @@ const router = useRouter();
 .post__w {
   @include flex-start;
   align-items: flex-start;
+
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 .posts {
   background-color: $blue;
@@ -53,6 +58,12 @@ const router = useRouter();
   h3 {
     font-size: 3.2rem;
   }
+
+  :deep(.btn) {
+    @include bp($point_2) {
+      width: auto;
+    }
+  }
 }
 
 .posts-grid {
@@ -60,6 +71,11 @@ const router = useRouter();
   flex-wrap: wrap;
   gap: 3.2rem;
   max-width: 118.8rem;
+
+  @include bp($point_2) {
+    max-width: 100%;
+    gap: 1rem;
+  }
   li {
     background-color: $white;
     border: 0.1rem solid #d9d9d9;
@@ -67,20 +83,40 @@ const router = useRouter();
     padding: 3.2rem;
     color: $dark;
     width: 100%;
+
+    @include bp($point_2) {
+      padding: 1rem;
+      border-radius: 1.6rem;
+    }
     &:nth-child(1) {
       max-width: calc(50% - 3.2rem);
+      @include bp($point_2) {
+        max-width: 48%;
+      }
     }
     &:nth-child(2) {
       max-width: calc(50% - 3.2rem);
+      @include bp($point_2) {
+        max-width: 48%;
+      }
     }
     &:nth-child(3) {
       max-width: calc(33.3% - 3.2rem);
+      @include bp($point_2) {
+        max-width: 48%;
+      }
     }
     &:nth-child(4) {
       max-width: calc(33.3% - 3.2rem);
+      @include bp($point_2) {
+        max-width: 48%;
+      }
     }
     &:nth-child(5) {
       max-width: calc(33.3% - 3.2rem);
+      @include bp($point_2) {
+        max-width: 48%;
+      }
     }
   }
 }
@@ -89,6 +125,11 @@ const router = useRouter();
   @include flex-start;
   flex-direction: column;
   gap: 3.2rem;
+
+  @include bp($point_2) {
+    flex-direction: row;
+    gap: 1rem;
+  }
   div {
     width: 100%;
     height: 100%;

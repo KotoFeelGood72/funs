@@ -1,51 +1,54 @@
 <template>
   <div class="sidebar">
-    <div class="sidebar-head">
+    <div class="sidebar-head" @click="toggleFilters">
       <p>Фильтры</p>
-      <div class="clear" @click="resetFilters">
+      <div :class="['arrow_expanded', { active: isExpanded }]">
+        <Icon name="bxs:down-arrow" :size="12" />
+      </div>
+      <div class="clear" @click.stop="resetFilters" v-if="hasActiveFilters">
         <p>Сбросить</p>
         <div class="ic"><Icon name="f:close" /></div>
       </div>
     </div>
 
-    <!-- Фильтр по пересадкам -->
-    <div class="row">
-      <div class="row-head">Пересадки</div>
-      <div class="list">
-        <Checkboxes
-          :id="'transfer-item-' + i"
-          :label="item"
-          :value="parseInt(item)"
-          v-for="(item, i) in transfer"
-          :key="'transfer-item-' + i"
-          v-model="localValueTransfers"
-          name="transfers"
-        />
+    <div v-show="isExpanded" class="col">
+      <div class="row">
+        <div class="row-head">Пересадки</div>
+        <div class="list">
+          <Checkboxes
+            :id="'transfer-item-' + i"
+            :label="item"
+            :value="parseInt(item)"
+            v-for="(item, i) in transfer"
+            :key="'transfer-item-' + i"
+            v-model="localValueTransfers"
+            name="transfers"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="row-head">Авиакомпании</div>
-      <div class="list">
-        <Checkboxes
-          :id="'airline-item-' + i"
-          :label="item"
-          :value="item"
-          v-for="(item, i) in airlines"
-          :key="'airline-item-' + i"
-          v-model="localValueAirline"
-          name="airline"
-        />
+      <div class="row">
+        <div class="row-head">Авиакомпании</div>
+        <div class="list">
+          <Checkboxes
+            :id="'airline-item-' + i"
+            :label="item"
+            :value="item"
+            v-for="(item, i) in airlines"
+            :key="'airline-item-' + i"
+            v-model="localValueAirline"
+            name="airline"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import Checkboxes from "../ui/inputs/Checkboxes.vue";
 
-// Принимаем проп modelValue из родительского компонента
 const props = defineProps<{
   airlines?: any;
   modelValue: {
@@ -58,11 +61,17 @@ const emit = defineEmits(["update:modelValue"]);
 
 const transfer = ["1 пересадка", "2 пересадки", "3 пересадки"];
 
-// Локальные значения, которые синхронизируются с родительским v-model
 const localValueTransfers = ref<number[]>(props.modelValue.transfer || []);
 const localValueAirline = ref<string[]>(props.modelValue.airline || []);
 
-// Следим за изменениями и обновляем родительский v-model
+const isExpanded = ref(true); // По умолчанию фильтры открыты
+
+const hasActiveFilters = computed(() => {
+  return (
+    localValueTransfers.value.length > 0 || localValueAirline.value.length > 0
+  );
+});
+
 watch(
   () => [localValueTransfers.value, localValueAirline.value],
   () => {
@@ -74,7 +83,10 @@ watch(
   { deep: true }
 );
 
-// Функция сброса фильтров
+const toggleFilters = () => {
+  isExpanded.value = !isExpanded.value;
+};
+
 const resetFilters = () => {
   localValueTransfers.value = [];
   localValueAirline.value = [];
@@ -94,6 +106,13 @@ const resetFilters = () => {
   position: sticky;
   top: 3rem;
   left: 0;
+
+  @include bp($point_2) {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    gap: 2rem;
+  }
 }
 
 .sidebar-head {
@@ -101,10 +120,15 @@ const resetFilters = () => {
   justify-content: space-between;
   align-items: center;
   gap: 1.2rem;
+  position: relative;
 
   & > p {
     font-size: 2.4rem;
     font-family: $font_2;
+
+    @include bp($point_2) {
+      font-size: 1.8rem;
+    }
   }
 }
 
@@ -135,5 +159,29 @@ const resetFilters = () => {
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
+}
+
+.arrow_expanded {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+
+  &.active {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.row {
+  @include bp($point_2) {
+    margin-bottom: 2rem;
+  }
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 </style>

@@ -37,5 +37,9 @@ const { sendFormAnonim, formData, isLoadingFormAnonim } = useFormSend();
   flex-direction: column;
   gap: 2.4rem;
   flex-grow: 1;
+
+  @include bp($point_2) {
+    width: 100%;
+  }
 }
 </style>

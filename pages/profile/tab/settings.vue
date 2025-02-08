@@ -89,12 +89,20 @@ const { user, updateProfile } = useAuth();
 .settings {
   padding-top: 3.2rem;
 
+  @include bp($point_2) {
+    padding-top: 0;
+  }
+
   &-title {
     text-align: center;
     font-size: 2.4rem;
     font-family: $font_2;
     font-weight: 500;
     margin-bottom: 3.2rem;
+
+    @include bp($point_2) {
+      font-size: 2rem;
+    }
   }
 
   .settings-card {
@@ -126,6 +134,10 @@ const { user, updateProfile } = useAuth();
     .settings-item-link {
       font-size: 1.8rem;
       color: $blue;
+
+      @include bp($point_2) {
+        font-size: 1.4rem;
+      }
     }
   }
 
@@ -134,6 +146,10 @@ const { user, updateProfile } = useAuth();
     display: inline-block;
     width: 4rem;
     height: 2.4rem;
+
+    @include bp($point_2) {
+      min-width: 4rem;
+    }
 
     input {
       opacity: 0;

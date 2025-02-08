@@ -50,16 +50,29 @@ const props = defineProps<{
   @include flex-space;
   gap: 1.6rem;
   padding-right: 9.3rem;
+
+  @include bp($point_2) {
+    padding: 0;
+  }
 }
 
 .time {
   font-size: 2.4rem;
+
+  @include bp($point_2) {
+    font-size: 2rem;
+  }
 }
 
 .city {
   font-size: 1.4rem;
   color: $gray;
   padding: 0.8rem 0 2.8rem 0;
+
+  @include bp($point_2) {
+    font-size: 1.2rem;
+    padding: 0.8rem 0;
+  }
 }
 
 .tags {
@@ -67,20 +80,34 @@ const props = defineProps<{
   color: $blue;
   font-family: $font_3;
   text-transform: uppercase;
+
+  @include bp($point_2) {
+    font-size: 1.2rem;
+  }
 }
 
 .info-ic {
   @include flex-center;
+
+  @include bp($point_2) {
+    display: none;
+  }
 }
 
 .info-start {
   @include flex-start;
   align-items: flex-start;
   gap: 2.4rem;
+  @include bp($point_2) {
+    gap: 0;
+  }
 }
 .info-end {
   @include flex-start;
   align-items: flex-start;
   gap: 2.4rem;
+  @include bp($point_2) {
+    gap: 0;
+  }
 }
 </style>

@@ -54,6 +54,10 @@ label {
   pointer-events: none;
   transition: all 0.2s ease-in-out;
   font-family: $font_2;
+
+  @include bp($point_2) {
+    font-size: 1.4rem;
+  }
 }
 
 textarea {
@@ -65,6 +69,10 @@ textarea {
   outline: none;
   resize: none;
   font-family: $font_2;
+
+  @include bp($point_2) {
+    font-size: 1.4rem;
+  }
 }
 
 textarea:focus {
@@ -79,5 +87,9 @@ label.active {
   background-color: $white;
   padding: 0.5rem 1rem 0.5rem 0.4rem;
   margin: -0.5rem 0 0 -0.5rem;
+
+  @include bp($point_2) {
+    font-size: 1.2rem;
+  }
 }
 </style>
