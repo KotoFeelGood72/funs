@@ -21,5 +21,9 @@ export function useFetchPlace() {
     }
   };
 
-  return { places, fetchPlace };
+  const clear = () => {
+    places.value = [];
+  };
+
+  return { places, fetchPlace, clear };
 }

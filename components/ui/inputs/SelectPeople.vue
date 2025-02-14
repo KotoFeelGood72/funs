@@ -14,31 +14,8 @@
         :class="['dropdown', dropdownPosition]"
         ref="dropdown"
       >
-        <div class="counter">
-          <p>Взрослые</p>
-          <div class="counter-buttons">
-            <button @click="decreaseAdults">
-              <Icon name="f:minus" />
-            </button>
-            <span>{{ ticket.adults }}</span>
-            <button @click="increaseAdults">
-              <Icon name="f:plus" />
-            </button>
-          </div>
-        </div>
-
-        <div class="counter">
-          <p>Дети</p>
-          <div class="counter-buttons">
-            <button @click="decreaseChildren">
-              <Icon name="f:minus" />
-            </button>
-            <span>{{ ticket.children }}</span>
-            <button @click="increaseChildren">
-              <Icon name="f:plus" />
-            </button>
-          </div>
-        </div>
+        <Counter label="Взрослые" v-model="ticket.adults" />
+        <Counter label="Дети" v-model="ticket.children" />
         <Checkbox
           id="isBusinessClass"
           label="Бизнес класс"
@@ -53,6 +30,7 @@
 
 <script setup lang="ts">
 import Checkbox from "./Checkbox.vue";
+import Counter from "./Counter.vue";
 import {
   useTicketAirStore,
   useTicketAirStoreRefs,
@@ -94,7 +72,7 @@ watch(
     }
   }
 );
-// Закрыть, если кликнули вне области
+
 const closeDropdown = (event: MouseEvent) => {
   if (
     isDropdownVisible.value &&
@@ -105,7 +83,6 @@ const closeDropdown = (event: MouseEvent) => {
   }
 };
 
-// Рассчитать позицию дропдауна
 const calculateDropdownPosition = () => {
   if (!wrapper.value) return;
 
@@ -116,23 +93,6 @@ const calculateDropdownPosition = () => {
     wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
-const increaseAdults = () => {
-  ticket.value.adults++;
-
-  createPassengers();
-};
-
-const decreaseAdults = () => {
-  if (ticket.value.adults > 1) {
-    ticket.value.adults--;
-    createPassengers();
-  }
-};
-const increaseChildren = () => ticket.value.children++;
-const decreaseChildren = () =>
-  ticket.value.children > 0 && ticket.value.children--;
-
-// Слушатели событий
 onMounted(() => document.addEventListener("click", closeDropdown));
 onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 </script>
@@ -209,57 +169,6 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
   }
   &.bottom {
     top: calc(100% + 2rem);
-  }
-}
-
-.counter {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
-  grid-gap: 1.6rem;
-
-  @include bp($point_2) {
-    grid-gap: 1rem;
-  }
-
-  p {
-    font-size: 1.6rem;
-    font-family: $font_3;
-    @include flex-start;
-    color: $dark;
-
-    @include bp($point_2) {
-      font-size: 1.4rem;
-    }
-  }
-}
-
-.counter-buttons {
-  border: 0.1rem solid $light;
-  border-radius: 0.8rem;
-  @include flex-center;
-  gap: 1.6rem;
-  overflow: hidden;
-
-  span {
-    font-size: 1.8rem;
-    font-family: $font_3;
-    @include bp($point_2) {
-      font-size: 1.4rem;
-    }
-  }
-  button {
-    flex-grow: 1;
-    height: 4rem;
-    cursor: pointer;
-    @include flex-center;
-    transition: all 0.3s ease-in-out;
-
-    @include bp($point_2) {
-      height: 3rem;
-    }
-    &:hover {
-      background-color: $gray-light;
-    }
   }
 }
 

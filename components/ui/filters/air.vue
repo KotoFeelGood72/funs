@@ -1,20 +1,9 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect
-        label="Откуда"
-        :options="places"
-        v-model="ticket.departure"
-      />
+      <SearchSelect label="Откуда" v-model="ticket.departure" />
     </div>
-    <div class="filter-change" @click="swapCities">
-      <div class="filter-change__ic">
-        <Icon name="f:right" />
-      </div>
-      <div class="filter-change__ic">
-        <Icon name="f:left" />
-      </div>
-    </div>
+    <SwapBtn @click="swapCities" />
     <div class="filter-group">
       <SearchSelect label="Куда" :options="places" v-model="ticket.arrival" />
     </div>
@@ -35,7 +24,6 @@
       @click="getTicketsUi()"
       theme="primary"
     />
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -43,6 +31,7 @@
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
+import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
 import {
   useTicketAirStore,
@@ -64,52 +53,46 @@ const route = useRoute();
 const router = useRouter();
 
 const { ticket } = useTicketAirStoreRefs();
-const { fetchTickets, clearPlace, createPassengers } = useTicketAirStore();
+// const { fetchTickets, clearPlace, createPassengers } = useTicketAirStore();
 const emit = defineEmits();
 
+const filters = ref<any>({
+  departure_name: "",
+  departure_value: "",
+  arrival_name: "",
+  arrival_value: "",
+  date_forward: "",
+  date_backward: "",
+  class_type: "",
+  adults: 1,
+});
 
+// const applyFilters = () => {
+//   if (
+//     !ticket.value.departure.name ||
+//     !ticket.value.arrival.name ||
+//     !ticket.value.date_forward
+//   ) {
+//     toast.error("Заполните все поля перед поиском!");
+//     return;
+//   }
 
-const errorMessage = ref("");
-
-const applyFilters = () => {
-  if (
-    !ticket.value.departure.name ||
-    !ticket.value.arrival.name ||
-    !ticket.value.date_forward
-  ) {
-    toast.error("Заполните все поля перед поиском!");
-    errorMessage.value = "";
-    return;
-  }
-  errorMessage.value = "";
-  fetchTickets(router, route);
-};
+//   fetchTickets(router, route);
+// };
 
 const swapCities = () => {
   const temp = ticket.value.arrival;
   ticket.value.arrival = ticket.value.departure;
   ticket.value.departure = temp;
-  clearPlace();
+  // clearPlace();
 };
 
-watch(
-  () => ticket.value.departure,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-
-watch(
-  () => ticket.value.arrival,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-
-createPassengers();
+// createPassengers();
 
 const getTicketsUi = () => {
-  getTickets();
+  // getTickets({
+  //   departure_name: ,
+  // });
 };
 </script>
 
@@ -135,20 +118,5 @@ const getTicketsUi = () => {
 .people-ic {
   @include flex-center;
   color: $blue;
-}
-
-.filter-change {
-  @include flex-center;
-  flex-direction: column;
-  gap: 0.4rem;
-  cursor: pointer;
-
-  @include bp($point_2) {
-    display: none;
-  }
-}
-
-.filter-change__ic {
-  @include flex-center;
 }
 </style>

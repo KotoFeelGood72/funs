@@ -1,56 +1,47 @@
 <template>
-  <ClientOnly>
-    <div class="select" :class="{ active: displayName || dropdownOpen }">
-      <label :class="{ active: dropdownOpen || displayName }" class="label">
-        {{ label }}
-      </label>
+  <div class="select" :class="{ active: displayName || dropdownOpen }">
+    <label :class="{ active: dropdownOpen || displayName }" class="label">
+      {{ label }}
+    </label>
 
-      <input
-        type="text"
-        :value="displayName"
-        @focus="toggleDropdown(true)"
-        @blur="toggleDropdown(false)"
-        @input="onInput($event)"
-        @keydown="handleKeyDown"
-        class="input"
-      />
+    <input
+      type="text"
+      :value="displayName"
+      @focus="toggleDropdown(true)"
+      @blur="toggleDropdown(false)"
+      @input="onInput($event)"
+      @keydown="handleKeyDown"
+      class="input"
+    />
 
-      <ul v-if="dropdownOpen && options.length > 0" class="options">
-        <li
-          v-for="(option, index) in options"
-          :key="index"
-          :class="{ selected: index === selectedIndex }"
-          @mousedown="selectOption(option)"
-        >
-          <p>
-            {{ option.name }}
-          </p>
-          <p class="val">
-            {{ option.value }}
-          </p>
-        </li>
-        <li v-if="options.length === 0" class="no-options">
-          Нет доступных вариантов
-        </li>
-      </ul>
-    </div>
-  </ClientOnly>
+    <ul v-if="dropdownOpen && places.length > 0" class="options">
+      <li
+        v-for="(option, index) in places"
+        :key="index"
+        :class="{ selected: index === selectedIndex }"
+        @mousedown="selectOption(option)"
+      >
+        <p>
+          {{ option.name }}
+        </p>
+        <p class="val">
+          {{ option.value }}
+        </p>
+      </li>
+      <li v-if="places.length === 0" class="no-options">
+        Нет доступных вариантов
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineEmits, onMounted } from "vue";
-import { useTicketAirStore } from "~/store/useTicketAirStore";
+import { ref, computed, defineEmits, watch } from "vue";
+import { useFetchPlace } from "@/composables/usePlace";
 
-const props = defineProps<{
-  options: Array<{ name: string; value: string }>;
-  modelValue: any;
-  defaultIndex?: number;
-  label?: string;
-  type?: "air" | "eta" | "hotel";
-}>();
-
+const props = defineProps<{ modelValue: any; label?: string }>();
 const emit = defineEmits(["update:modelValue"]);
-const { clearPlace } = useTicketAirStore();
+const { fetchPlace, clear, places } = useFetchPlace();
 
 const localValue = computed({
   get: () => props.modelValue,
@@ -61,28 +52,30 @@ const displayName = computed(() => localValue.value?.name || "");
 const dropdownOpen = ref(false);
 const selectedIndex = ref(-1);
 
+watch(localValue, () => {
+  fetchPlace(displayName.value);
+});
+
 const toggleDropdown = (open: boolean) => {
   setTimeout(() => {
     dropdownOpen.value = open;
     if (!open) {
-      clearPlace();
+      clear();
       selectedIndex.value = -1;
     }
   }, 50);
 };
 
-const selectOption = (option: { name: string; value: string }) => {
+const selectOption = (option: any) => {
   emit("update:modelValue", option);
-  clearPlace();
+  clear();
   toggleDropdown(false);
 };
 
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  const value = target.value;
-  target.value = value;
-  emit("update:modelValue", { name: value, value: "" });
-  selectedIndex.value = -1; // Сброс выбранного индекса при вводе
+  emit("update:modelValue", { name: target.value, value: "" });
+  selectedIndex.value = -1;
 };
 
 const handleKeyDown = (event: KeyboardEvent) => {
@@ -90,24 +83,16 @@ const handleKeyDown = (event: KeyboardEvent) => {
     event.preventDefault();
     selectedIndex.value = Math.min(
       selectedIndex.value + 1,
-      props.options.length - 1
+      places.value.length - 1
     );
   } else if (event.key === "ArrowUp") {
     event.preventDefault();
     selectedIndex.value = Math.max(selectedIndex.value - 1, 0);
   } else if (event.key === "Enter" && selectedIndex.value !== -1) {
     event.preventDefault();
-    selectOption(props.options[selectedIndex.value]);
+    selectOption(places.value[selectedIndex.value]);
   }
 };
-
-onMounted(() => {
-  if (!localValue.value?.value && props.options.length > 0) {
-    const defaultOption =
-      props.options[props.defaultIndex || 0] || props.options[0];
-    emit("update:modelValue", defaultOption);
-  }
-});
 </script>
 
 <style scoped lang="scss">
