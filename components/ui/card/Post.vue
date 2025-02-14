@@ -55,7 +55,7 @@ withDefaults(
   }
 
   .desc {
-    max-height: 6rem;
+    max-height: 5.9rem;
     overflow: hidden;
     padding: 0.8rem 0 1.6rem 0;
 

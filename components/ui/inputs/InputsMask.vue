@@ -3,30 +3,26 @@
     class="input"
     :class="{ active: localValue || isFocused || type === 'date' }"
   >
-    <label :for="id">
-      {{ label }}
-    </label>
+    <label :for="id">{{ label }}</label>
     <input
       :type="isPasswordVisible ? 'text' : type"
       v-model="localValue"
       :id="id"
       :placeholder="type === 'date' ? '' : placeholder"
+      v-maska="maskOptions"
       @focus="isFocused = true"
       @blur="isFocused = false"
-      @input="validateInput"
     />
     <div
-      v-if="type !== 'date' && (type === 'password' || icon)"
+      v-if="type === 'password' || icon"
       class="input_ic"
       @click="togglePasswordVisibility"
     >
       <Icon
         :name="
-          type === 'password'
-            ? isPasswordVisible
-              ? 'fluent:eye-16-filled'
-              : 'fluent:eye-off-16-filled'
-            : icon
+          isPasswordVisible
+            ? 'fluent:eye-16-filled'
+            : 'fluent:eye-off-16-filled'
         "
         :size="22"
       />
@@ -35,39 +31,31 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from "vue-toastification";
+import { vMaska } from "maska/vue";
 
-const toast = useToast();
-
-const props = withDefaults(
-  defineProps<{
-    modelValue?: any;
-    id?: string;
-    type?: "text" | "email" | "password" | "date" | "tel";
-    label: string;
-    icon?: string;
-    placeholder?: string;
-    mode?: "english" | "default"; // Добавлен новый пропс mode
-  }>(),
-  {
-    modelValue: "",
-    id: "",
-    label: "",
-    icon: "",
-    placeholder: "",
-    mode: "default", // По умолчанию нет ограничений
-  }
-);
+const props = defineProps<{
+  modelValue?: string;
+  id?: string;
+  type?: "text" | "email" | "password" | "date" | "tel";
+  label: string;
+  icon?: string;
+  placeholder?: string;
+  mask?: string;
+}>();
 
 const emit = defineEmits(["update:modelValue"]);
-const isFocused = ref<boolean>(false);
+const isFocused = ref(false);
+const isPasswordVisible = ref(false);
+
 const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
 
-// Состояние видимости пароля
-const isPasswordVisible = ref(false);
+// Опции для maska
+const maskOptions = computed(() => ({
+  mask: props.mask || "", // Передаем маску из props
+}));
 
 const togglePasswordVisibility = () => {
   if (props.type === "password") {
@@ -75,18 +63,8 @@ const togglePasswordVisibility = () => {
   }
 };
 
-// Валидация ввода (запрет русских символов)
-const validateInput = (event: Event) => {
-  if (props.mode === "english") {
-    const input = (event.target as HTMLInputElement).value;
-    const englishOnly = /^[A-Za-z0-9@._-]*$/; // Разрешены только латинские буквы, цифры, символы @ . _ -
-
-    if (!englishOnly.test(input)) {
-      toast.warning("Разрешен ввод только на английском языке!");
-      localValue.value = input.replace(/[^A-Za-z0-9@._-]/g, ""); // Удаляем русские символы
-    }
-  }
-};
+// Экспорт, если понадобится доступ к input
+defineExpose({ localValue });
 </script>
 
 <style scoped lang="scss">

@@ -45,25 +45,20 @@
                 :id="route.params.id + 'birthDate' + index"
               />
               <Select
-                :options="['Мужчина', 'Женщина']"
+                :options="[
+                  { name: 'Мужчина', value: 'M' },
+                  { name: 'Женщина', value: 'W' },
+                ]"
                 v-model="passenger.gender"
                 label="Пол"
               />
-              <Inputs
-                label="Серия загранпаспорта"
-                v-model="passenger.seria_passport"
-                :id="route.params.id + 'passportSeries' + index"
-              />
-              <Inputs
+              <InputsMask
                 label="Номер загранпаспорта"
-                v-model="passenger.number_passport"
+                v-model="passenger.number_seria_passport"
                 :id="route.params.id + 'passportNumber' + index"
+                mask="##-## ###-###"
               />
-              <Select
-                :options="['Россия', 'Украина', 'Беларусь']"
-                v-model="passenger.nationality"
-                label="Гражданство"
-              />
+              <Inputs label="Гражданство" v-model="passenger.nationality" />
               <Inputs
                 type="date"
                 label="Срок действия"
@@ -91,7 +86,7 @@
               <p>Общая стоимость</p>
               <span>{{ currentTicket.price }} €</span>
             </div>
-            <btn name="Оплатить" @click="bookingTicketAir(route.params.id)" />
+            <btn name="Оплатить" @click="payAirTicket()" />
           </div>
         </div>
       </div>
@@ -110,18 +105,30 @@ import {
   useTicketAirStoreRefs,
   useTicketAirStore,
 } from "~/store/useTicketAirStore";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
+import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+import { useToast } from "vue-toastification";
 
 const { ticket, currentTicket } = useTicketAirStoreRefs();
 const { fetchTickedId, bookingTicketAir } = useTicketAirStore();
 
+const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 const activeTab = ref<number | null>(0);
 const agreement = ref<boolean>(false);
 
 const toggleAccordion = (index: number) => {
   activeTab.value = activeTab.value === index ? null : index;
+};
+
+const payAirTicket = async () => {
+  await bookingTicketAir(route.params.id);
+  setTimeout(() => {
+    toast.success("Вы успешно оформили");
+    router.push("/");
+  }, 500);
 };
 
 onMounted(() => {
@@ -133,7 +140,7 @@ onMounted(() => {
 .accordion {
   .accordion_item {
     margin-bottom: 1.6rem;
-    border: 1px solid #ddd;
+    border: 0.1rem solid #a2d0ff;
     border-radius: 0.8rem;
 
     &__head {
@@ -141,10 +148,11 @@ onMounted(() => {
       justify-content: space-between;
       align-items: center;
       padding: 1.6rem;
-      background-color: #f9f9f9;
+      // background-color: #f9f9f9;
       cursor: pointer;
-      font-size: 1.6rem;
-      font-weight: bold;
+      font-size: 1.8rem;
+      font-weight: 500;
+      font-family: $font_2;
     }
 
     &__body {
@@ -203,5 +211,10 @@ onMounted(() => {
   & > p {
     color: $gray;
   }
+}
+
+.accordion__icon {
+  @include flex-center;
+  color: $blue;
 }
 </style>

@@ -51,28 +51,6 @@ export const useFiltersStore = defineStore("filters", {
       }
     },
 
-    async fetchPlace(query?: string) {
-      try {
-        const response = await api.get("places", {
-          params: {
-            query, // Передаём строку в параметре query
-            locale: "ru", // Язык локали
-          },
-        });
-        this.places = response.data.map((item: any) => ({
-          name: item.city_name_ru, // Отображаемое имя города
-          value: item.code, // Код города
-        }));
-      } catch (error) {
-        console.error("Ошибка при загрузке мест:", error);
-      }
-    },
-
-    async clearPlace() {
-      // console.log("clear");
-      this.places = [];
-    },
-
     setHotelUser(data: any) {
       this.hotelData = data;
     },

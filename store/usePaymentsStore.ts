@@ -36,7 +36,4 @@ export const usePaymentsStore = defineStore("payments", {
   },
 });
 
-
 export const usePaymentsStoreRefs = () => storeToRefs(usePaymentsStore());
-
-

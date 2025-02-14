@@ -20,7 +20,7 @@
             <button @click="decreaseAdults">
               <Icon name="f:minus" />
             </button>
-            <span>{{ ticketHotel.adults }}</span>
+            <span>{{ ticketHotel.num }}</span>
             <button @click="increaseAdults">
               <Icon name="f:plus" />
             </button>
@@ -68,7 +68,7 @@ const wrapper = ref<HTMLElement | null>(null);
 
 // Текст с правильными склонениями
 const passengerText = computed(() => {
-  const total = ticketHotel.value.adults + ticketHotel.value.children;
+  const total = ticketHotel.value.num + ticketHotel.value.children;
   return `${total} пассажир${total === 1 ? "" : "а"}`;
 });
 
@@ -102,13 +102,13 @@ const calculateDropdownPosition = () => {
 };
 
 const increaseAdults = () => {
-  ticketHotel.value.adults++;
+  ticketHotel.value.num++;
   createPassengersHotel();
 };
 
 const decreaseAdults = () => {
-  if (ticketHotel.value.adults > 1) {
-    ticketHotel.value.adults--;
+  if (ticketHotel.value.num > 1) {
+    ticketHotel.value.num--;
     createPassengersHotel();
   }
 };

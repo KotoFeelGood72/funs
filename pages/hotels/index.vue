@@ -9,9 +9,9 @@
       <hotel />
     </div>
     <div class="passenger-form">
-      <PaymentForm />
+      <PaymentFormHotel />
       <PassengerTabs
-        :tabs="ticketHotel.passengers"
+        :tabs="ticketHotel.adults"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
@@ -19,29 +19,25 @@
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            v-model="ticketHotel.passengers[activeTab].last_name"
+            v-model="ticketHotel.adults[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            v-model="ticketHotel.passengers[activeTab].first_name"
+            v-model="ticketHotel.adults[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
           <Inputs
             type="date"
             label="Дата рождения"
-            v-model="ticketHotel.passengers[activeTab].birth_date"
+            v-model="ticketHotel.adults[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
-          <Inputs
-            label="Серия загранпаспорта"
-            v-model="ticketHotel.passengers[activeTab].passport_seria"
-            :id="'passportSeries' + activeTab"
-          />
-          <Inputs
+          <InputsMask
             label="Номер загранпаспорта"
-            v-model="ticketHotel.passengers[activeTab].passport_number"
-            :id="'passportNumber' + activeTab"
+            v-model="ticketHotel.adults[activeTab].number_seria_passport"
+            mask="##-## ###-###"
+            :id="'number_serias_passport' + activeTab"
           />
         </div>
         <div class="note">
@@ -51,18 +47,13 @@
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">550 ₽</p>
+            <!-- <p class="price">{{ price?.price }} ₽</p> -->
           </div>
           <btn
             name="Далее"
             theme="primary"
             size="normal"
-            @click="
-              router.push({
-                name: 'hotels-id',
-                params: { id: route.params.id },
-              })
-            "
+            @click="bookingHotelForNextPage()"
           />
         </div>
       </div>
@@ -72,19 +63,22 @@
 
 <script setup lang="ts">
 import ContentView from "~/components/shared/ContentView.vue";
-import PaymentForm from "~/components/shared/PaymentForm.vue";
+import PaymentFormHotel from "~/components/shared/PaymentFormHotel.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import hotel from "~/components/ui/filters/hotel.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
+import { usePaymentsStore } from "~/store/usePaymentsStore";
+import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 
 const isLoading = ref<boolean>(true);
 const route = useRoute();
 const router = useRouter();
-const { ticketHotel } = useHotelStoreRefs();
-const { fillHotelTicketFromQuery } = useHotelStore();
+const { ticketHotel, currentOrder, price } = useHotelStoreRefs();
+const { fillHotelTicketFromQuery, bookingHotel, getHotelPrice } =
+  useHotelStore();
 const activeTab = ref<number>(0);
 
 const setActiveTab = (index: number) => {
@@ -92,11 +86,22 @@ const setActiveTab = (index: number) => {
 };
 
 onMounted(() => {
+  getHotelPrice();
   setTimeout(() => {
     isLoading.value = false;
-  }, 500);
+  }, 200);
   fillHotelTicketFromQuery(route.query);
 });
+
+const bookingHotelForNextPage = async () => {
+  await bookingHotel();
+  if (currentOrder.value && currentOrder.value.id) {
+    await router.push({
+      name: "hotels-id",
+      params: { id: currentOrder.value.id },
+    });
+  }
+};
 </script>
 
 <style scoped lang="scss">

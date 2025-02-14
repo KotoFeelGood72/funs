@@ -34,17 +34,19 @@ import Calendar from "../inputs/Calendar.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
+import { useFetchPlace } from "@/composables/usePlace";
 
-const { fillHotelTicketFromQuery, fetchPlaceHotel } = useHotelStore();
-const { ticketHotel, places } = useHotelStoreRefs();
+const { fillHotelTicketFromQuery } = useHotelStore();
+const { ticketHotel } = useHotelStoreRefs();
 
+const { fetchPlace, places } = useFetchPlace();
 const router = useRouter();
 const route = useRoute();
 
 watch(
   () => ticketHotel.value.city,
   (newValue) => {
-    if (newValue.name) fetchPlaceHotel(newValue.name);
+    if (newValue.name) fetchPlace(newValue.name);
   }
 );
 

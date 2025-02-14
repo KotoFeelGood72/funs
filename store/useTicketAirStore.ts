@@ -30,8 +30,7 @@ export const useTicketAirStore = defineStore("air-ticket", {
         last_name: string;
         birth_date: string;
         gender: string;
-        seria_passport: string;
-        number_passport: string;
+        number_seria_passport: string;
         nationality: string;
         validity_period: string;
       }>,
@@ -46,8 +45,7 @@ export const useTicketAirStore = defineStore("air-ticket", {
           last_name: "",
           birth_date: "",
           gender: "",
-          seria_passport: "",
-          number_passport: "",
+          number_seria_passport: "",
           nationality: "",
           validity_period: "",
         })
@@ -139,31 +137,26 @@ export const useTicketAirStore = defineStore("air-ticket", {
       }
     },
 
-    async fetchPlace(query?: string) {
+    async bookingTicketAir(ticketId: any) {
       try {
-        const response = await api.get("places", {
-          params: {
-            query,
-            locale: "ru",
-          },
-        });
-        this.places = response.data.map((item: any) => ({
-          name: item.city_name_ru,
-          value: item.code,
+        const formattedPassengers = this.ticket.passengers.map((passenger) => ({
+          ...passenger,
+          number_seria_passport: passenger.number_seria_passport.replace(
+            /-/g,
+            ""
+          ),
         }));
-      } catch (error) {
-        console.error("Ошибка при загрузке мест:", error);
-      }
-    },
 
-    async bookingTicketAir(tickedId: any) {
-      try {
-        const response = await api.post(`/tickets/${tickedId}`, {
+        const response = await api.post(`/tickets/${ticketId}`, {
           email: this.ticket.email,
           phone_number: this.ticket.phone_number,
-          adults: [...this.ticket.passengers],
+          adults: formattedPassengers,
         });
-      } catch {}
+
+        return response.data;
+      } catch (error) {
+        console.error("Ошибка при бронировании билета:", error);
+      }
     },
 
     async clearPlace() {

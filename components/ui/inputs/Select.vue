@@ -4,7 +4,9 @@
       {{ label }}
     </label>
     <div class="selected">
-      <p class="selected-text">{{ modelValue || placeholder }}</p>
+      <p class="selected-text">
+        {{ selectedOption?.name || placeholder }}
+      </p>
       <slot />
     </div>
 
@@ -12,10 +14,10 @@
       <li
         v-for="(option, index) in options"
         :key="index"
-        :class="{ selected: option === modelValue }"
-        @click.stop="selectOption(option)"
+        :class="{ selected: option.value === modelValue }"
+        @click.stop="selectOption(option.value)"
       >
-        {{ option }}
+        {{ option.name }}
       </li>
       <li v-if="!options.length" class="no-options">Нет доступных опций</li>
     </ul>
@@ -23,21 +25,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
-// Пропсы
 const props = defineProps<{
-  options: string[] | number[]; // Список опций
+  options: { value: any; name: string }[]; // Теперь options - массив объектов
   modelValue: any; // Текущее выбранное значение
   label?: string; // Текст метки
   placeholder?: string; // Placeholder, если значение не выбрано
 }>();
 
-// Эмит события
 const emit = defineEmits(["update:modelValue"]);
 
-const dropdownOpen = ref(false); // Открытие/закрытие выпадающего списка
+const dropdownOpen = ref(false);
 const selectRef = ref<HTMLDivElement | null>(null);
+
+// Найти выбранную опцию
+const selectedOption = computed(() =>
+  props.options.find((option) => option.value === props.modelValue)
+);
 
 // Закрытие выпадающего списка при клике вне компонента
 const handleClickOutside = (event: MouseEvent) => {
@@ -46,7 +51,6 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
-// Добавляем и удаляем слушатель кликов вне компонента
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });
@@ -60,8 +64,8 @@ const toggleDropdown = () => {
 };
 
 // Выбор опции
-const selectOption = (option: string | number) => {
-  emit("update:modelValue", option);
+const selectOption = (value: any) => {
+  emit("update:modelValue", value);
   dropdownOpen.value = false;
 };
 </script>

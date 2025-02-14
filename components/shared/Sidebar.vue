@@ -64,7 +64,14 @@ const transfer = ["1 пересадка", "2 пересадки", "3 перес�
 const localValueTransfers = ref<number[]>(props.modelValue.transfer || []);
 const localValueAirline = ref<string[]>(props.modelValue.airline || []);
 
-const isExpanded = ref(true); // По умолчанию фильтры открыты
+const isExpanded = ref(true);
+
+const screenWidth = ref<number | null>(null);
+const updateScreenWidth = () => {
+  if (typeof window !== "undefined") {
+    screenWidth.value = window.innerWidth;
+  }
+};
 
 const hasActiveFilters = computed(() => {
   return (
@@ -84,13 +91,25 @@ watch(
 );
 
 const toggleFilters = () => {
-  isExpanded.value = !isExpanded.value;
+  if (screenWidth.value <= 1024) {
+    // Работает только для мобильных и планшетов
+    isExpanded.value = !isExpanded.value;
+  }
 };
-
 const resetFilters = () => {
   localValueTransfers.value = [];
   localValueAirline.value = [];
 };
+
+onMounted(() => {
+  updateScreenWidth(); // Устанавливаем начальное значение
+  window.addEventListener("resize", updateScreenWidth);
+});
+
+// Очищаем слушатель при размонтировании
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateScreenWidth);
+});
 </script>
 
 <style scoped lang="scss">
@@ -167,6 +186,10 @@ const resetFilters = () => {
   right: 0;
   transform: translateY(-50%);
   transition: transform 0.3s ease;
+
+  @include bp($point_2, $direction: min) {
+    display: none;
+  }
 
   &.active {
     transform: translateY(-50%) rotate(180deg);

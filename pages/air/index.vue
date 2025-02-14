@@ -8,21 +8,12 @@
         <air />
       </div>
       <div class="row">
-        <!-- Боковая панель с фильтрами -->
-        <FiltersSidebar v-model="filters" :airlines="airlines" />
-
+        <FiltersSidebar v-model="filters" :airlines="airlines" v-if="tickets" />
         <div class="content">
-          <div class="top-content">
-            <!-- Поле поиска -->
+          <div class="top-content" v-if="tickets">
             <InputsSearch v-model="searchQuery" />
-
-            <!-- Сортировка -->
             <RadioGroup :items="sort" name="sortering" v-model="selectedSort" />
-
-            <btn name="Обновить" icon="reset" theme="white" />
           </div>
-
-          <!-- Вывод списка авиабилетов -->
           <div class="content-col" v-if="finalTickets.length">
             <ul class="air-list">
               <li
@@ -56,7 +47,6 @@ import FiltersSidebar from "~/components/shared/Sidebar.vue";
 import air from "~/components/ui/filters/air.vue";
 import InputsSearch from "~/components/ui/inputs/InputsSearch.vue";
 import RadioGroup from "~/components/ui/inputs/RadioGroup.vue";
-import btn from "~/components/ui/buttons/btn.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
 
 import {
@@ -70,48 +60,33 @@ const { fetchTickets } = useTicketAirStore();
 const route = useRoute();
 const router = useRouter();
 
-// Список сортировки
 const sort = ref([
-  // { name: "Новые", val: "new" },
-  // { name: "Популярные", val: "popular" },
   { name: "Сначала дешевле", val: "downprice" },
   { name: "Сначала дороже", val: "upprice" },
 ]);
 
-// Текущее значение сортировки
-const selectedSort = ref("new");
+const selectedSort = ref("downprice");
 
-// Фильтры для Sidebar
 const filters = ref({
   transfer: [] as number[],
   airline: [] as string[],
 });
 
-// Строка поиска
 const searchQuery = ref("");
-
-// Делаем общее вычисляемое свойство, которое:
-// 1) Фильтрует по пересадкам/авиакомпаниям
-// 2) Фильтрует по поисковой строке
-// 3) Сортирует по выбранному типу
 const finalTickets = computed(() => {
-  // Если данных нет, сразу возвращаем пустой массив
   if (!tickets.value?.offers || !Array.isArray(tickets.value.offers)) {
     return [];
   }
 
   let result = [...tickets.value.offers];
 
-  // ФИЛЬТРАЦИЯ: пересадки и авиакомпании
   result = result.filter((offer: any) => {
-    // Проверяем пересадки (stops)
     const matchesTransfers =
       !filters.value.transfer.length ||
       offer.itineraries?.some((itinerary: any) =>
         filters.value.transfer.includes(itinerary.stops)
       );
 
-    // Проверяем авиакомпании
     const matchesAirlines =
       !filters.value.airline.length ||
       filters.value.airline.includes("Все") ||
@@ -120,8 +95,6 @@ const finalTickets = computed(() => {
     return matchesTransfers && matchesAirlines;
   });
 
-  // ФИЛЬТРАЦИЯ ПО ПОИСКУ (пример: ищем совпадение в имени авиакомпании,
-  // названии пунктов вылета/прилёта и т. д. — корректируйте под свои поля)
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.trim().toLowerCase();
     result = result.filter((offer: any) => {
@@ -137,23 +110,12 @@ const finalTickets = computed(() => {
     });
   }
 
-  // СОРТИРОВКА
   switch (selectedSort.value) {
     case "downprice":
-      // Предположим, что цена лежит в offer.price
       result.sort((a: any, b: any) => a.price - b.price);
       break;
     case "upprice":
       result.sort((a: any, b: any) => b.price - a.price);
-      break;
-    case "new":
-      // Пример: сортируем по дате добавления или ID
-      // Здесь всё зависит от того, как распознать «новые»
-      result.sort((a: any, b: any) => b.id - a.id);
-      break;
-    case "popular":
-      // Пример: сортируем по некому рейтингу или количеству заказов
-      result.sort((a: any, b: any) => b.popularity - a.popularity);
       break;
     default:
       break;
@@ -163,13 +125,19 @@ const finalTickets = computed(() => {
 });
 
 onMounted(() => {
-  // При монтировании подгружаем билеты по текущему маршруту/запросу
   fetchTickets(router, route, route.query);
 
-  // Дополнительно защитимся от undefined
   if (!tickets.value?.offers) {
     tickets.value = { offers: [] };
   }
+
+  useSeoMeta({
+    title: `Авиабилеты ${ticket.value.departure.name} - ${ticket.value.arrival.name}, ${ticket.value.date_forward} - ${ticket.value.date_backward}`,
+  });
+});
+
+useSeoMeta({
+  title: `Авиабилеты ${ticket.value.departure.name} - ${ticket.value.arrival.name}, ${ticket.value.date_forward} - ${ticket.value.date_backward}`,
 });
 </script>
 

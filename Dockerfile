@@ -1,5 +1,5 @@
 # Используем официальный образ Node.js
-FROM node:22
+FROM node:18
 
 # Устанавливаем рабочую директорию
 WORKDIR /usr/src/app

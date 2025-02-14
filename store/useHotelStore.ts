@@ -3,7 +3,9 @@ import { api } from "~/api/api";
 
 export const useHotelStore = defineStore("hotel-ticket", {
   state: () => ({
+    price: null as any,
     places: [] as any,
+    currentOrder: null as any,
     ticketHotel: {
       city: { name: "", value: "" } as any,
       check_in_date: null as string | null,
@@ -11,26 +13,24 @@ export const useHotelStore = defineStore("hotel-ticket", {
       email_address: "" as string,
       phone_number: "" as string,
       hotel_class: 3 as number,
-      adults: 1 as number,
+      num: 1 as number,
       children: 1 as number,
-      passengers: [] as Array<{
+      adults: [] as Array<{
         first_name: string;
         last_name: string;
-        passport_seria: number;
-        passport_number: number;
+        number_seria_passport: string;
         birth_date: string;
       }>,
     },
   }),
   actions: {
     createPassengersHotel() {
-      this.ticketHotel.passengers = Array.from(
-        { length: this.ticketHotel.adults },
+      this.ticketHotel.adults = Array.from(
+        { length: this.ticketHotel.num },
         () => ({
           first_name: "",
           last_name: "",
-          passport_seria: 0,
-          passport_number: 0,
+          number_seria_passport: "",
           birth_date: "",
         })
       );
@@ -46,7 +46,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
           check_in_date: this.ticketHotel.check_in_date || "",
           check_out_date: this.ticketHotel.check_out_date || "",
           adults: this.ticketHotel.adults.toString(),
-          hotel_class: this.ticketHotel.hotel_class,
+          hotel_class: String(this.ticketHotel.hotel_class),
         };
 
         // Обновляем параметры в URL
@@ -63,38 +63,33 @@ export const useHotelStore = defineStore("hotel-ticket", {
       }
     },
 
-    async fetchPlaceHotel(query?: string) {
-      try {
-        const response = await api.get("places", {
-          params: {
-            query,
-            locale: "ru",
-          },
-        });
-        this.places = response.data.map((item: any) => ({
-          name: item.city_name_ru,
-          value: item.code,
-        }));
-      } catch (error) {
-        console.error("Ошибка при загрузке мест:", error);
-      }
-    },
-
     async bookingHotel() {
       try {
+        const formattedAdults = this.ticketHotel.adults.map((adult) => ({
+          ...adult,
+          number_seria_passport: adult.number_seria_passport.replace(/-/g, ""),
+        }));
         const response = await api.post("/hotels", {
           email_address: this.ticketHotel.email_address,
           phone_number: this.ticketHotel.phone_number,
           check_in_date: this.ticketHotel.check_in_date,
           check_out_date: this.ticketHotel.check_out_date,
           city: this.ticketHotel.city?.value,
-          hotel_class: this.ticketHotel.hotel_class,
-          passengers: [...this.ticketHotel.passengers],
+          hotel_class: String(this.ticketHotel.hotel_class),
+          adults: formattedAdults,
         });
         console.log("Бронирование успешно", response.data);
+        this.currentOrder = response.data;
       } catch (error) {
         console.error("Ошибка при бронировании отеля:", error);
       }
+    },
+
+    async getHotelPrice() {
+      try {
+        const response = await api.get("/hotels/price");
+        this.price = response.data;
+      } catch (error) {}
     },
 
     async clearPlace() {
@@ -106,7 +101,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
       this.ticketHotel.city = { name: query.cityName, value: query.cityValue };
       this.ticketHotel.check_in_date = query.check_in_date || null;
       this.ticketHotel.check_out_date = query.check_out_date || null;
-      this.ticketHotel.adults = query.adults ? parseInt(query.adults) : 1;
+      this.ticketHotel.num = query.num ? parseInt(query.num) : 1;
       this.ticketHotel.children = query.children ? parseInt(query.children) : 0;
       this.ticketHotel.hotel_class = query.hotel_class
         ? parseInt(query.hotel_class)

@@ -17,6 +17,7 @@ const user = ref<any>({
   receive_email_notifications: false,
   receive_sms_notifications: false,
 });
+
 export function useAuth(store?: any, router?: any) {
   // const router = useRouter();
   const toast = useToast();

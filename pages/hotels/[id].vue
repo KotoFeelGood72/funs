@@ -4,13 +4,17 @@
     :is-loading="false"
   >
     <div class="passenger-form">
-      <div v-for="(tab, index) in tabs" :key="index" class="accordion-item">
+      <div
+        v-for="(tab, index) in ticketHotel.adults"
+        :key="index"
+        class="accordion-item"
+      >
         <div
           class="accordion-header"
           @click="toggleAccordion(index)"
           :class="{ active: activeAccordion === index }"
         >
-          <p>{{ tab.label }}</p>
+          <p>Гость № {{ index + 1 }}</p>
           <div :class="['acc_icon', { active: activeAccordion === index }]">
             <Icon name="bxs:down-arrow" :size="12" />
           </div>
@@ -34,23 +38,18 @@
                 :id="'firstName' + index"
               />
               <DatePicker :disablePast="true" v-model="tab.birth_date" />
-              <Inputs
-                label="Email"
-                type="email"
-                v-model="tab.email"
-                :id="'email' + index"
-                icon="f:email"
-              />
-              <Select
+
+              <!-- <Select
                 :options="['Россия', 'Украина', 'Беларусь']"
                 v-model="tab.citizenship"
                 label="Выберите объект проживания"
               />
+              
               <Select
                 :options="['Россия', 'Украина', 'Беларусь']"
                 v-model="tab.citizenship"
                 label="Выберите класс"
-              />
+              /> -->
             </div>
           </div>
         </transition>
@@ -91,10 +90,13 @@ import { useRouter } from "vue-router";
 import { ref, watch, computed } from "vue";
 import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import { usePaymentsStore } from "~/store/usePaymentsStore";
+import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
+import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 
 const router = useRouter();
 const { hotelData } = useFiltersStoreRefs();
 const { payHotel } = usePaymentsStore();
+const { ticketHotel } = useHotelStoreRefs();
 
 const agreement = ref<boolean>(false);
 const tabs = ref<any>([]);

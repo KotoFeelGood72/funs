@@ -32,7 +32,7 @@
     <btn
       name="Искать для визы"
       icon="right"
-      @click="applyFilters"
+      @click="getTicketsUi()"
       theme="primary"
     />
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -51,15 +51,23 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
 import { useToast } from "vue-toastification";
+import { useFetchPlace } from "@/composables/usePlace";
+import { useFetchTickets } from "@/composables/useTicket";
+
 const toast = useToast();
+
+const { fetchPlace, places } = useFetchPlace();
+
+const { getTickets } = useFetchTickets();
 
 const route = useRoute();
 const router = useRouter();
 
-const { ticket, places } = useTicketAirStoreRefs();
-const { fetchPlace, fetchTickets, clearPlace, createPassengers } =
-  useTicketAirStore();
+const { ticket } = useTicketAirStoreRefs();
+const { fetchTickets, clearPlace, createPassengers } = useTicketAirStore();
 const emit = defineEmits();
+
+
 
 const errorMessage = ref("");
 
@@ -98,13 +106,11 @@ watch(
   }
 );
 
-onMounted(() => {
-  if (route.name === "air") {
-    // fetchTickets(router, route, route.query);
-  }
-});
-
 createPassengers();
+
+const getTicketsUi = () => {
+  getTickets();
+};
 </script>
 
 <style scoped lang="scss">

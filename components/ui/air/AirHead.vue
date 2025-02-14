@@ -1,7 +1,7 @@
 <template>
   <div class="head">
     <div class="air-logo">
-      <div class="air_logo__img">
+      <div class="air_logo__img" v-if="logo">
         <img :src="logo" />
       </div>
     </div>
@@ -14,7 +14,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   title: string;
-  logo: string;
+  logo?: string;
 }>();
 </script>
 

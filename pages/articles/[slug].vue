@@ -200,4 +200,12 @@ onMounted(async () => {
   flex-direction: column;
   gap: 2.4rem;
 }
+
+.articles__head {
+  h1 {
+    @include bp($point_2) {
+      font-size: 2.6rem;
+    }
+  }
+}
 </style>

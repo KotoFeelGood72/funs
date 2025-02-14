@@ -32,24 +32,25 @@
           />
 
           <Select
-            :options="['Мужчина', 'Женщина']"
+            :options="[
+              { name: 'Мужчина', value: 'M' },
+              { name: 'Женщина', value: 'W' },
+            ]"
             v-model="ticket.passengers[activeTab].gender"
             label="Пол"
           />
-          <Inputs
-            label="Серия загранпаспорта"
-            v-model="ticket.passengers[activeTab].seria_passport"
-            :id="'passportSeries' + activeTab"
-          />
-          <Inputs
-            label="Номер загранпаспорта"
-            v-model="ticket.passengers[activeTab].number_passport"
+          <InputsMask
+            v-model="ticket.passengers[activeTab].number_seria_passport"
             :id="'passportNumber' + activeTab"
+            label="Номер загранпаспорта"
+            type="text"
+            mask="##-## ###-###"
           />
-          <Select
-            :options="['Россия', 'Украина', 'Беларусь']"
-            v-model="ticket.passengers[activeTab].nationality"
+          <Inputs
             label="Гражданство"
+            v-model="ticket.passengers[activeTab].nationality"
+            :id="'nationality' + activeTab"
+            mode="english"
           />
           <Inputs
             type="date"
@@ -65,7 +66,7 @@
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">{{ currentTicket.price }} €</p>
+            <p class="price">{{ currentTicket?.price }} €</p>
           </div>
           <btn
             name="Далее"
@@ -93,6 +94,7 @@ import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
+import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import {
   useTicketAirStoreRefs,
   useTicketAirStore,
@@ -134,8 +136,7 @@ const isFormValid = computed(() => {
         p.first_name &&
         p.birth_date &&
         p.gender &&
-        p.seria_passport &&
-        p.number_passport &&
+        p.number_seria_passport &&
         p.nationality &&
         p.validity_period
       );
