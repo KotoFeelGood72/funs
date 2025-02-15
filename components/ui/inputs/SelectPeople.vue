@@ -8,19 +8,23 @@
         <Icon name="f:user" :size="16" />
       </div>
     </div>
+
     <transition name="fade">
       <div
         v-if="isDropdownVisible"
         :class="['dropdown', dropdownPosition]"
         ref="dropdown"
       >
-        <Counter label="Взрослые" v-model="ticket.adults" />
-        <Counter label="Дети" v-model="ticket.children" />
+        <!-- v-model="localAdults" привязан к props.adults (и событию update:adults) -->
+        <Counter label="Взрослые" v-model="localAdults" />
+        <Counter label="Дети" v-model="children" />
+
+        <!-- Аналогично для класса -->
         <Checkbox
           id="isBusinessClass"
           label="Бизнес класс"
           value="BUSINESS"
-          v-model="ticket.class_type"
+          v-model="localClass"
           name="isBusinessClass"
         />
       </div>
@@ -29,30 +33,51 @@
 </template>
 
 <script setup lang="ts">
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+  defineProps,
+  defineEmits,
+} from "vue";
 import Checkbox from "./Checkbox.vue";
 import Counter from "./Counter.vue";
-import {
-  useTicketAirStore,
-  useTicketAirStoreRefs,
-} from "~/store/useTicketAirStore";
 
-const { createPassengers } = useTicketAirStore();
-const { ticket } = useTicketAirStoreRefs();
+const props = defineProps<{
+  adults: number;
+  classType: string;
+}>();
+
+const emit = defineEmits(["update:adults", "update:classType"]);
+
+const localAdults = computed<number>({
+  get: () => props.adults,
+  set: (newValue) => emit("update:adults", newValue),
+});
+
+const localClass = computed<string>({
+  get: () => props.classType,
+  set: (newValue) => emit("update:classType", newValue),
+});
+
+const children = ref<number>(0);
 
 const isDropdownVisible = ref(false);
-const dropdownPosition = ref("bottom");
+const dropdownPosition = ref<"top" | "bottom">("bottom");
 const wrapper = ref<HTMLElement | null>(null);
 
-const classTypeTranslation: any = {
+const classTypeTranslation: Record<string, string> = {
   ECONOMY: "Эконом",
   BUSINESS: "Бизнес",
 };
 
-// Текст с правильными склонениями
 const passengerText = computed(() => {
-  const total = ticket.value.adults + ticket.value.children;
+  const total = localAdults.value + children.value;
   return `${total} пассажир${total === 1 ? "" : "а"} (${
-    classTypeTranslation[ticket.value.class_type]
+    classTypeTranslation[localClass.value] || "Эконом"
   })`;
 });
 
@@ -64,14 +89,11 @@ const toggleDropdown = async () => {
   }
 };
 
-watch(
-  () => ticket.value.class_type,
-  (newValue) => {
-    if (!newValue) {
-      ticket.value.class_type = "ECONOMY";
-    }
+watch(localClass, (newVal) => {
+  if (!newVal) {
+    localClass.value = "ECONOMY";
   }
-);
+});
 
 const closeDropdown = (event: MouseEvent) => {
   if (
@@ -85,10 +107,8 @@ const closeDropdown = (event: MouseEvent) => {
 
 const calculateDropdownPosition = () => {
   if (!wrapper.value) return;
-
   const wrapperRect = wrapper.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-
   dropdownPosition.value =
     wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
@@ -96,6 +116,7 @@ const calculateDropdownPosition = () => {
 onMounted(() => document.addEventListener("click", closeDropdown));
 onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 </script>
+
 <style scoped lang="scss">
 .people-wrapper {
   position: relative;

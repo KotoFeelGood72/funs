@@ -11,13 +11,14 @@
           class="settings-item"
         >
           <span class="settings-item-link">
-            {{ labels[key] }} {{ value }}
+            {{ labels[key] }}
           </span>
           <label class="switch">
+            <!-- Вместо :checked="value" + @change -- используем v-model -->
             <input
               type="checkbox"
-              :checked="value"
-              @change="updateSettings(key, $event)"
+              v-model="localSettings[key]"
+              @change="updateSettings(key)"
               :disabled="loadingKeys.includes(key)"
             />
             <span class="slider">
@@ -36,6 +37,9 @@ import { useAuth } from "~/composables/useAuth";
 
 const { user, updateProfile } = useAuth();
 
+/**
+ * В localSettings указываем только те поля, которые хотим показывать
+ */
 const localSettings = ref({
   remind_booking_completion: user.value.remind_booking_completion,
   remind_booking_end_day: user.value.remind_booking_end_day,
@@ -44,6 +48,9 @@ const localSettings = ref({
   receive_sms_notifications: user.value.receive_sms_notifications,
 });
 
+/**
+ * Подписи для этих полей
+ */
 const labels = {
   remind_booking_completion: "Напоминать о завершении бронирования",
   remind_booking_end_day: "Напоминать в день окончания брони",
@@ -54,30 +61,40 @@ const labels = {
 
 const loadingKeys = ref<string[]>([]);
 
-watch(user, (newUser) => {
-  localSettings.value = { ...newUser };
-});
+const updateSettings = async (key: keyof typeof localSettings.value) => {
+  // Посмотрим, что сейчас в localSettings, key и какой newValue
+  console.log("updateSettings", key, localSettings.value[key]);
 
-const updateSettings = async (
-  key: keyof typeof localSettings.value,
-  event: Event
-) => {
   try {
-    const newValue = (event.target as HTMLInputElement).checked;
-    localSettings.value[key] = newValue;
     loadingKeys.value.push(key);
+    const newValue = localSettings.value[key];
 
+    // ...
     setTimeout(async () => {
+      console.log("   -> отправляем на сервер", { [key]: newValue });
       await updateProfile({ [key]: newValue });
       user.value[key] = newValue;
+
       loadingKeys.value = loadingKeys.value.filter((item) => item !== key);
     }, 500);
   } catch (error) {
-    console.error("Ошибка обновления профиля:", error);
-    localSettings.value[key] = user.value[key];
-    loadingKeys.value = loadingKeys.value.filter((item) => item !== key);
+    // ...
   }
 };
+
+watch(
+  user,
+  (newUser) => {
+    localSettings.value = {
+      remind_booking_completion: newUser.remind_booking_completion,
+      remind_booking_end_day: newUser.remind_booking_end_day,
+      offer_extend_booking: newUser.offer_extend_booking,
+      receive_email_notifications: newUser.receive_email_notifications,
+      receive_sms_notifications: newUser.receive_sms_notifications,
+    };
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style scoped lang="scss">

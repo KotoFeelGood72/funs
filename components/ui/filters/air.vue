@@ -1,22 +1,25 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Откуда" v-model="ticket.departure" />
+      <SearchSelect label="Откуда" v-model="filters.departure" />
     </div>
     <SwapBtn @click="swapCities" />
     <div class="filter-group">
-      <SearchSelect label="Куда" :options="places" v-model="ticket.arrival" />
+      <SearchSelect label="Куда" :options="places" v-model="filters.arrival" />
     </div>
     <div class="filter-group">
       <Calendar
-        v-model:startDate="ticket.date_forward"
-        v-model:endDate="ticket.date_backward"
+        v-model:startDate="filters.date_forward"
+        v-model:endDate="filters.date_backward"
         :isRange="true"
         :isError="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeople />
+      <SelectPeople
+        v-model:adults="filters.adults"
+        v-model:classType="filters.class_type"
+      />
     </div>
     <btn
       name="Искать для визы"
@@ -33,10 +36,10 @@ import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
-import {
-  useTicketAirStore,
-  useTicketAirStoreRefs,
-} from "~/store/useTicketAirStore";
+// import {
+//   useTicketAirStore,
+//   useTicketAirStoreRefs,
+// } from "~/store/useTicketAirStore";
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
 import { useToast } from "vue-toastification";
@@ -52,18 +55,16 @@ const { getTickets } = useFetchTickets();
 const route = useRoute();
 const router = useRouter();
 
-const { ticket } = useTicketAirStoreRefs();
+// const { ticket } = useTicketAirStoreRefs();
 // const { fetchTickets, clearPlace, createPassengers } = useTicketAirStore();
 const emit = defineEmits();
 
 const filters = ref<any>({
-  departure_name: "",
-  departure_value: "",
-  arrival_name: "",
-  arrival_value: "",
+  departure: "",
+  arrival: "",
   date_forward: "",
   date_backward: "",
-  class_type: "",
+  class_type: "ECONOMY",
   adults: 1,
 });
 
@@ -80,19 +81,24 @@ const filters = ref<any>({
 //   fetchTickets(router, route);
 // };
 
-const swapCities = () => {
-  const temp = ticket.value.arrival;
-  ticket.value.arrival = ticket.value.departure;
-  ticket.value.departure = temp;
-  // clearPlace();
-};
+// const swapCities = () => {
+//   const temp = ticket.value.arrival;
+//   ticket.value.arrival = ticket.value.departure;
+//   ticket.value.departure = temp;
+//   // clearPlace();
+// };
 
 // createPassengers();
 
 const getTicketsUi = () => {
-  // getTickets({
-  //   departure_name: ,
-  // });
+  getTickets({
+    departure: filters.value.departure.value,
+    arrival: filters.value.arrival.value,
+    date_forward: filters.value.date_forward,
+    date_backward: filters.value.date_backward,
+    class_type: filters.value.class_type,
+    adults: filters.value.adults,
+  });
 };
 </script>
 
