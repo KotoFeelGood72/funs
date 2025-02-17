@@ -1,8 +1,8 @@
 <template>
   <div class="air">
     <ContentView
-      :title="`${ticket.departure.name} - ${ticket.arrival.name}`"
-      :isLoading="loadTicket"
+      :title="`${tickets?.data?.departure?.name} - ${tickets?.data?.arrival?.name} `"
+      :isLoading="isLoading"
     >
       <div class="top">
         <air />
@@ -14,7 +14,7 @@
             <InputsSearch v-model="searchQuery" />
             <RadioGroup :items="sort" name="sortering" v-model="selectedSort" />
           </div>
-          <div class="content-col" v-if="finalTickets.length">
+          <div class="content-col" v-if="tickets">
             <ul class="air-list">
               <li
                 v-for="(item, index) in finalTickets"
@@ -41,24 +41,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-
 import ContentView from "~/components/shared/ContentView.vue";
 import FiltersSidebar from "~/components/shared/Sidebar.vue";
 import air from "~/components/ui/filters/air.vue";
 import InputsSearch from "~/components/ui/inputs/InputsSearch.vue";
 import RadioGroup from "~/components/ui/inputs/RadioGroup.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
+import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
-import {
-  useTicketAirStoreRefs,
-  useTicketAirStore,
-} from "~/store/useTicketAirStore";
-
-const { tickets, loadTicket, ticket, airlines } = useTicketAirStoreRefs();
-const { fetchTickets } = useTicketAirStore();
-
-const route = useRoute();
-const router = useRouter();
+const { getTickets } = useTicketStore();
+const { tickets, isLoading, airlines } = useTicketStoreRefs();
 
 const sort = ref([
   { name: "Сначала дешевле", val: "downprice" },
@@ -125,19 +117,11 @@ const finalTickets = computed(() => {
 });
 
 onMounted(() => {
-  fetchTickets(router, route, route.query);
-
-  if (!tickets.value?.offers) {
-    tickets.value = { offers: [] };
-  }
-
-  useSeoMeta({
-    title: `Авиабилеты ${ticket.value.departure.name} - ${ticket.value.arrival.name}, ${ticket.value.date_forward} - ${ticket.value.date_backward}`,
-  });
+  getTickets();
 });
 
 useSeoMeta({
-  title: `Авиабилеты ${ticket.value.departure.name} - ${ticket.value.arrival.name}, ${ticket.value.date_forward} - ${ticket.value.date_backward}`,
+  title: `Авиабилеты ${tickets.value.data.departure.name} - ${tickets.value.data.arrival.name}, ${tickets.value.data.date_forward} - ${tickets.value.data.date_backward}`,
 });
 </script>
 

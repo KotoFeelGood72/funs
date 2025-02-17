@@ -1,24 +1,24 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Откуда" v-model="filters.departure" />
+      <SearchSelect label="Откуда" v-model="tickets.data.departure" />
     </div>
     <SwapBtn @click="swapCities" />
     <div class="filter-group">
-      <SearchSelect label="Куда" :options="places" v-model="filters.arrival" />
+      <SearchSelect label="Куда" v-model="tickets.data.arrival" />
     </div>
     <div class="filter-group">
       <Calendar
-        v-model:startDate="filters.date_forward"
-        v-model:endDate="filters.date_backward"
+        v-model:startDate="tickets.data.date_forward"
+        v-model:endDate="tickets.data.date_backward"
         :isRange="true"
         :isError="true"
       />
     </div>
     <div class="filter-group">
       <SelectPeople
-        v-model:adults="filters.adults"
-        v-model:classType="filters.class_type"
+        v-model:adults="tickets.data.adults"
+        v-model:classType="tickets.data.class_type"
       />
     </div>
     <btn
@@ -36,70 +36,44 @@ import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
-// import {
-//   useTicketAirStore,
-//   useTicketAirStoreRefs,
-// } from "~/store/useTicketAirStore";
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
 import { useToast } from "vue-toastification";
 import { useFetchPlace } from "@/composables/usePlace";
 import { useFetchTickets } from "@/composables/useTicket";
+import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
-const toast = useToast();
-
-const { fetchPlace, places } = useFetchPlace();
-
-const { getTickets } = useFetchTickets();
-
+// const toast = useToast();
+// const { fetchPlace, places } = useFetchPlace();
+const { getTickets } = useTicketStore();
+const { tickets, isLoading } = useTicketStoreRefs();
+// const { getTickets, tickets } = useFetchTickets();
 const route = useRoute();
 const router = useRouter();
-
-// const { ticket } = useTicketAirStoreRefs();
-// const { fetchTickets, clearPlace, createPassengers } = useTicketAirStore();
 const emit = defineEmits();
 
-const filters = ref<any>({
-  departure: "",
-  arrival: "",
-  date_forward: "",
-  date_backward: "",
-  class_type: "ECONOMY",
-  adults: 1,
-});
-
-// const applyFilters = () => {
-//   if (
-//     !ticket.value.departure.name ||
-//     !ticket.value.arrival.name ||
-//     !ticket.value.date_forward
-//   ) {
-//     toast.error("Заполните все поля перед поиском!");
-//     return;
-//   }
-
-//   fetchTickets(router, route);
-// };
-
-// const swapCities = () => {
-//   const temp = ticket.value.arrival;
-//   ticket.value.arrival = ticket.value.departure;
-//   ticket.value.departure = temp;
-//   // clearPlace();
-// };
-
-// createPassengers();
-
+// Функция для запроса билетов
 const getTicketsUi = () => {
-  getTickets({
-    departure: filters.value.departure.value,
-    arrival: filters.value.arrival.value,
-    date_forward: filters.value.date_forward,
-    date_backward: filters.value.date_backward,
-    class_type: filters.value.class_type,
-    adults: filters.value.adults,
-  });
+  getTickets();
+
+  if (route.name !== "air") {
+    router.push("/air");
+  }
 };
+
+// Функция смены городов местами
+const swapCities = () => {
+  const temp = tickets.value.data.departure;
+  tickets.value.data.departure = tickets.value.data.arrival;
+  tickets.value.data.arrival = temp;
+};
+
+// При монтировании подтягиваем данные, если они уже есть
+onMounted(() => {
+  // if (route.name === "air") {
+  //   getTicketsUi();
+  // }
+});
 </script>
 
 <style scoped lang="scss">

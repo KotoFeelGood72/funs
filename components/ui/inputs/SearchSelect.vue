@@ -1,59 +1,63 @@
 <template>
-  <div class="select" :class="{ active: displayName || dropdownOpen }">
-    <label :class="{ active: dropdownOpen || displayName }" class="label">
-      {{ label }}
-    </label>
+  <ClientOnly>
+    <div class="select" :class="{ active: displayName || dropdownOpen }">
+      <label :class="{ active: dropdownOpen || displayName }" class="label">
+        {{ label }}
+      </label>
 
-    <input
-      type="text"
-      :value="displayName"
-      @focus="toggleDropdown(true)"
-      @blur="toggleDropdown(false)"
-      @input="onInput($event)"
-      @keydown="handleKeyDown"
-      class="input"
-    />
+      <input
+        type="text"
+        :value="displayName"
+        @focus="toggleDropdown(true)"
+        @blur="toggleDropdown(false)"
+        @input="onInput($event)"
+        @keydown="handleKeyDown"
+        class="input"
+      />
 
-    <ul v-if="dropdownOpen && places.length > 0" class="options">
-      <li
-        v-for="(option, index) in places"
-        :key="index"
-        :class="{ selected: index === selectedIndex }"
-        @mousedown="selectOption(option)"
-      >
-        <p>
-          {{ option.name }}
-        </p>
-        <p class="val">
-          {{ option.value }}
-        </p>
-      </li>
-      <li v-if="places.length === 0" class="no-options">
-        Нет доступных вариантов
-      </li>
-    </ul>
-  </div>
+      <ul v-if="dropdownOpen && places.length > 0" class="options">
+        <li
+          v-for="(option, index) in places"
+          :key="index"
+          :class="{ selected: index === selectedIndex }"
+          @mousedown="selectOption(option)"
+        >
+          <p>
+            {{ option.name }}
+          </p>
+          <p class="val">
+            {{ option.value }}
+          </p>
+        </li>
+        <li v-if="places.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
+      </ul>
+    </div></ClientOnly
+  >
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineEmits, watch } from "vue";
+import { ref, computed, defineEmits, watchEffect } from "vue";
 import { useFetchPlace } from "@/composables/usePlace";
 
 const props = defineProps<{ modelValue: any; label?: string }>();
 const emit = defineEmits(["update:modelValue"]);
+
 const { fetchPlace, clear, places } = useFetchPlace();
 
-const localValue = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
-});
-
-const displayName = computed(() => localValue.value?.name || "");
 const dropdownOpen = ref(false);
 const selectedIndex = ref(-1);
 
-watch(localValue, () => {
-  fetchPlace(displayName.value);
+const displayName = computed(() => props.modelValue?.name || "");
+
+// Отслеживание изменений displayName и вызов fetchPlace
+watchEffect(() => {
+  if (displayName.value && displayName.value.length > 1) {
+    fetchPlace(displayName.value);
+  } else {
+    clear();
+  }
 });
 
 const toggleDropdown = (open: boolean) => {
@@ -74,7 +78,10 @@ const selectOption = (option: any) => {
 
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit("update:modelValue", { name: target.value, value: "" });
+  emit("update:modelValue", {
+    name: target.value,
+    value: props.modelValue?.value || "", // Сохраняем прошлый `value`
+  });
   selectedIndex.value = -1;
 };
 
