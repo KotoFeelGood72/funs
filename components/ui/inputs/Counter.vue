@@ -16,26 +16,53 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from "vue";
 
+/**
+ *  Добавляем пропы:
+ *  1. minValue — минимально допустимое значение (по умолчанию 0)
+ *  2. maxValue — максимально допустимое значение (по умолчанию бесконечность)
+ */
 const props = defineProps<{
   modelValue: number;
   label: string;
+  minValue?: number;
+  maxValue?: number;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
 
-const localValue = computed({
+// Устанавливаем "умолчания" для minValue и maxValue, если их не передали
+const minVal = computed(() => props.minValue ?? 0);
+const maxVal = computed(() => props.maxValue ?? Infinity);
+
+/**
+ * localValue — computed на базе modelValue, но в сеттере
+ * мы проверяем, не вышло ли значение за диапазон [minVal, maxVal].
+ */
+const localValue = computed<number>({
   get: () => props.modelValue,
-  set: (newValue) => emit("update:modelValue", newValue),
+  set: (newValue: number) => {
+    if (newValue < minVal.value) {
+      newValue = minVal.value;
+    }
+    if (newValue > maxVal.value) {
+      newValue = maxVal.value;
+    }
+    emit("update:modelValue", newValue);
+  },
 });
 
+/**
+ * decrease: уменьшаем на 1, но не даём уйти ниже minVal
+ */
 const decrease = () => {
-  if (localValue.value > 1) {
-    localValue.value -= 1;
-  }
+  localValue.value = localValue.value - 1;
 };
 
+/**
+ * increase: увеличиваем на 1, но не даём уйти выше maxVal
+ */
 const increase = () => {
-  localValue.value += 1;
+  localValue.value = localValue.value + 1;
 };
 </script>
 

@@ -5,7 +5,7 @@
   >
     <div class="passenger-form">
       <div
-        v-for="(tab, index) in ticketHotel.adults"
+        v-for="(tab, index) in ticket.adults"
         :key="index"
         class="accordion-item"
       >
@@ -73,7 +73,11 @@
           <span>Общая стоимость</span>
           <p>600</p>
         </div>
-        <btn name="Оплатить" theme="primary" @click="payHotel()" />
+        <btn
+          name="Оплатить"
+          theme="primary"
+          @click="addPayment(route.params.id)"
+        />
       </div>
     </div>
   </ContentView>
@@ -88,18 +92,22 @@ import Select from "~/components/ui/inputs/Select.vue";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
 import { useRouter } from "vue-router";
 import { ref, watch, computed } from "vue";
-import { useFiltersStoreRefs } from "~/store/useFilterStore";
+// import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import { usePaymentsStore } from "~/store/usePaymentsStore";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+// import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+
+// getBookingHotel
 
 const router = useRouter();
-const { hotelData } = useFiltersStoreRefs();
+const route = useRoute();
+// const { hotelData } = useFiltersStoreRefs();
 const { payHotel } = usePaymentsStore();
-const { ticketHotel } = useHotelStoreRefs();
+const { getBookingHotel, addPayment } = useHotelStore();
+const { ticket } = useHotelStoreRefs();
 
 const agreement = ref<boolean>(false);
-const tabs = ref<any>([]);
+// const tabs = ref<any>([]);
 const activeTab = ref<any>(0);
 
 const setActiveTab = (index: number) => {
@@ -107,36 +115,36 @@ const setActiveTab = (index: number) => {
 };
 
 // Функция для обновления вкладок
-const updateTabs = () => {
-  tabs.value = [];
+// const updateTabs = () => {
+//   tabs.value = [];
 
-  // Добавляем взрослых
-  hotelData.value.adults.forEach((adult: any, index: any) => {
-    tabs.value.push({
-      ...adult,
-      type: "adult",
-      label: `Взрослый ${index + 1}`,
-    });
-  });
+//   // Добавляем взрослых
+//   hotelData.value.adults.forEach((adult: any, index: any) => {
+//     tabs.value.push({
+//       ...adult,
+//       type: "adult",
+//       label: `Взрослый ${index + 1}`,
+//     });
+//   });
 
-  // Добавляем детей
-  hotelData.value.children.forEach((child: any, index: any) => {
-    tabs.value.push({
-      ...child,
-      type: "child",
-      label: `Ребёнок ${index + 1}`,
-    });
-  });
-};
+//   // Добавляем детей
+//   hotelData.value.children.forEach((child: any, index: any) => {
+//     tabs.value.push({
+//       ...child,
+//       type: "child",
+//       label: `Ребёнок ${index + 1}`,
+//     });
+//   });
+// };
 
 // Следим за изменениями данных
-watch(
-  () => [hotelData.value.adults, hotelData.value.children],
-  () => {
-    updateTabs();
-  },
-  { immediate: true }
-);
+// watch(
+//   () => [hotelData.value.adults, hotelData.value.children],
+//   () => {
+//     updateTabs();
+//   },
+//   { immediate: true }
+// );
 
 const activeAccordion = ref<number | null>(1);
 
@@ -161,6 +169,10 @@ const leave = (el: any) => {
     el.style.height = "0";
   });
 };
+
+onMounted(() => {
+  getBookingHotel(route.params.id);
+});
 </script>
 
 <style scoped lang="scss">

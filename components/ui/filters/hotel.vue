@@ -1,22 +1,22 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect
-        label="Город"
-        :options="places"
-        v-model="ticketHotel.city"
-      />
+      <SearchSelect label="Город" v-model="ticket.city" />
     </div>
     <div class="filter-group date">
       <Calendar
         label="Дата заезда"
-        v-model:startDate="ticketHotel.check_in_date"
-        v-model:endDate="ticketHotel.check_out_date"
+        v-model:startDate="ticket.check_in_date"
+        v-model:endDate="ticket.check_out_date"
         :isRange="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeopleHotel />
+      <!-- <SelectPeopleHotel /> -->
+      <SelectPeople
+        v-model:adults="ticket.adult"
+        v-model:stars="ticket.hotel_class"
+      />
     </div>
     <btn
       name="Забронировать"
@@ -33,37 +33,30 @@ import btn from "../buttons/btn.vue";
 import Calendar from "../inputs/Calendar.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
-import { useFetchPlace } from "@/composables/usePlace";
+// import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
+import SelectPeople from "../inputs/SelectPeople.vue";
 
-const { fillHotelTicketFromQuery } = useHotelStore();
-const { ticketHotel } = useHotelStoreRefs();
+const { bookingHotel } = useHotelStore();
+const { ticket } = useHotelStoreRefs();
 
-const { fetchPlace, places } = useFetchPlace();
 const router = useRouter();
 const route = useRoute();
 
-watch(
-  () => ticketHotel.value.city,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-
 const nextHotelBooking = async () => {
-  const query = {
-    cityName: ticketHotel.value.city.name,
-    cityValue: ticketHotel.value.city.value,
-    check_in_date: ticketHotel.value.check_in_date || "",
-    check_out_date: ticketHotel.value.check_out_date || "",
-    adults: ticketHotel.value.adults.toString(),
-    hotel_class: ticketHotel.value.hotel_class,
-  };
-  router.push({ name: "hotels", query });
+  // const query = {
+  //   cityName: ticketHotel.value.city.name,
+  //   cityValue: ticketHotel.value.city.value,
+  //   check_in_date: ticketHotel.value.check_in_date || "",
+  //   check_out_date: ticketHotel.value.check_out_date || "",
+  //   adults: ticketHotel.value.adults.toString(),
+  //   hotel_class: ticketHotel.value.hotel_class,
+  // };
+  bookingHotel();
+  router.push({ name: "hotels" });
 };
 
 onMounted(() => {
-  fillHotelTicketFromQuery(route.query);
+  // fillHotelTicketFromQuery(route.query);
 });
 </script>
 

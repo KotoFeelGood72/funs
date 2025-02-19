@@ -1,9 +1,7 @@
 <template>
   <ContentView
-    :title="
-      ticketHotel.city?.name ? 'Отели в ' + ticketHotel.city.name : 'Отели в'
-    "
-    :isLoading="isLoading"
+    :title="ticket.city?.name ? 'Отели в ' + ticket.city.name : 'Отели в'"
+    :isLoading="false"
   >
     <div class="passenger-header">
       <hotel />
@@ -11,31 +9,31 @@
     <div class="passenger-form">
       <PaymentFormHotel />
       <PassengerTabs
-        :tabs="ticketHotel.adults"
+        :tabs="ticket.adults"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
-      <div class="tab-content">
+      <div class="tab-content" v-if="ticket.adults.length > 0">
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            v-model="ticketHotel.adults[activeTab].last_name"
+            v-model="ticket.adults[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            v-model="ticketHotel.adults[activeTab].first_name"
+            v-model="ticket.adults[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
           <Inputs
             type="date"
             label="Дата рождения"
-            v-model="ticketHotel.adults[activeTab].birth_date"
+            v-model="ticket.adults[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
           <InputsMask
             label="Номер загранпаспорта"
-            v-model="ticketHotel.adults[activeTab].number_seria_passport"
+            v-model="ticket.adults[activeTab].number_seria_passport"
             mask="##-## ###-###"
             :id="'number_serias_passport' + activeTab"
           />
@@ -70,15 +68,16 @@ import btn from "~/components/ui/buttons/btn.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-import { usePaymentsStore } from "~/store/usePaymentsStore";
+// import { usePaymentsStore } from "~/store/usePaymentsStore";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+import { usePassengers } from "@/composables/usePassengers";
 
 const isLoading = ref<boolean>(true);
 const route = useRoute();
 const router = useRouter();
-const { ticketHotel, currentOrder, price } = useHotelStoreRefs();
-const { fillHotelTicketFromQuery, bookingHotel, getHotelPrice } =
-  useHotelStore();
+const { ticket } = useHotelStoreRefs();
+const { createPassengers } = usePassengers();
+const { bookingHotel, getHotelPrice } = useHotelStore();
 const activeTab = ref<number>(0);
 
 const setActiveTab = (index: number) => {
@@ -87,18 +86,20 @@ const setActiveTab = (index: number) => {
 
 onMounted(() => {
   getHotelPrice();
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 200);
-  fillHotelTicketFromQuery(route.query);
+  // setTimeout(() => {
+  //   isLoading.value = false;
+  // }, 200);
+  // fillHotelTicketFromQuery(route.query);
+
+  createPassengers(ticket.value.adult);
 });
 
 const bookingHotelForNextPage = async () => {
   await bookingHotel();
-  if (currentOrder.value && currentOrder.value.id) {
+  if (ticket.value && ticket.value.id) {
     await router.push({
       name: "hotels-id",
-      params: { id: currentOrder.value.id },
+      params: { id: ticket.value.id },
     });
   }
 };

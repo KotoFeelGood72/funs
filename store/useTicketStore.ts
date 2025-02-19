@@ -3,19 +3,21 @@ import { api } from "~/api/api";
 
 export const useTicketStore = defineStore("tickets", {
   state: () => ({
+    currentOrder: {} as any,
     tickets: {
       data: {
-        departure: { name: '', value: ''},
-        arrival: { name: '', value: ''},
-        date_forward: '',
-        date_backward: '',
+        departure: { name: "", value: "" },
+        arrival: { name: "", value: "" },
+        date_forward: "",
+        date_backward: "",
         class_type: "ECONOMY",
         adults: 1,
-      }
+      },
     } as any,
     isLoading: false as boolean,
     airlines: [] as any,
-    selectedAirlines: [] as any
+    stops: [] as any,
+    selectedAirlines: [] as any,
   }),
   persist: {
     storage: piniaPluginPersistedstate.localStorage(),
@@ -23,26 +25,26 @@ export const useTicketStore = defineStore("tickets", {
   actions: {
     async getTickets() {
       try {
-        this.isLoading = true
+        this.isLoading = true;
         const response = await api.get("/tickets", {
           params: {
             departure: this.tickets.data.departure.value,
-            arrival: this.tickets.data.arrival.value, 
+            arrival: this.tickets.data.arrival.value,
             date_forward: this.tickets.data.date_forward,
             date_backward: this.tickets.data.date_backward,
             class_type: this.tickets.data.class_type,
             adults: this.tickets.data.adults,
           },
         });
-    
-        console.log("Ответ API:", response.data); 
-    
+
+        console.log("Ответ API:", response.data);
+
         this.tickets = response.data;
         this.collectAirlines();
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
     collectAirlines() {

@@ -16,11 +16,24 @@
         ref="dropdown"
       >
         <!-- v-model="localAdults" привязан к props.adults (и событию update:adults) -->
-        <Counter label="Взрослые" v-model="localAdults" />
-        <Counter label="Дети" v-model="children" />
+        <Counter
+          label="Взрослые"
+          v-model="localAdults"
+          :maxValue="20"
+          :minValue="1"
+        />
+        <Counter label="Дети" v-model="children" :minValue="0" />
+        <Counter
+          label="Кол-во звезд"
+          v-model="localStars"
+          v-if="stars"
+          :minValue="3"
+          :maxValue="5"
+        />
 
         <!-- Аналогично для класса -->
         <Checkbox
+          v-if="classType"
           id="isBusinessClass"
           label="Бизнес класс"
           value="BUSINESS"
@@ -45,26 +58,29 @@ import {
 } from "vue";
 import Checkbox from "./Checkbox.vue";
 import Counter from "./Counter.vue";
+import { usePassengers } from "@/composables/usePassengers";
 
 const props = defineProps<{
   adults: number;
-  classType: string;
+  classType?: string;
+  stars?: any;
 }>();
 
-const emit = defineEmits(["update:adults", "update:classType"]);
+const emit = defineEmits(["update:adults", "update:classType", "update:stars"]);
+const { createPassengers, createPassengersAvia } = usePassengers();
 
-const localAdults = computed<number>({
-  get: () => props.adults,
-  set: (newValue) => emit("update:adults", newValue),
-});
-
-const localClass = computed<string>({
+const localClass = computed<any>({
   get: () => props.classType,
   set: (newValue) => emit("update:classType", newValue),
 });
 
-const children = ref<number>(0);
+const localStars = computed<any>({
+  get: () => props.stars,
+  set: (newValue) => emit("update:stars", newValue),
+});
 
+const children = ref<number>(0);
+const localAdults = ref<number>(props.adults);
 const isDropdownVisible = ref(false);
 const dropdownPosition = ref<"top" | "bottom">("bottom");
 const wrapper = ref<HTMLElement | null>(null);
@@ -76,9 +92,48 @@ const classTypeTranslation: Record<string, string> = {
 
 const passengerText = computed(() => {
   const total = localAdults.value + children.value;
-  return `${total} пассажир${total === 1 ? "" : "а"} (${
-    classTypeTranslation[localClass.value] || "Эконом"
-  })`;
+
+  // Соберём информацию о звёздах
+  // Чтобы потом условно добавить `(3★)` или пропустить
+  let starInfo = "";
+  if (props.stars) {
+    starInfo = `${props.stars}★`;
+  }
+
+  // 1) Если classType не передан => "гость/гостей"
+  if (!props.classType) {
+    // Для 1 человека = "гость", для остальных = "гостей"
+    const suffix = total === 1 ? "гость" : "гостей";
+
+    // Если есть звезды, то добавляем их в скобках
+    if (starInfo) {
+      return `${total} ${suffix} (${starInfo})`;
+    } else {
+      return `${total} ${suffix}`;
+    }
+  }
+
+  // 2) Если classType передан => используем "пассажир / пассажира"
+  // Для 1 человека = "пассажир", для остальных = "пассажира"
+  const suffix = total === 1 ? "" : "а";
+
+  // Собираем класс + звёзды в одном месте
+  // Например, "Эконом, 3★"
+  let classInfoParts: string[] = [];
+  if (props.classType && classTypeTranslation[props.classType]) {
+    classInfoParts.push(classTypeTranslation[props.classType]);
+  }
+  if (starInfo) {
+    classInfoParts.push(starInfo);
+  }
+
+  // Если у нас вообще что-то собралось, то кладём в скобки
+  let classInfo = "";
+  if (classInfoParts.length) {
+    classInfo = ` (${classInfoParts.join(", ")})`;
+  }
+
+  return `${total} пассажир${suffix}${classInfo}`;
 });
 
 const toggleDropdown = async () => {
@@ -90,10 +145,42 @@ const toggleDropdown = async () => {
 };
 
 watch(localClass, (newVal) => {
-  if (!newVal) {
+  if (!newVal && props.classType) {
     localClass.value = "ECONOMY";
   }
 });
+
+// watch(
+//   [() => localAdults.value, () => children.value],
+//   ([newAdults, newChildren], [oldAdults, oldChildren]) => {
+//     // Если сумма действительно изменилась, эмитим новое значение
+//     if (newAdults + newChildren !== oldAdults + oldChildren) {
+//       emit("update:adults", newAdults + newChildren);
+//     }
+//   }
+// );
+
+watch(
+  [() => localAdults.value, () => children.value],
+  ([newAdults, newChildren], [oldAdults, oldChildren]) => {
+    const oldSum = oldAdults + oldChildren;
+    const newSum = newAdults + newChildren;
+
+    if (newSum !== oldSum) {
+      // 1. Эмитим новое значение во внеший компонент
+      emit("update:adults", newSum);
+
+      // 2. Вызываем нужный метод композабла:
+      //    - если classType нет => createPassengers
+      //    - если classType есть => createPassengersAvia
+      if (!props.classType) {
+        createPassengers(newSum);
+      } else {
+        createPassengersAvia(newSum);
+      }
+    }
+  }
+);
 
 const closeDropdown = (event: MouseEvent) => {
   if (
@@ -113,7 +200,16 @@ const calculateDropdownPosition = () => {
     wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
-onMounted(() => document.addEventListener("click", closeDropdown));
+onMounted(() => {
+  const sum = localAdults.value + children.value;
+  if (!props.classType) {
+    createPassengers(sum);
+  } else {
+    createPassengersAvia(sum);
+  }
+
+  document.addEventListener("click", closeDropdown);
+});
 onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 </script>
 
