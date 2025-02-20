@@ -102,7 +102,10 @@ import {
 import PaymentForm from "~/components/shared/PaymentForm.vue";
 
 const { ticket, currentTicket } = useTicketAirStoreRefs();
-const { createPassengers, fetchTickedId } = useTicketAirStore();
+// const { createPassengers } = useTicketAirStore();
+import { useTicketStore } from "~/store/useTicketStore";
+
+const { fetchTickedId } = useTicketStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -121,7 +124,7 @@ const loadData = () => {
 };
 onMounted(() => {
   fetchTickedId(route.params.id.toString());
-  createPassengers();
+  // createPassengers();
   loadData();
 });
 

@@ -1,23 +1,25 @@
 <template>
-  <div class="payment-form">
-    <div class="payment-form__head">
-      <p>Покупатель</p>
+  <ClientOnly>
+    <div class="payment-form">
+      <div class="payment-form__head">
+        <p>Покупатель</p>
+      </div>
+      <div class="payment-form__action">
+        <Inputs
+          type="email"
+          id="payment-email"
+          label="Email"
+          v-model="ticket.email_address"
+        />
+        <InputsMask
+          v-model="ticket.phone_number"
+          label="Номер телефона"
+          type="text"
+          mask="# (###) ###-##-##"
+        />
+      </div>
     </div>
-    <div class="payment-form__action">
-      <Inputs
-        type="email"
-        id="payment-email"
-        label="Email"
-        v-model="ticket.email_address"
-      />
-      <InputsMask
-        v-model="ticket.phone_number"
-        label="Номер телефона"
-        type="text"
-        mask="# (###) ###-##-##"
-      />
-    </div>
-  </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">

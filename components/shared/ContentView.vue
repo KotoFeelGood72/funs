@@ -15,26 +15,26 @@
         </div>
         <div class="area__layout">
           <transition name="fade" mode="out-in">
-            <template v-if="isLoading">
+            <div v-if="isLoading">
               <div class="area__empty" key="loading">
                 <img src="~/assets/img/loader.png" alt="Загрузка" />
                 <p>
                   Загрузка<span class="dots">{{ animatedDots }}</span>
                 </p>
               </div>
-            </template>
+            </div>
 
-            <template v-else-if="$slots.default">
+            <div v-else-if="$slots.default">
               <div key="content">
                 <slot />
               </div>
-            </template>
+            </div>
 
-            <template v-else>
+            <div v-else>
               <div class="empty" key="empty">
                 <h2>Билетов не найдено</h2>
               </div>
-            </template>
+            </div>
           </transition>
         </div>
       </div>

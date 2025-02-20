@@ -14,7 +14,7 @@
     <div class="filter-group">
       <!-- <SelectPeopleHotel /> -->
       <SelectPeople
-        v-model:adults="ticket.adult"
+        v-model:adults="ticket.adults_count"
         v-model:stars="ticket.hotel_class"
       />
     </div>
@@ -36,11 +36,13 @@ import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 // import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 
-const { bookingHotel } = useHotelStore();
+const { bookingHotel, getHotelId } = useHotelStore();
 const { ticket } = useHotelStoreRefs();
 
 const router = useRouter();
 const route = useRoute();
+
+const requestId = ref<any>(null);
 
 const nextHotelBooking = async () => {
   // const query = {
@@ -51,12 +53,15 @@ const nextHotelBooking = async () => {
   //   adults: ticketHotel.value.adults.toString(),
   //   hotel_class: ticketHotel.value.hotel_class,
   // };
-  bookingHotel();
-  router.push({ name: "hotels" });
+  requestId.value = await bookingHotel();
+  console.log(requestId.value);
+
+  await router.push(`/hotels/?hotelId=${requestId.value}`);
 };
 
 onMounted(() => {
   // fillHotelTicketFromQuery(route.query);
+  // getHotelId(route.params.id);
 });
 </script>
 

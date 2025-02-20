@@ -4,6 +4,7 @@
       <div class="air_logo__img" v-if="logo">
         <img :src="logo" />
       </div>
+      <p>{{ title }}</p>
     </div>
     <div class="share">
       <Icon name="f:share" :size="25" />
@@ -29,8 +30,10 @@ const props = defineProps<{
 }
 
 .air_logo__img {
-  width: 10rem;
+  width: 5rem;
   height: 5rem;
+  border-radius: 100%;
+  overflow: hidden;
   // width: 4rem;
   // height: 4rem;
   // border-radius: 100rem;
@@ -45,5 +48,10 @@ const props = defineProps<{
     height: 100%;
     object-fit: contain;
   }
+}
+
+p {
+  font-family: $font_3;
+  font-weight: 600;
 }
 </style>

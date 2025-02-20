@@ -2,13 +2,13 @@
   <div class="home">
     <div class="start">
       <Hero />
-      <Divider :height="8" />
+      <Divider :height="8" class="hero-divider" />
       <Preview />
       <Divider :height="8" />
     </div>
     <Faq :faqs="faq" />
     <Divider :height="8" :color="true" />
-    <Posts :posts="blogs" />
+    <Posts :posts="blogs['featured']" />
     <Divider :height="8" :color="true" />
     <section class="quote blue">
       <div class="container">
@@ -23,7 +23,7 @@
         <p>Готовы?</p>
       </div>
     </section>
-    <section class="services blue">
+    <!-- <section class="services blue">
       <div class="container">
         <div class="services_main">
           <div class="service_card">
@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
     <section class="callback blue">
       <div class="container">
         <div class="callback_main">
@@ -91,46 +91,13 @@ import Preview from "~/components/screens/Preview.vue";
 import Faq from "~/components/screens/Faq.vue";
 import Divider from "~/components/ui/Divider.vue";
 import Posts from "~/components/screens/Posts.vue";
-import btn from "~/components/ui/buttons/btn.vue";
+// import btn from "~/components/ui/buttons/btn.vue";
 import Form from "~/components/shared/Form.vue";
 import { useFaqs } from "~/composables/useFaqs";
 import { useBlogs } from "~/composables/useBlogs";
 
 const { fetchFaqs, faq } = useFaqs();
 const { fetchBlogs, blogs } = useBlogs();
-
-const posts = ref<any>([
-  {
-    title: "Заголовок",
-    txt: "Принимая во внимание показатели успешности, убеждённость некоторых оппонентов требует определения и уточнения позиций, занимаемых участниками в отношении поставленных задач. Разнообразный и богатый опыт говорит нам, что высококачественный прототип будущего проекта, в своём классическом представлении, допускает внедрение распределения внутренних резервов и ресурсов.",
-    img: "/img/preview.jpg",
-    id: "11",
-  },
-  {
-    title: "Заголовок",
-    txt: "Принимая во внимание показатели успешности, убеждённость некоторых оппонентов требует определения и уточнения позиций, занимаемых участниками в отношении поставленных задач. Разнообразный и богатый опыт говорит нам, что высококачественный прототип будущего проекта, в своём классическом представлении, допускает внедрение распределения внутренних резервов и ресурсов.",
-    img: "/img/preview.jpg",
-    id: "11",
-  },
-  {
-    title: "Заголовок",
-    txt: "Принимая во внимание показатели успешности, убеждённость некоторых оппонентов требует определения и уточнения позиций, занимаемых участниками в отношении поставленных задач. Разнообразный и богатый опыт говорит нам, что высококачественный прототип будущего проекта, в своём классическом представлении, допускает внедрение распределения внутренних резервов и ресурсов.",
-    img: "/img/preview.jpg",
-    id: "11",
-  },
-  {
-    title: "Заголовок",
-    txt: "Принимая во внимание показатели успешности, убеждённость некоторых оппонентов требует определения и уточнения позиций, занимаемых участниками в отношении поставленных задач. Разнообразный и богатый опыт говорит нам, что высококачественный прототип будущего проекта, в своём классическом представлении, допускает внедрение распределения внутренних резервов и ресурсов.",
-    img: "/img/preview.jpg",
-    id: "11",
-  },
-  {
-    title: "Заголовок",
-    txt: "Принимая во внимание показатели успешности, убеждённость некоторых оппонентов требует определения и уточнения позиций, занимаемых участниками в отношении поставленных задач. Разнообразный и богатый опыт говорит нам, что высококачественный прототип будущего проекта, в своём классическом представлении, допускает внедрение распределения внутренних резервов и ресурсов.",
-    img: "/img/preview.jpg",
-    id: "11",
-  },
-]);
 
 onMounted(() => {
   fetchFaqs();
@@ -154,7 +121,7 @@ onMounted(() => {
     font-size: 5rem;
     line-height: 120%;
     text-align: center;
-    margin-bottom: 8rem;
+    // margin-bottom: 8rem;
   }
 
   img {

@@ -128,14 +128,16 @@ export const useTicketAirStore = defineStore("air-ticket", {
       this.selectedAirlines = selected.includes("Все") ? [] : selected;
     },
 
-    async fetchTickedId(id: any) {
-      try {
-        const response = await api.get(`/tickets/${id}`);
-        this.currentTicket = response.data;
-      } catch (error) {
-        console.error("Ошибка при загрузке билетов:", error);
-      }
-    },
+    // async fetchTickedId(id: any) {
+    //   try {
+    //     const response = await api.get(
+    //       `/tickets/${this.tickets.request_id}/${id}`
+    //     );
+    //     this.currentTicket = response.data;
+    //   } catch (error) {
+    //     console.error("Ошибка при загрузке билетов:", error);
+    //   }
+    // },
 
     async bookingTicketAir(ticketId: any) {
       try {

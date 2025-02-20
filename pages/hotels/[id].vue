@@ -103,7 +103,7 @@ const router = useRouter();
 const route = useRoute();
 // const { hotelData } = useFiltersStoreRefs();
 const { payHotel } = usePaymentsStore();
-const { getBookingHotel, addPayment } = useHotelStore();
+const { addPayment } = useHotelStore();
 const { ticket } = useHotelStoreRefs();
 
 const agreement = ref<boolean>(false);
@@ -170,9 +170,9 @@ const leave = (el: any) => {
   });
 };
 
-onMounted(() => {
-  getBookingHotel(route.params.id);
-});
+// onMounted(() => {
+//   getBookingHotel(route.params.id);
+// });
 </script>
 
 <style scoped lang="scss">

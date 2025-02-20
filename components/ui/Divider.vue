@@ -29,4 +29,10 @@ const heightInRem = `${props.height}rem`;
     background-color: $blue;
   }
 }
+
+.hero-divider {
+  @include bp($point_2) {
+    display: none;
+  }
+}
 </style>

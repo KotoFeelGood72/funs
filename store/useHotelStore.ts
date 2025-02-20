@@ -4,27 +4,6 @@ import { api } from "~/api/api";
 
 export const useHotelStore = defineStore("hotel-ticket", {
   state: () => ({
-    price: null as any,
-    // places: [] as any,
-    // currentOrderHotel: {
-    //   adults: [] as any,
-    // } as any,
-    // ticketHotel: {
-    //   city: { name: "", value: "" } as any,
-    //   check_in_date: null as string | null,
-    //   check_out_date: null as string | null,
-    //   email_address: "" as string,
-    //   phone_number: "" as string,
-    //   hotel_class: 3 as number,
-    //   num: 1 as number,
-    //   children: 1 as number,
-    //   adults: [] as Array<{
-    //     first_name: string;
-    //     last_name: string;
-    //     number_seria_passport: string;
-    //     birth_date: string;
-    //   }>,
-    // },
     ticket: {
       city: { name: "", value: "" } as any,
       check_in_date: null as string | null,
@@ -32,64 +11,31 @@ export const useHotelStore = defineStore("hotel-ticket", {
       email_address: "" as string,
       phone_number: "" as string,
       hotel_class: "3" as string,
-      adult: 1,
+      adults_count: 1,
       adults: [] as any,
+      id: null,
     },
   }),
   actions: {
-    // createPassengersHotel() {
-    //   this.ticketHotel.adults = Array.from(
-    //     { length: this.ticketHotel.num },
-    //     () => ({
-    //       first_name: "",
-    //       last_name: "",
-    //       number_seria_passport: "",
-    //       birth_date: "",
-    //     })
-    //   );
-    // },
-
-    // async fetchHotels(router: any) {
-    //   try {
-    //     const query = {
-    //       // city: {
-    //       //   name: this.ticketHotel.city.name,
-    //       //   value: this.ticketHotel.city.value,
-    //       // },
-    //       check_in_date: this.ticketHotel.check_in_date || "",
-    //       check_out_date: this.ticketHotel.check_out_date || "",
-    //       adults: this.ticketHotel.adults.toString(),
-    //       hotel_class: String(this.ticketHotel.hotel_class),
-    //     };
-
-    //     // Обновляем параметры в URL
-    //     router.push({
-    //       path: "/hotels",
-    //       query,
-    //     });
-
-    //     const response = await api.get("/hotels", { params: query });
-    //     // this.hotels = response.data; // Если есть массив отелей, его нужно сохранить
-    //   } catch (error) {
-    //     console.error("Ошибка при загрузке отелей:", error);
-    //   }
-    // },
-
     async bookingHotel() {
       try {
         const response = await api.post("hotels", {
-          ...this.ticket,
-          city: this.ticket.city.name,
+          ...this?.ticket,
+          city: this?.ticket?.city?.name,
         });
-        this.ticket = response.data;
-      } catch (error) {}
-    },
 
-    async getBookingHotel(id: any) {
-      try {
-        const response = await api.get(`/hotels/${id}`);
         this.ticket = response.data;
-      } catch (error) {}
+
+        if (response.data.id) {
+          // await router.push(`hotels/${response.data.id}`);
+          // await this.getHotelId(response.data.id);
+        }
+
+        return response.data.id; // Возвращаем ID брони
+      } catch (error) {
+        console.error("Ошибка при бронировании отеля:", error);
+        return null; // Возвращаем null в случае ошибки
+      }
     },
 
     async addPayment(id: any) {
@@ -98,8 +44,21 @@ export const useHotelStore = defineStore("hotel-ticket", {
           ...this.ticket,
           city: this.ticket.city.name,
         });
-        this.ticket = response.data;
+        // this.ticket = response.data;
       } catch (error) {}
+    },
+
+    async getHotelId(id: any) {
+      try {
+        const response = await api.get(`/hotels/${id}`);
+        this.ticket = response.data;
+
+        const { createPassengers } = usePassengers();
+
+        createPassengers(this.ticket.adults_count);
+      } catch (error) {
+        console.error("Ошибка при загрузке отелей:", error);
+      }
     },
 
     // async bookingHotel() {
@@ -127,7 +86,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
     async getHotelPrice() {
       try {
         const response = await api.get("/hotels/price");
-        this.price = response.data;
+        return response.data;
       } catch (error) {}
     },
 
@@ -150,9 +109,9 @@ export const useHotelStore = defineStore("hotel-ticket", {
     //   // this.createPassengersHotel();
     // },
   },
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-  },
+  // persist: {
+  //   storage: piniaPluginPersistedstate.localStorage(),
+  // },
 });
 
 export const useHotelStoreRefs = () => storeToRefs(useHotelStore());

@@ -13,7 +13,7 @@
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
-      <div class="tab-content" v-if="ticket.adults.length > 0">
+      <div class="tab-content" v-if="ticket.adults && ticket.adults.length > 0">
         <div class="form-grid">
           <Inputs
             label="Фамилия"
@@ -45,7 +45,7 @@
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <!-- <p class="price">{{ price?.price }} ₽</p> -->
+            <p class="price">{{ price?.price }} ₽</p>
           </div>
           <btn
             name="Далее"
@@ -77,25 +77,22 @@ const route = useRoute();
 const router = useRouter();
 const { ticket } = useHotelStoreRefs();
 const { createPassengers } = usePassengers();
-const { bookingHotel, getHotelPrice } = useHotelStore();
+const { bookingHotel, getHotelPrice, getHotelId } = useHotelStore();
 const activeTab = ref<number>(0);
 
 const setActiveTab = (index: number) => {
   activeTab.value = index;
 };
 
-onMounted(() => {
-  getHotelPrice();
-  // setTimeout(() => {
-  //   isLoading.value = false;
-  // }, 200);
-  // fillHotelTicketFromQuery(route.query);
+const price = ref<any>(null);
 
-  createPassengers(ticket.value.adult);
+onMounted(async () => {
+  price.value = await getHotelPrice();
+  getHotelId(route.query.hotelId);
 });
 
 const bookingHotelForNextPage = async () => {
-  await bookingHotel();
+  // await bookingHotel();
   if (ticket.value && ticket.value.id) {
     await router.push({
       name: "hotels-id",

@@ -4,6 +4,7 @@ import { api } from "~/api/api";
 export const useTicketStore = defineStore("tickets", {
   state: () => ({
     currentOrder: {} as any,
+    ticket: null as any,
     tickets: {
       data: {
         departure: { name: "", value: "" },
@@ -57,6 +58,17 @@ export const useTicketStore = defineStore("tickets", {
 
     applyAirlineFilter(selected: string[]) {
       this.selectedAirlines = selected.includes("Все") ? [] : selected;
+    },
+
+    async fetchTickedId(id: any) {
+      try {
+        const response = await api.get(
+          `/tickets/${this.tickets.request_id}/${id}`
+        );
+        this.ticket = response.data;
+      } catch (error) {
+        console.error("Ошибка при загрузке билетов:", error);
+      }
     },
   },
 });

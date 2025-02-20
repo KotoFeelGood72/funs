@@ -54,6 +54,11 @@ const list = [
 </script>
 
 <style scoped lang="scss">
+.hero {
+  @include bp($point_2) {
+    margin: 0 1.6rem 6rem 1.6rem !important;
+  }
+}
 .hero_main {
   color: $blue;
   background-color: $white;
@@ -61,6 +66,7 @@ const list = [
   border-radius: 3.2rem;
   @include bp($point_2) {
     border-radius: 1.6rem;
+    padding: 1.6rem;
   }
   h2 {
     font-size: 10rem;

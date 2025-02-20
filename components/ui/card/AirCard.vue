@@ -1,7 +1,7 @@
 <template>
   <div class="air">
     <div class="air_action" v-if="price">
-      <div class="price">{{ card.price }} €</div>
+      <div class="price">{{ card.price }} <span class="walet">₽</span></div>
       <!-- <div class="badge" v-if="false">
         <p>Багаж</p>
         <div class="ic">
@@ -20,11 +20,13 @@
         :title="card?.airline"
         :logo="card?.itineraries[0].segments[0].carrier_logo"
       />
-      <AirInfo
-        v-for="(item, i) in card?.itineraries"
-        :key="'card-itineraries' + i"
-        :info="item"
-      />
+      <div class="air_info__list">
+        <AirInfo
+          v-for="(item, i) in card?.itineraries"
+          :key="'card-itineraries' + i"
+          :info="item"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -100,5 +102,21 @@ const props = withDefaults(
     min-width: 100%;
     order: 1;
   }
+}
+
+.air_info__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  :deep(.info) {
+    &:nth-child(2) {
+      border-top: 0.1rem solid #e3e3e3;
+      padding-top: 1.5rem;
+    }
+  }
+}
+
+.walet {
+  font-family: Arial, Helvetica, sans-serif;
 }
 </style>

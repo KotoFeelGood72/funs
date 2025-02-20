@@ -129,6 +129,17 @@ img {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(32%, 1fr));
   grid-gap: 2.4rem;
+
+  @include bp($point_2) {
+    gap: 1.6rem;
+  }
+}
+.grid-3-mobile {
+  @include bp($point_2) {
+    display: grid !important ;
+    grid-template-columns: repeat(auto-fill, minmax(32%, 1fr)) !important;
+    grid-gap: 1.6rem !important;
+  }
 }
 
 .page {
@@ -137,6 +148,10 @@ img {
     background-color: $white;
     border-radius: 3.2rem;
     padding: 4rem;
+
+    @include bp($point_2) {
+      padding: 4rem 1.6rem;
+    }
   }
 
   span {

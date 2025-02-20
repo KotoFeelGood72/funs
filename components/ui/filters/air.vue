@@ -38,9 +38,9 @@ import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
-import { useToast } from "vue-toastification";
-import { useFetchPlace } from "@/composables/usePlace";
-import { useFetchTickets } from "@/composables/useTicket";
+// import { useToast } from "vue-toastification";
+// import { useFetchPlace } from "@/composables/usePlace";
+// import { useFetchTickets } from "@/composables/useTicket";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
 // const toast = useToast();
@@ -57,7 +57,12 @@ const getTicketsUi = () => {
   getTickets();
 
   if (route.name !== "air") {
-    router.push("/air");
+    router.push({
+      name: "air",
+      query: {
+        session_id: tickets.value.request_id,
+      },
+    });
   }
 };
 

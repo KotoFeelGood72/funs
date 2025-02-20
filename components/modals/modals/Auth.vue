@@ -54,6 +54,10 @@ const { email, password, login } = useAuth(store, router);
   transition: all 0.3s ease-in-out;
   position: relative;
 
+  @include bp($point_2) {
+    width: 95%;
+  }
+
   h3 {
     font-size: 2.4rem;
     margin-bottom: 1.6rem;

@@ -122,5 +122,9 @@ const modalTransitionName = computed(() => {
   z-index: 115;
   @include flex-center;
   transition: all 0.3s ease-in-out;
+
+  @include bp($point_2) {
+    width: 100%;
+  }
 }
 </style>

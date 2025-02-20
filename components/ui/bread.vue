@@ -8,45 +8,23 @@
     </div>
     <ul>
       <li v-for="(crumb, index) in breadcrumbs" :key="index">
-        <!-- Если это не последний элемент, делаем ссылку -->
-        <span v-if="index !== breadcrumbs.length - 1">
-          <NuxtLink :to="crumb.path">{{ crumb.title }}</NuxtLink>
+        <span v-if="crumb.path">
+          <NuxtLink v-if="index !== breadcrumbs.length - 1" :to="crumb.path">
+            {{ crumb.title }}
+          </NuxtLink>
+          <span v-else>{{ crumb.title }}</span>
         </span>
-        <!-- Последний элемент - просто текст -->
-        <span v-else>{{ crumb.title }}</span>
       </li>
     </ul>
   </nav>
 </template>
 
-<script setup>
-import { useRoute, useRouter } from "vue-router";
-import { computed } from "vue";
+<script setup lang="ts">
+import { defineProps } from "vue";
 
-// Доступ к текущему маршруту
-const route = useRoute();
-const router = useRouter();
-
-// Вычисляем хлебные крошки
-const breadcrumbs = computed(() => {
-  const crumbs = [];
-  let currentPath = "";
-
-  // Проходимся по каждому сегменту маршрута
-  route.matched.forEach((route) => {
-    currentPath += route.path;
-
-    // Получаем title из мета-данных
-    const title = route.meta.title || "Без названия";
-
-    crumbs.push({
-      path: currentPath,
-      title,
-    });
-  });
-
-  return crumbs;
-});
+const props = defineProps<{
+  breadcrumbs: any;
+}>();
 </script>
 
 <style scoped lang="scss">
@@ -57,6 +35,12 @@ const breadcrumbs = computed(() => {
     font-size: 1.8rem;
     color: $blue;
     font-family: $font_2;
+
+    @include bp($point_2) {
+      font-size: 1.4rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
   }
 }
 
@@ -67,5 +51,19 @@ nav {
     font-family: $font_3;
     font-weight: 500;
   }
+}
+
+.iconify {
+  @include bp($point_2) {
+    width: 1.3rem;
+    height: 1.3rem;
+    @include flex-center;
+  }
+}
+
+ul {
+  @include flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 </style>

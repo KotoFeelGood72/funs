@@ -25,10 +25,19 @@ const onLink = (link: string) => {
   @include flex-space;
   gap: 4rem;
 
+  @include bp($point_2) {
+    gap: 2rem;
+  }
+
   h3 {
     font-size: 3.2rem;
     font-weight: 500;
     font-family: $font_2;
+    @include bp($point_2) {
+      font-size: 1.8rem;
+      flex-grow: 1;
+      min-width: 20rem;
+    }
   }
 }
 </style>

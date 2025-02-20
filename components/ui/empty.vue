@@ -18,11 +18,26 @@ const props = defineProps<{
   flex-direction: column;
   gap: 3rem;
   min-height: 40rem;
+
+  @include bp($point_2) {
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    min-height: 20rem;
+  }
   h3 {
     font-size: 4rem;
+    @include bp($point_2) {
+      font-size: 2.4rem;
+      text-align: center;
+    }
   }
   p {
     font-size: 2.4rem;
+    @include bp($point_2) {
+      font-size: 1.8rem;
+      text-align: center;
+    }
   }
 }
 </style>

@@ -4,76 +4,39 @@
     <div class="articles_main">
       <div class="container">
         <div class="articles__col">
-          <bread class="breadcrums" />
+          <bread
+            class="breadcrums"
+            :breadcrumbs="[
+              { title: 'Блог', path: '/articles' },
+              { title: post.title, path: '/' },
+            ]"
+          ></bread>
+
           <div class="articles__head">
             <h1>{{ post.title }}</h1>
             <div class="articles_timeread">
-              3 мин <Icon name="famicons:time-outline" />
+              {{ post.reading_time }} <Icon name="famicons:time-outline" />
             </div>
           </div>
           <div class="articles_img">
-            <img src="@/assets/img/single.png" />
+            <img :src="post.image" />
           </div>
           <div class="articles__row">
             <div class="articles__content">
-              <h2>Заголовок h2</h2>
+              <h2>{{ post.title_h2 }}</h2>
               <div class="articles_txt">
-                <h3>Подзаголовок</h3>
+                <h3>{{ post.subtitle }}</h3>
                 <p>
-                  Прежде всего, синтетическое тестирование предоставляет широкие
-                  возможности для существующих финансовых и административных
-                  условий. С другой стороны, внедрение современных методик
-                  способствует подготовке и реализации первоочередных
-                  требований. Противоположная точка зрения подразумевает, что
-                  элементы политического процесса призывают нас к новым
-                  свершениям, которые, в свою очередь, должны быть призваны к
-                  ответу. Следует отметить, что выбранный нами инновационный
-                  путь позволяет выполнить важные задания по разработке
-                  прогресса профессионального сообщества. Наше дело не так
-                  однозначно, как может показаться: начало повседневной работы
-                  по формированию позиции в значительной степени обусловливает
-                  важность переосмысления внешнеэкономических политик. Внезапно,
-                  ключевые особенности структуры проекта формируют глобальную
-                  экономическую сеть и при этом — ограничены исключительно
-                  образом мышления. Разнообразный и богатый опыт говорит нам,
-                  что дальнейшее развитие различных форм деятельности влечет за
-                  собой процесс внедрения и модернизации системы обучения
-                  кадров, соответствующей насущным потребностям. В целом,
-                  конечно, существующая теория не оставляет шанса для
-                  первоочередных требований. Равным образом, современная
-                  методология разработки предоставляет широкие возможности для
-                  инновационных методов управления процессами. В рамках
-                  спецификации современных стандартов, акционеры крупнейших
-                  компаний превращены в посмешище, хотя само их существование
-                  приносит несомненную пользу обществу. Приятно, граждане,
-                  наблюдать, как реплицированные с зарубежных источников,
-                  современные исследования освещают чрезвычайно интересные
-                  особенности картины в целом, однако конкретные выводы,
-                  разумеется, подвергнуты целой серии независимых исследований.
-                  Кстати, сторонники тоталитаризма в науке лишь добавляют
-                  фракционных разногласий и ограничены исключительно образом
-                  мышления. А ещё некоторые особенности внутренней политики
-                  будут заблокированы в рамках своих собственных рациональных
-                  ограничений. Мы вынуждены отталкиваться от того, что
-                  социально-экономическое развитие выявляет срочную потребность
-                  экспериментов, поражающих по своей масштабности и
-                  грандиозности. Разнообразный и богатый опыт говорит нам, что
-                  граница обучения кадров способствует повышению качества
-                  поставленных обществом задач. Противоположная точка зрения
-                  подразумевает, что независимые государства и по сей день
-                  остаются уделом либералов, которые жаждут быть представлены в
-                  исключительно положительном свете. Значимость этих проблем
-                  настолько очевидна, что высококачественный прототип будущего
-                  проекта играет важную роль в формировании новых.
+                  {{ post.body }}
                 </p>
               </div>
-              <btn name="Поделиться" icon="share-2" theme="white" />
+              <btn name="Поделиться" icon="share-2" theme="blue" />
             </div>
             <div class="articles_aside">
               <sectionHead title="Новые посты" link="/" />
-              <div class="post__new">
+              <div class="post__new grid-3-mobile">
                 <Post
-                  v-for="(item, i) in blogs"
+                  v-for="(item, i) in blogs['new']"
                   :key="'post-item-' + i"
                   :post="item"
                 />
@@ -85,7 +48,7 @@
               <sectionHead title="Избранные посты" link="/" />
               <div class="grid-3">
                 <Post
-                  v-for="(item, i) in blogs"
+                  v-for="(item, i) in blogs['featured']"
                   :key="'post-item-' + i"
                   :post="item"
                 />
@@ -105,6 +68,7 @@ import Post from "~/components/ui/card/Post.vue";
 import bread from "~/components/ui/bread.vue";
 import Hero from "~/components/screens/Hero.vue";
 import { useBlogs } from "~/composables/useBlogs";
+
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -114,6 +78,11 @@ const { fetchBlogsSlug, post, fetchBlogs, blogs } = useBlogs();
 onMounted(async () => {
   await fetchBlogsSlug(route.params.slug.toString());
   await fetchBlogs("new");
+  await fetchBlogs("featured");
+
+  useHead({
+    title: `Funbooking - Блог - ${post.value?.title}`,
+  });
 });
 </script>
 
@@ -144,6 +113,9 @@ onMounted(async () => {
   height: auto;
   border-radius: 2.4rem;
   overflow: hidden;
+  @include bp($point_2) {
+    max-height: 25rem;
+  }
   img {
     object-fit: cover;
   }
@@ -159,6 +131,11 @@ onMounted(async () => {
   @include flex-start;
   align-items: flex-start;
   gap: 13.8rem;
+
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 6rem;
+  }
 }
 .articles__content {
   max-width: 99.4rem;
@@ -186,6 +163,14 @@ onMounted(async () => {
   li {
     margin: 1rem 0;
   }
+}
+
+.articles_txt > p {
+  margin-bottom: 4rem;
+}
+
+.articles_aside {
+  max-width: 50rem;
 }
 
 .articles_aside,
