@@ -12,7 +12,6 @@
       />
     </div>
     <div class="filter-group">
-      <!-- <SelectPeopleHotel /> -->
       <SelectPeople
         v-model:adults="ticket.adults_count"
         v-model:stars="ticket.hotel_class"
