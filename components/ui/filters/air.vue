@@ -24,7 +24,7 @@
     <btn
       name="Искать для визы"
       icon="right"
-      @click="getTicketsUi()"
+      @click="onTicket()"
       theme="primary"
     />
   </div>
@@ -45,19 +45,24 @@ import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
 // const toast = useToast();
 // const { fetchPlace, places } = useFetchPlace();
-const { getTickets } = useTicketStore();
+// const { getTickets } = useTicketStore();
 const { tickets, isLoading } = useTicketStoreRefs();
 // const { getTickets, tickets } = useFetchTickets();
 const route = useRoute();
 const router = useRouter();
-const emit = defineEmits();
+const emit = defineEmits(["getTicket"]);
+
+const onTicket = () => {
+  emit("getTicket");
+  console.log("emit getTicket сработало!");
+};
 
 // Функция для запроса билетов
-const getTicketsUi = () => {
-  getTickets();
+const getTicketsUi = async () => {
+  // getTickets();
 
   if (route.name !== "air") {
-    router.push({
+    await router.push({
       name: "air",
       query: {
         session_id: tickets.value.request_id,
@@ -74,11 +79,11 @@ const swapCities = () => {
 };
 
 // При монтировании подтягиваем данные, если они уже есть
-onMounted(() => {
-  // if (route.name === "air") {
-  //   getTicketsUi();
-  // }
-});
+// onMounted(() => {
+// if (route.name === "air") {
+//   getTicketsUi();
+// }
+// });
 </script>
 
 <style scoped lang="scss">

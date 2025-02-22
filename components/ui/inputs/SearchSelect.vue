@@ -51,10 +51,25 @@ const selectedIndex = ref(-1);
 
 const displayName = computed(() => props.modelValue?.name || "");
 
-// Отслеживание изменений displayName и вызов fetchPlace
 watchEffect(() => {
   if (displayName.value && displayName.value.length > 1) {
     fetchPlace(displayName.value);
+  } else {
+    clear();
+  }
+});
+
+watchEffect(() => {
+  if (places.value.length > 0 && typeof props.modelValue === "string") {
+    emit("update:modelValue", places.value[0]);
+  }
+});
+
+watchEffect(() => {
+  if (typeof props.modelValue === "string" && props.modelValue.length > 1) {
+    fetchPlace(props.modelValue);
+  } else if (typeof props.modelValue === "object" && props.modelValue?.name) {
+    fetchPlace(props.modelValue.name);
   } else {
     clear();
   }
@@ -80,7 +95,7 @@ const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   emit("update:modelValue", {
     name: target.value,
-    value: props.modelValue?.value || "", // Сохраняем прошлый `value`
+    value: props.modelValue?.value || "",
   });
   selectedIndex.value = -1;
 };

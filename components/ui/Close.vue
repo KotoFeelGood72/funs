@@ -1,17 +1,15 @@
 <template>
-  <div class="close" @click="onClose">
+  <div class="close" @click="closeAllModals">
     <Icon name="f:close" :size="22" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineEmits } from "vue";
+import { useModalStore } from "~/store/useModalStore";
 
+const { closeAllModals } = useModalStore();
 const emit = defineEmits(["close"]);
-
-const onClose = () => {
-  emit("close");
-};
 </script>
 
 <style scoped lang="scss">

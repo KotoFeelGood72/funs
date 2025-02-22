@@ -77,7 +77,7 @@ const route = useRoute();
 const router = useRouter();
 const { ticket } = useHotelStoreRefs();
 const { createPassengers } = usePassengers();
-const { bookingHotel, getHotelPrice, getHotelId } = useHotelStore();
+const { bookingHotelAddInfo, getHotelPrice, getHotelId } = useHotelStore();
 const activeTab = ref<number>(0);
 
 const setActiveTab = (index: number) => {
@@ -92,11 +92,11 @@ onMounted(async () => {
 });
 
 const bookingHotelForNextPage = async () => {
-  // await bookingHotel();
+  await bookingHotelAddInfo(route.query.hotelId, "post");
   if (ticket.value && ticket.value.id) {
     await router.push({
       name: "hotels-id",
-      params: { id: ticket.value.id },
+      params: { id: String(route.query.hotelId) },
     });
   }
 };
@@ -114,6 +114,10 @@ const bookingHotelForNextPage = async () => {
     font-size: 1.8rem;
     font-family: $font_2;
     margin-bottom: 2.4rem;
+
+    @include bp($point_2) {
+      font-size: 1.4rem;
+    }
 
     .tab-link {
       background-color: $gray-light;

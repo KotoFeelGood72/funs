@@ -31,22 +31,64 @@ export const useHotelStore = defineStore("hotel-ticket", {
           // await this.getHotelId(response.data.id);
         }
 
-        return response.data.id; // Возвращаем ID брони
+        return response.data.id;
       } catch (error) {
         console.error("Ошибка при бронировании отеля:", error);
-        return null; // Возвращаем null в случае ошибки
+        return null;
       }
     },
 
-    async addPayment(id: any) {
+    async bookingHotelAddInfo(
+      requestId: any,
+      method: "get" | "post" | "patch" | "delete" = "post"
+    ) {
       try {
-        const response = await api.get(`/hotels/${id}`, {
-          ...this.ticket,
-          city: this.ticket.city.name,
-        });
-        // this.ticket = response.data;
-      } catch (error) {}
+        const filteredTicket = this?.ticket
+          ? Object.fromEntries(
+              Object.entries(this.ticket).filter(([key, value]) => {
+                // Фильтруем пустые значения
+                if (value === null || value === undefined || value === "") {
+                  return false;
+                }
+
+                // Проверяем массив adults, чтобы не отправлять, если все поля в нем пустые
+                if (key === "adults" && Array.isArray(value)) {
+                  const hasValidAdult = value.some((adult) =>
+                    Object.values(adult).some(
+                      (field) =>
+                        field !== "" && field !== null && field !== undefined
+                    )
+                  );
+                  return hasValidAdult;
+                }
+
+                return true;
+              })
+            )
+          : {};
+
+        const response = await api[method](
+          `hotels/${requestId}`,
+          method === "get" || method === "delete"
+            ? undefined
+            : { ...filteredTicket, city: this?.ticket?.city?.name }
+        );
+
+        return response.data;
+      } catch (error) {
+        console.error("Ошибка при бронировании отеля:", error);
+        return null;
+      }
     },
+    // async addPayment(id: any) {
+    //   try {
+    //     const response = await api.get(`/hotels/${id}`, {
+    //       ...this.ticket,
+    //       city: this.ticket.city.name,
+    //     });
+    //     // this.ticket = response.data;
+    //   } catch (error) {}
+    // },
 
     async getHotelId(id: any) {
       try {
@@ -55,33 +97,16 @@ export const useHotelStore = defineStore("hotel-ticket", {
 
         const { createPassengers } = usePassengers();
 
-        createPassengers(this.ticket.adults_count);
+        // Проверяем, пуст ли массив adults
+        if (!this.ticket.adults || this.ticket.adults.length === 0) {
+          createPassengers(this.ticket.adults_count);
+        }
+
+        console.log(this.ticket);
       } catch (error) {
         console.error("Ошибка при загрузке отелей:", error);
       }
     },
-
-    // async bookingHotel() {
-    //   try {
-    //     const formattedAdults = this.ticketHotel.adults.map((adult) => ({
-    //       ...adult,
-    //       number_seria_passport: adult.number_seria_passport.replace(/-/g, ""),
-    //     }));
-    //     const response = await api.post("/hotels", {
-    //       email_address: this.ticketHotel.email_address,
-    //       phone_number: this.ticketHotel.phone_number,
-    //       check_in_date: this.ticketHotel.check_in_date,
-    //       check_out_date: this.ticketHotel.check_out_date,
-    //       city: this.ticketHotel.city?.value,
-    //       hotel_class: String(this.ticketHotel.hotel_class),
-    //       adults: formattedAdults,
-    //     });
-    //     console.log("Бронирование успешно", response.data);
-    //     this.currentOrder = response.data;
-    //   } catch (error) {
-    //     console.error("Ошибка при бронировании отеля:", error);
-    //   }
-    // },
 
     async getHotelPrice() {
       try {
@@ -89,25 +114,6 @@ export const useHotelStore = defineStore("hotel-ticket", {
         return response.data;
       } catch (error) {}
     },
-
-    // async clearPlace() {
-    //   this.places = [];
-    // },
-
-    // // Метод для получения данных из query и обновления store
-    // fillHotelTicketFromQuery(query: any) {
-    //   this.ticketHotel.city = { name: query.cityName, value: query.cityValue };
-    //   this.ticketHotel.check_in_date = query.check_in_date || null;
-    //   this.ticketHotel.check_out_date = query.check_out_date || null;
-    //   this.ticketHotel.num = query.num ? parseInt(query.num) : 1;
-    //   this.ticketHotel.children = query.children ? parseInt(query.children) : 0;
-    //   this.ticketHotel.hotel_class = query.hotel_class
-    //     ? parseInt(query.hotel_class)
-    //     : 3;
-
-    //   // Обновляем пассажиров
-    //   // this.createPassengersHotel();
-    // },
   },
   // persist: {
   //   storage: piniaPluginPersistedstate.localStorage(),

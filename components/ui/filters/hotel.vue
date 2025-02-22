@@ -35,33 +35,31 @@ import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 // import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 
-const { bookingHotel, getHotelId } = useHotelStore();
+import { watch, ref } from "vue";
+
+const { bookingHotel, bookingHotelAddInfo } = useHotelStore();
 const { ticket } = useHotelStoreRefs();
 
 const router = useRouter();
 const route = useRoute();
-
 const requestId = ref<any>(null);
 
 const nextHotelBooking = async () => {
-  // const query = {
-  //   cityName: ticketHotel.value.city.name,
-  //   cityValue: ticketHotel.value.city.value,
-  //   check_in_date: ticketHotel.value.check_in_date || "",
-  //   check_out_date: ticketHotel.value.check_out_date || "",
-  //   adults: ticketHotel.value.adults.toString(),
-  //   hotel_class: ticketHotel.value.hotel_class,
-  // };
   requestId.value = await bookingHotel();
   console.log(requestId.value);
 
   await router.push(`/hotels/?hotelId=${requestId.value}`);
 };
 
-onMounted(() => {
-  // fillHotelTicketFromQuery(route.query);
-  // getHotelId(route.params.id);
-});
+// Отслеживаем только adults_count и вызываем PUT, если есть hotelId
+watch(
+  () => ticket.value.adults_count,
+  async (newValue, oldValue) => {
+    if (route.query.hotelId && newValue !== oldValue) {
+      await bookingHotelAddInfo(route.query.hotelId, "patch");
+    }
+  }
+);
 </script>
 
 <style scoped lang="scss">

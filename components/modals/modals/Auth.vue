@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="auth">
-      <Close @close="store.closeAllModals" />
+      <Close />
       <div class="auth_head">
         <h3>Вход в личный кабинет</h3>
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-// import AuthConfirm from "~/components/ui/auth/AuthConfirm.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Close from "~/components/ui/Close.vue";

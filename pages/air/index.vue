@@ -5,7 +5,7 @@
       :isLoading="isLoading"
     >
       <div class="top">
-        <air />
+        <air @getTicket="handleGetTicket" />
       </div>
       <div class="row">
         <FiltersSidebar v-model="filters" :airlines="airlines" v-if="tickets" />
@@ -115,6 +115,10 @@ const finalTickets = computed(() => {
 
   return result;
 });
+
+const handleGetTicket = () => {
+  console.log("Событие getTicket сработало!");
+};
 
 onMounted(() => {
   getTickets();

@@ -20,11 +20,12 @@ export const useTicketStore = defineStore("tickets", {
     stops: [] as any,
     selectedAirlines: [] as any,
   }),
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-  },
+  // persist: {
+  //   storage: piniaPluginPersistedstate.localStorage(),
+  // },
   actions: {
     async getTickets() {
+      console.log("Событие getTicket сработало!");
       try {
         this.isLoading = true;
         const response = await api.get("/tickets", {

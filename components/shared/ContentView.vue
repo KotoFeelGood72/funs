@@ -1,5 +1,5 @@
 <template>
-  <section class="area">
+  <section class="area" v-bind="$attrs">
     <div class="container">
       <div class="area_main">
         <div class="area__head" v-if="title">

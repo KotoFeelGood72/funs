@@ -8,6 +8,7 @@
 import { computed, ref } from "vue";
 import { useModalStoreRefs } from "~/store/useModalStore";
 import Auth from "./modals/Auth.vue";
+import Payment from "./modals/Payment.vue";
 
 const { modals } = useModalStoreRefs();
 
@@ -30,6 +31,8 @@ const activeModalComponent = computed(() => {
       switch (key) {
         case "auth":
           return Auth;
+        case "payment":
+          return Payment;
         default:
           return null;
       }

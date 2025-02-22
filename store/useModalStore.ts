@@ -4,6 +4,7 @@ export const useModalStore = defineStore("modal", {
   state: (): { modals: any } => ({
     modals: {
       auth: false,
+      payment: false,
     },
   }),
   actions: {

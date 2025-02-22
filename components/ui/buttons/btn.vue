@@ -1,5 +1,9 @@
 <template>
-  <div class="btn" :class="[isColorTheme, isSize, { disabled: disabled }]">
+  <div
+    class="btn"
+    :class="[isColorTheme, isSize, { disabled: disabled }]"
+    @click="emit('onClick')"
+  >
     <p>{{ name }}</p>
     <div class="icon" v-if="icon && !loading">
       <Icon :name="'f:' + icon" :size="15" />
@@ -11,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits(["onClick"]);
 const props = defineProps<{
   name: string;
   loading?: boolean;

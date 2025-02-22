@@ -37,19 +37,18 @@
                 v-model="tab.first_name"
                 :id="'firstName' + index"
               />
-              <DatePicker :disablePast="true" v-model="tab.birth_date" />
-
-              <!-- <Select
-                :options="['Россия', 'Украина', 'Беларусь']"
-                v-model="tab.citizenship"
-                label="Выберите объект проживания"
+              <Inputs
+                type="date"
+                label="Дата рождения"
+                v-model="tab.birth_date"
+                :id="'dateBirth' + index"
               />
-              
-              <Select
-                :options="['Россия', 'Украина', 'Беларусь']"
-                v-model="tab.citizenship"
-                label="Выберите класс"
-              /> -->
+              <InputsMask
+                label="Номер загранпаспорта"
+                v-model="tab.number_seria_passport"
+                :id="route.params.id + 'passportNumber' + index"
+                mask="##-## ###-###"
+              />
             </div>
           </div>
         </transition>
@@ -73,11 +72,7 @@
           <span>Общая стоимость</span>
           <p>600</p>
         </div>
-        <btn
-          name="Оплатить"
-          theme="primary"
-          @click="addPayment(route.params.id)"
-        />
+        <btn name="Оплатить" theme="primary" @click="openModal('payment')" />
       </div>
     </div>
   </ContentView>
@@ -87,66 +82,26 @@
 import ContentView from "~/components/shared/ContentView.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import btn from "~/components/ui/buttons/btn.vue";
-import DatePicker from "~/components/ui/inputs/DatePicker.vue";
-import Select from "~/components/ui/inputs/Select.vue";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
-import { useRouter } from "vue-router";
 import { ref, watch, computed } from "vue";
-// import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import { usePaymentsStore } from "~/store/usePaymentsStore";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-// import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+import { useModalStore } from "~/store/useModalStore";
 
-// getBookingHotel
-
-const router = useRouter();
 const route = useRoute();
-// const { hotelData } = useFiltersStoreRefs();
-const { payHotel } = usePaymentsStore();
-const { addPayment } = useHotelStore();
+const { getHotelId } = useHotelStore();
 const { ticket } = useHotelStoreRefs();
+const { openModal } = useModalStore();
 
 const agreement = ref<boolean>(false);
-// const tabs = ref<any>([]);
 const activeTab = ref<any>(0);
 
-const setActiveTab = (index: number) => {
-  activeTab.value = index;
-};
-
-// Функция для обновления вкладок
-// const updateTabs = () => {
-//   tabs.value = [];
-
-//   // Добавляем взрослых
-//   hotelData.value.adults.forEach((adult: any, index: any) => {
-//     tabs.value.push({
-//       ...adult,
-//       type: "adult",
-//       label: `Взрослый ${index + 1}`,
-//     });
-//   });
-
-//   // Добавляем детей
-//   hotelData.value.children.forEach((child: any, index: any) => {
-//     tabs.value.push({
-//       ...child,
-//       type: "child",
-//       label: `Ребёнок ${index + 1}`,
-//     });
-//   });
+// const setActiveTab = (index: number) => {
+//   activeTab.value = index;
 // };
 
-// Следим за изменениями данных
-// watch(
-//   () => [hotelData.value.adults, hotelData.value.children],
-//   () => {
-//     updateTabs();
-//   },
-//   { immediate: true }
-// );
-
-const activeAccordion = ref<number | null>(1);
+const activeAccordion = ref<number | null>(0);
 
 const toggleAccordion = (index: number) => {
   activeAccordion.value = activeAccordion.value === index ? null : index;
@@ -170,9 +125,9 @@ const leave = (el: any) => {
   });
 };
 
-// onMounted(() => {
-//   getBookingHotel(route.params.id);
-// });
+onMounted(() => {
+  getHotelId(route.params.id);
+});
 </script>
 
 <style scoped lang="scss">
@@ -241,6 +196,10 @@ const leave = (el: any) => {
     font-size: 1.8rem;
     font-family: $font_3;
     cursor: pointer;
+
+    @include bp($point_2) {
+      font-size: 1.6rem;
+    }
   }
 
   .acc_icon {
@@ -256,6 +215,10 @@ const leave = (el: any) => {
     padding: 2.4rem;
     border: 0.1rem solid $light;
     border-radius: 1.6rem;
+
+    @include bp($point_2) {
+      padding: 1.6rem;
+    }
   }
 
   .form-grid {
@@ -263,6 +226,10 @@ const leave = (el: any) => {
     grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
     gap: 2.4rem;
     padding: 3rem 0 0 0;
+
+    @include bp($point_2) {
+      gap: 3rem 1rem;
+    }
   }
 }
 .bottom {
