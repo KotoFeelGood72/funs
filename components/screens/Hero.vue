@@ -17,7 +17,7 @@
         <div class="hero_bottom">
           <Tabs :tabs="list">
             <template #tab-0>
-              <air />
+              <air @get-ticket="getTicket" />
             </template>
             <template #tab-1>
               <hotel />
@@ -35,8 +35,10 @@
 <script setup lang="ts">
 import air from "../ui/filters/air.vue";
 import hotel from "../ui/filters/hotel.vue";
-import eta from "../ui/filters/eta.vue";
+// import eta from "../ui/filters/eta.vue";
 import Tabs from "../ui/Tabs.vue";
+import { useTicketStore } from "~/store/useTicketStore";
+import { useRouter } from "vue-router";
 const props = withDefaults(
   defineProps<{
     title?: boolean;
@@ -46,11 +48,17 @@ const props = withDefaults(
   }
 );
 
-const list = [
-  { label: "Билеты" },
-  { label: "Отели" },
-  // { label: "ETA" }
-];
+const router = useRouter();
+const requestId = ref<string | null>(null);
+
+const { getTickets } = useTicketStore();
+
+const list = [{ label: "Билеты" }, { label: "Отели" }];
+
+const getTicket = async () => {
+  requestId.value = await getTickets();
+  await router.push({ name: "air", query: { ticketsId: requestId.value } });
+};
 </script>
 
 <style scoped lang="scss">

@@ -2,12 +2,6 @@
   <div class="air">
     <div class="air_action" v-if="price">
       <div class="price">{{ card.price }} <span class="walet">₽</span></div>
-      <!-- <div class="badge" v-if="false">
-        <p>Багаж</p>
-        <div class="ic">
-          <Icon name="f:tright" :size="16" />
-        </div>
-      </div> -->
       <btn
         name="Бронировать для визы"
         @click="nextToAir()"
@@ -35,12 +29,16 @@
 import btn from "../buttons/btn.vue";
 import AirHead from "../air/AirHead.vue";
 import AirInfo from "../air/AirInfo.vue";
-import { useRouter } from "vue-router";
-
+import { useRouter, useRoute } from "vue-router";
+const route = useRoute();
 const router = useRouter();
 
-const nextToAir = () => {
-  router.push(`/air/${props.card.id}`);
+const nextToAir = async () => {
+  await router.push({
+    name: "air-id",
+    query: { ticketsId: route.query.ticketsId },
+    params: { id: props.card.id },
+  });
 };
 
 const props = withDefaults(

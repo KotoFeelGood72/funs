@@ -1,5 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
 import { api } from "~/api/api";
+import { usePassengers } from "@/composables/usePassengers";
 
 export const useTicketStore = defineStore("tickets", {
   state: () => ({
@@ -25,7 +26,6 @@ export const useTicketStore = defineStore("tickets", {
   // },
   actions: {
     async getTickets() {
-      console.log("Событие getTicket сработало!");
       try {
         this.isLoading = true;
         const response = await api.get("/tickets", {
@@ -43,6 +43,7 @@ export const useTicketStore = defineStore("tickets", {
 
         this.tickets = response.data;
         this.collectAirlines();
+        return response.data.request_id;
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       } finally {
@@ -60,6 +61,29 @@ export const useTicketStore = defineStore("tickets", {
     applyAirlineFilter(selected: string[]) {
       this.selectedAirlines = selected.includes("Все") ? [] : selected;
     },
+
+    async getTickerForRequest(requestId: any) {
+      try {
+        const response = await api.get(`/tickets/requests/${requestId}`);
+        this.tickets = response.data;
+      } catch (error) {
+        console.error("Ошибка при загрузке билетов:", error);
+      }
+    },
+
+
+    async getTickerForRequestToId(request_id: any, id: any) {
+      try {
+          const response = await api.get(`/tickets/requests/${request_id}/${id}`);
+          // this.tickets = response.data;
+          return response.data;
+
+          const { createPassengers } = usePassengers();
+        } catch (error) {
+          console.error("Ошибка при загрузке билетов:", error);
+      }
+  },
+
 
     async fetchTickedId(id: any) {
       try {

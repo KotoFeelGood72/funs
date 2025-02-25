@@ -1,14 +1,12 @@
 <template>
   <ContentView
-    :title="
-      currentTicket?.start_city_name + ' - ' + currentTicket?.final_city_name
-    "
-    :isLoading="isLoading"
+    :title="tickets.data?.departure.name + ' - ' + tickets.data?.arrival.name"
+    :isLoading="false"
   >
-    <div class="passenger-form" v-if="ticket.passengers.length > 0">
+    <!-- <div class="passenger-form" v-if="tickets.adults.length > 0">
       <PaymentForm />
       <PassengerTabs
-        :tabs="ticket.passengers"
+        :tabs="tickets.passengers"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
@@ -16,18 +14,18 @@
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            v-model="ticket.passengers[activeTab].last_name"
+            v-model="tickets.passengers[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            v-model="ticket.passengers[activeTab].first_name"
+            v-model="tickets.passengers[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
           <Inputs
             type="date"
             label="Дата рождения"
-            v-model="ticket.passengers[activeTab].birth_date"
+            v-model="tickets.passengers[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
 
@@ -36,11 +34,11 @@
               { name: 'Мужчина', value: 'M' },
               { name: 'Женщина', value: 'W' },
             ]"
-            v-model="ticket.passengers[activeTab].gender"
+            v-model="tickets.passengers[activeTab].gender"
             label="Пол"
           />
           <InputsMask
-            v-model="ticket.passengers[activeTab].number_seria_passport"
+            v-model="tickets.passengers[activeTab].number_seria_passport"
             :id="'passportNumber' + activeTab"
             label="Номер загранпаспорта"
             type="text"
@@ -48,14 +46,14 @@
           />
           <Inputs
             label="Гражданство"
-            v-model="ticket.passengers[activeTab].nationality"
+            v-model="tickets.passengers[activeTab].nationality"
             :id="'nationality' + activeTab"
             mode="english"
           />
           <Inputs
             type="date"
             label="Срок действия"
-            v-model="ticket.passengers[activeTab].validity_period"
+            v-model="tickets.passengers[activeTab].validity_period"
             :id="'validityPeriod' + activeTab"
           />
         </div>
@@ -72,7 +70,6 @@
             name="Далее"
             theme="primary"
             size="normal"
-            :disabled="!isFormValid"
             @click="
               router.push({
                 name: 'air-id-confirmId',
@@ -82,7 +79,7 @@
           />
         </div>
       </div>
-    </div>
+    </div> -->
   </ContentView>
 </template>
 
@@ -95,19 +92,14 @@ import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
-import {
-  useTicketAirStoreRefs,
-  useTicketAirStore,
-} from "~/store/useTicketAirStore";
-import PaymentForm from "~/components/shared/PaymentForm.vue";
 
-const { ticket, currentTicket } = useTicketAirStoreRefs();
-// const { createPassengers } = useTicketAirStore();
-import { useTicketStore } from "~/store/useTicketStore";
+import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
-const { fetchTickedId } = useTicketStore();
+const { getTickerForRequestToId, getTickerForRequest } = useTicketStore();
+const { tickets } = useTicketStoreRefs();
 const route = useRoute();
 const router = useRouter();
+const currentTicket = ref<any>(null);
 
 const isLoading = ref(true);
 const activeTab = ref(0);
@@ -115,37 +107,30 @@ const activeTab = ref(0);
 const setActiveTab = (index: number) => {
   activeTab.value = index;
 };
-
-const loadData = () => {
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 300);
-};
 onMounted(() => {
-  fetchTickedId(route.params.id.toString());
-  // createPassengers();
-  loadData();
-});
-
-const isFormValid = computed(() => {
-  // Проверяем, что в ticket.passengers есть хотя бы один пассажир
-  // и что у каждого пассажира заполнены ВСЕ нужные поля
-  return (
-    ticket.value.passengers.length > 0 &&
-    ticket.value.passengers.every((p) => {
-      return (
-        p.last_name &&
-        p.first_name &&
-        p.birth_date &&
-        p.gender &&
-        p.number_seria_passport &&
-        p.nationality &&
-        p.validity_period
-      );
-    })
+  getTickerForRequest(route.query.ticketsId);
+  currentTicket.value = getTickerForRequestToId(
+    route.query.ticketsId,
+    route.params.id
   );
 });
+
+// const isFormValid = computed(() => {
+//   return (
+//     ticket.value.passengers.length > 0 &&
+//     ticket.value.passengers.every((p) => {
+//       return (
+//         p.last_name &&
+//         p.first_name &&
+//         p.birth_date &&
+//         p.gender &&
+//         p.number_seria_passport &&
+//         p.nationality &&
+//         p.validity_period
+//       );
+//     })
+//   );
+// });
 </script>
 
 <style scoped lang="scss">

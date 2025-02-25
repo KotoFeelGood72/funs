@@ -5,7 +5,7 @@
       :isLoading="isLoading"
     >
       <div class="top">
-        <air @getTicket="handleGetTicket" />
+        <air @getTicket="getTicket()" />
       </div>
       <div class="row">
         <FiltersSidebar v-model="filters" :airlines="airlines" v-if="tickets" />
@@ -24,14 +24,13 @@
               </li>
             </ul>
           </div>
-          <div class="air-empty" v-else>
-            <h3>Рейсов не найдено 😔</h3>
-            <p>
-              К сожалению, мы не нашли подходящих авиабилетов по вашему запросу.
+          <empty
+            title="Рейсов не найдено 😔"
+            txt="К сожалению, мы не нашли подходящих авиабилетов по вашему запросу.
               Попробуйте изменить параметры поиска: выберите другие даты,
-              аэропорты или пересмотрите фильтры. ✈️💙
-            </p>
-          </div>
+              аэропорты или пересмотрите фильтры. ✈️💙"
+            v-else
+          />
         </div>
       </div>
     </ContentView>
@@ -48,9 +47,12 @@ import InputsSearch from "~/components/ui/inputs/InputsSearch.vue";
 import RadioGroup from "~/components/ui/inputs/RadioGroup.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
+import empty from "~/components/ui/empty.vue";
 
-const { getTickets } = useTicketStore();
+const { getTickets, getTickerForRequest } = useTicketStore();
 const { tickets, isLoading, airlines } = useTicketStoreRefs();
+const route = useRoute();
+const router = useRouter();
 
 const sort = ref([
   { name: "Сначала дешевле", val: "downprice" },
@@ -116,12 +118,13 @@ const finalTickets = computed(() => {
   return result;
 });
 
-const handleGetTicket = () => {
-  console.log("Событие getTicket сработало!");
+const getTicket = async () => {
+  const requestId = await getTickets();
+  await router.push({ name: "air", query: { ticketsId: requestId } });
 };
 
 onMounted(() => {
-  getTickets();
+  getTickerForRequest(route.query.ticketsId as string);
 });
 
 useSeoMeta({

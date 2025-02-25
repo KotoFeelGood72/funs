@@ -111,7 +111,7 @@ import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import { useToast } from "vue-toastification";
 
 const { ticket, currentTicket } = useTicketAirStoreRefs();
-const { fetchTickedId, bookingTicketAir } = useTicketAirStore();
+const { bookingTicketAir } = useTicketAirStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -132,7 +132,7 @@ const payAirTicket = async () => {
 };
 
 onMounted(() => {
-  fetchTickedId(route.params.id);
+  // fetchTickedId(route.params.id);
 });
 </script>
 
