@@ -66,24 +66,28 @@ export const useTicketStore = defineStore("tickets", {
       try {
         const response = await api.get(`/tickets/requests/${requestId}`);
         this.tickets = response.data;
+
+        const { createPassengers } = usePassengers();
+
+        if (!this.tickets.adults || this.tickets.adults.length === 0) {
+          createPassengers(this.tickets.adults);
+        }
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }
     },
 
-
     async getTickerForRequestToId(request_id: any, id: any) {
       try {
-          const response = await api.get(`/tickets/requests/${request_id}/${id}`);
-          // this.tickets = response.data;
-          return response.data;
+        const response = await api.get(`/tickets/requests/${request_id}/${id}`);
+        // this.tickets = response.data;
+        return response.data;
 
-          const { createPassengers } = usePassengers();
-        } catch (error) {
-          console.error("Ошибка при загрузке билетов:", error);
+        // const { createPassengers } = usePassengers();
+      } catch (error) {
+        console.error("Ошибка при загрузке билетов:", error);
       }
-  },
-
+    },
 
     async fetchTickedId(id: any) {
       try {

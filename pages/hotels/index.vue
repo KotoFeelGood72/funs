@@ -70,13 +70,13 @@ import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 // import { usePaymentsStore } from "~/store/usePaymentsStore";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
-import { usePassengers } from "@/composables/usePassengers";
+// import { usePassengers } from "@/composables/usePassengers";
 
-const isLoading = ref<boolean>(true);
+// const isLoading = ref<boolean>(true);
 const route = useRoute();
 const router = useRouter();
 const { ticket } = useHotelStoreRefs();
-const { createPassengers } = usePassengers();
+// const { createPassengers } = usePassengers();
 const { bookingHotelAddInfo, getHotelPrice, getHotelId } = useHotelStore();
 const activeTab = ref<number>(0);
 
