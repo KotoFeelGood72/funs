@@ -1,27 +1,33 @@
-name: Deploy to Server
+name: Deploy to Server (Docker)
 
 on:
   push:
     branches:
-      - master # Деплой срабатывает при пуше в ветку master
+      - master  # Деплой при пуше в master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Шаг 1. Клонирование репозиторияы
+      # 🔹 1. Клонируем код репозитория
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Шаг 2. Подключение к серверу и выполнение команд
+      # 🔹 2. Устанавливаем SSH соединение
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 62.217.179.191 >> ~/.ssh/known_hosts
+
+      # 🔹 3. Деплой через SSH
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: 62.217.179.191
-          username: root
-          password: j7W_cT%8SAtt
-          port: 22
-          script: |
+        run: |
+          ssh root@62.217.179.191 <<EOF
             cd /var/www/frontend/funs
             git pull origin master
+            docker-compose down
+            docker-compose up --build -d
+          EOF
