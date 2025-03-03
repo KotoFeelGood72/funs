@@ -64,7 +64,7 @@
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">{{ currentTicket?.price }} €</p>
+            <p class="price">{{ currentOrder?.price }} €</p>
           </div>
           <btn
             name="Далее"

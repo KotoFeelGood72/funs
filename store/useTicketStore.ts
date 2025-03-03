@@ -8,6 +8,7 @@ export const useTicketStore = defineStore("tickets", {
       adults: [] as any,
       phone_number: "" as any,
       email: "" as any,
+      price: 0 as any,
     } as any,
     ticket: null as any,
     tickets: {
@@ -68,7 +69,8 @@ export const useTicketStore = defineStore("tickets", {
 
     async getTicketPrice() {
       try {
-        const response = await api.get("");
+        const response = await api.get("/tickets/price",);
+        this.currentOrder.price = response.data.price;
       } catch (error) {}
     },
 
@@ -81,6 +83,7 @@ export const useTicketStore = defineStore("tickets", {
         console.log("Good", response.data);
 
         createPassengersAvia(this.tickets.data.adults);
+        this.getTicketPrice();
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }
@@ -92,7 +95,6 @@ export const useTicketStore = defineStore("tickets", {
         // this.tickets = response.data;
         return response.data;
 
-        // const { createPassengers } = usePassengers();
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }

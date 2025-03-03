@@ -101,17 +101,20 @@ import Select from "~/components/ui/inputs/Select.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import PaymentForm from "~/components/shared/PaymentForm.vue";
-import {
-  useTicketAirStoreRefs,
-  useTicketAirStore,
-} from "~/store/useTicketAirStore";
+import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
+// import {
+//   useTicketAirStoreRefs,
+//   useTicketAirStore,
+// } from "~/store/useTicketAirStore";
 import { useRoute, useRouter } from "vue-router";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import { useToast } from "vue-toastification";
 
-const { ticket, currentTicket } = useTicketAirStoreRefs();
-const { bookingTicketAir } = useTicketAirStore();
+// const { ticket, currentTicket } = useTicketAirStoreRefs();
+// const { bookingTicketAir } = useTicketAirStore();
+
+const {} = useTicketStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -124,7 +127,7 @@ const toggleAccordion = (index: number) => {
 };
 
 const payAirTicket = async () => {
-  await bookingTicketAir(route.params.id);
+  // await bookingTicketAir(route.params.id);
   setTimeout(() => {
     toast.success("Вы успешно оформили");
     router.push("/");
