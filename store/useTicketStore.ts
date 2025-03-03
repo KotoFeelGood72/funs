@@ -4,7 +4,11 @@ import { usePassengers } from "@/composables/usePassengers";
 
 export const useTicketStore = defineStore("tickets", {
   state: () => ({
-    currentOrder: {} as any,
+    currentOrder: {
+      adults: [] as any,
+      phone_number: "" as any,
+      email: "" as any,
+    } as any,
     ticket: null as any,
     tickets: {
       data: {
@@ -62,16 +66,21 @@ export const useTicketStore = defineStore("tickets", {
       this.selectedAirlines = selected.includes("Все") ? [] : selected;
     },
 
+    async getTicketPrice() {
+      try {
+        const response = await api.get("");
+      } catch (error) {}
+    },
+
     async getTickerForRequest(requestId: any) {
       try {
         const response = await api.get(`/tickets/requests/${requestId}`);
         this.tickets = response.data;
 
-        const { createPassengers } = usePassengers();
+        const { createPassengersAvia } = usePassengers();
+        console.log("Good", response.data);
 
-        if (!this.tickets.adults || this.tickets.adults.length === 0) {
-          createPassengers(this.tickets.adults);
-        }
+        createPassengersAvia(this.tickets.data.adults);
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }

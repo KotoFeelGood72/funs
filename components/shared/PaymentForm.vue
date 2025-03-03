@@ -8,10 +8,10 @@
         type="email"
         id="payment-email"
         label="Email"
-        v-model="ticket.email"
+        v-model="currentOrder.email"
       />
       <InputsMask
-        v-model="ticket.phone_number"
+        v-model="currentOrder.phone_number"
         label="Номер телефона"
         type="text"
         mask="# (###) ###-##-##"
@@ -22,10 +22,10 @@
 
 <script setup lang="ts">
 import Inputs from "../ui/inputs/Inputs.vue";
-import { useTicketAirStoreRefs } from "~/store/useTicketAirStore";
+import { useTicketStoreRefs } from "~/store/useTicketStore";
 import InputsMask from "../ui/inputs/InputsMask.vue";
 
-const { ticket } = useTicketAirStoreRefs();
+const { currentOrder } = useTicketStoreRefs();
 </script>
 
 <style scoped lang="scss">

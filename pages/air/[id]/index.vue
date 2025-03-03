@@ -3,10 +3,10 @@
     :title="tickets.data?.departure.name + ' - ' + tickets.data?.arrival.name"
     :isLoading="false"
   >
-    <!-- <div class="passenger-form" v-if="tickets.adults.length > 0">
+    <div class="passenger-form" v-if="currentOrder.adults.length > 0">
       <PaymentForm />
       <PassengerTabs
-        :tabs="tickets.passengers"
+        :tabs="currentOrder.adults"
         :activeTab="activeTab"
         @update:activeTab="setActiveTab"
       />
@@ -14,18 +14,18 @@
         <div class="form-grid">
           <Inputs
             label="Фамилия"
-            v-model="tickets.passengers[activeTab].last_name"
+            v-model="currentOrder.adults[activeTab].last_name"
             :id="'lastName' + activeTab"
           />
           <Inputs
             label="Имя"
-            v-model="tickets.passengers[activeTab].first_name"
+            v-model="currentOrder.adults[activeTab].first_name"
             :id="'firstName' + activeTab"
           />
           <Inputs
             type="date"
             label="Дата рождения"
-            v-model="tickets.passengers[activeTab].birth_date"
+            v-model="currentOrder.adults[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
 
@@ -34,11 +34,11 @@
               { name: 'Мужчина', value: 'M' },
               { name: 'Женщина', value: 'W' },
             ]"
-            v-model="tickets.passengers[activeTab].gender"
+            v-model="currentOrder.adults[activeTab].gender"
             label="Пол"
           />
           <InputsMask
-            v-model="tickets.passengers[activeTab].number_seria_passport"
+            v-model="currentOrder.adults[activeTab].number_seria_passport"
             :id="'passportNumber' + activeTab"
             label="Номер загранпаспорта"
             type="text"
@@ -46,14 +46,14 @@
           />
           <Inputs
             label="Гражданство"
-            v-model="tickets.passengers[activeTab].nationality"
+            v-model="currentOrder.adults[activeTab].nationality"
             :id="'nationality' + activeTab"
             mode="english"
           />
           <Inputs
             type="date"
             label="Срок действия"
-            v-model="tickets.passengers[activeTab].validity_period"
+            v-model="currentOrder.adults[activeTab].validity_period"
             :id="'validityPeriod' + activeTab"
           />
         </div>
@@ -79,7 +79,7 @@
           />
         </div>
       </div>
-    </div> -->
+    </div>
   </ContentView>
 </template>
 
@@ -90,18 +90,16 @@ import btn from "~/components/ui/buttons/btn.vue";
 import Select from "~/components/ui/inputs/Select.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import { useRouter, useRoute } from "vue-router";
-import { ref } from "vue";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
+import PaymentForm from "~/components/shared/PaymentForm.vue";
 
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
 const { getTickerForRequestToId, getTickerForRequest } = useTicketStore();
-const { tickets } = useTicketStoreRefs();
+const { currentOrder, tickets } = useTicketStoreRefs();
 const route = useRoute();
 const router = useRouter();
 const currentTicket = ref<any>(null);
-
-const isLoading = ref(true);
 const activeTab = ref(0);
 
 const setActiveTab = (index: number) => {
