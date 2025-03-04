@@ -73,7 +73,10 @@
             @click="
               router.push({
                 name: 'air-id-confirmId',
-                params: { id: route.params.id, confirmId: 'checkout' },
+                params: {
+                  id: route.params.id,
+                  confirmId: String(route.query.ticketsId),
+                },
               })
             "
           />
@@ -112,23 +115,6 @@ onMounted(() => {
     route.params.id
   );
 });
-
-// const isFormValid = computed(() => {
-//   return (
-//     ticket.value.passengers.length > 0 &&
-//     ticket.value.passengers.every((p) => {
-//       return (
-//         p.last_name &&
-//         p.first_name &&
-//         p.birth_date &&
-//         p.gender &&
-//         p.number_seria_passport &&
-//         p.nationality &&
-//         p.validity_period
-//       );
-//     })
-//   );
-// });
 </script>
 
 <style scoped lang="scss">

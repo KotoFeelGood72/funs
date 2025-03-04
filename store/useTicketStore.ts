@@ -69,7 +69,7 @@ export const useTicketStore = defineStore("tickets", {
 
     async getTicketPrice() {
       try {
-        const response = await api.get("/tickets/price",);
+        const response = await api.get("/tickets/price");
         this.currentOrder.price = response.data.price;
       } catch (error) {}
     },
@@ -94,7 +94,6 @@ export const useTicketStore = defineStore("tickets", {
         const response = await api.get(`/tickets/requests/${request_id}/${id}`);
         // this.tickets = response.data;
         return response.data;
-
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }

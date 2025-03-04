@@ -24,8 +24,9 @@
             <div class="tickets__row tickets__row__list">
               <div
                 class="tickets_row__item"
-                v-for="item in currentOrder.adults"
+                v-for="(item, i) in currentOrder.adults"
               >
+                <div class="tickets_row__header">Пассажир № {{ i + 1 }}</div>
                 <ul>
                   <li>
                     Дата рождения: <span>{{ item.birth_date }}</span>
@@ -128,7 +129,7 @@
           <div class="ticket_total__price">
             <div class="col">
               <p>Общая стоимость</p>
-              <span>{{ currentOrder.price }} €</span>
+              <span>{{ currentOrder.price }} </span>
             </div>
             <btn name="Оплатить" @click="payAirTicket()" />
           </div>
@@ -140,28 +141,18 @@
 
 <script setup lang="ts">
 import ContentView from "~/components/shared/ContentView.vue";
-// import Inputs from "~/components/ui/inputs/Inputs.vue";
-// import Select from "~/components/ui/inputs/Select.vue";
-// import AirCard from "~/components/ui/card/AirCard.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 import { useRoute, useRouter } from "vue-router";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
-import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import { useToast } from "vue-toastification";
 
-const {} = useTicketStore();
 const { currentOrder } = useTicketStoreRefs();
-
+const { getTickerForRequestToId, getTickerForRequest } = useTicketStore();
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
-const activeTab = ref<number | null>(0);
 const agreement = ref<boolean>(false);
-
-const toggleAccordion = (index: number) => {
-  activeTab.value = activeTab.value === index ? null : index;
-};
 
 const payAirTicket = async () => {
   // await bookingTicketAir(route.params.id);
@@ -173,39 +164,12 @@ const payAirTicket = async () => {
 
 onMounted(() => {
   // fetchTickedId(route.params.id);
+  getTickerForRequest(route.params.confirmId);
+  getTickerForRequestToId(route.params.confirmId, route.params.id);
 });
 </script>
 
 <style scoped lang="scss">
-.accordion {
-  .accordion_item {
-    margin-bottom: 1.6rem;
-    border: 0.1rem solid #a2d0ff;
-    border-radius: 0.8rem;
-
-    &__head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.6rem;
-      // background-color: #f9f9f9;
-      cursor: pointer;
-      font-size: 1.8rem;
-      font-weight: 500;
-      font-family: $font_2;
-    }
-
-    &__body {
-      padding: 1.6rem;
-      background-color: #fff;
-    }
-
-    .accordion__icon {
-      font-size: 2rem;
-    }
-  }
-}
-
 .row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
@@ -217,32 +181,9 @@ onMounted(() => {
   }
 }
 
-.accordion_item__body {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
-  gap: 2rem;
+.ticket_pass {
+  margin-bottom: 6rem;
 }
-
-.ticket_total__price {
-  @include flex-space;
-  align-items: flex-end;
-  gap: 2rem;
-
-  @include bp($point_2) {
-    flex-direction: column;
-  }
-
-  .col {
-    p {
-      color: $gray;
-    }
-    span {
-      font-size: 3.2rem;
-      font-family: $font_3;
-    }
-  }
-}
-
 .ticket_total {
   display: flex;
   flex-direction: column;
@@ -253,8 +194,71 @@ onMounted(() => {
   }
 }
 
-.accordion__icon {
-  @include flex-center;
+.ticket_pass {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.tickets_row__header {
+  font-size: 2rem;
   color: $blue;
+  font-family: $font_2;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tickets_row__body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+  grid-gap: 2rem;
+}
+
+.tickets__row {
+  border: 0.1rem solid $gray-light;
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+}
+.tickets_row__output {
+  font-size: 1.8rem;
+  color: $dark;
+  font-weight: 600;
+  display: flex;
+  gap: 1rem;
+  span {
+    color: $light-blue;
+  }
+}
+
+.tickets_row__item {
+  ul {
+    li {
+      font-size: 1.6rem;
+      color: $dark;
+      gap: 1rem;
+      @include flex-space;
+      padding: 0.8rem 0;
+      &:not(:last-child) {
+        border-bottom: 0.1rem solid $gray-light;
+      }
+    }
+
+    span {
+      font-family: $font_2;
+      font-weight: 500;
+    }
+  }
+}
+
+.ticket_total__price {
+  @include flex-space;
+
+  .col {
+    span {
+      font-size: 2.4rem;
+      font-family: $font_2;
+      font-weight: 600;
+    }
+  }
 }
 </style>
