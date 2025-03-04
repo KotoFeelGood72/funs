@@ -5,11 +5,55 @@
   >
     <div class="row">
       <div class="ticket__list">
-        <AirCard :card="currentTicket" :price="false" />
+        <!-- <AirCard :card="currentTicket" :price="false" /> -->
       </div>
       <div class="ticket_data">
-        <PaymentForm />
-        <div class="accordion">
+        <div class="ticket_pass">
+          <div class="tickets__row">
+            <div class="tickets_row__header">Покупатель</div>
+            <div class="tickets_row__body">
+              <div class="tickets_row__output">
+                Телефон: <span>{{ currentOrder.phone_number }}</span>
+              </div>
+              <div class="tickets_row__output">
+                E-Mail: <span>{{ currentOrder.email }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="tickets__row__listW">
+            <div class="tickets__row tickets__row__list">
+              <div
+                class="tickets_row__item"
+                v-for="item in currentOrder.adults"
+              >
+                <ul>
+                  <li>
+                    Дата рождения: <span>{{ item.birth_date }}</span>
+                  </li>
+                  <li>
+                    Имя: <span>{{ item.first_name }}</span>
+                  </li>
+                  <li>
+                    Фамилия: <span>{{ item.last_name }}</span>
+                  </li>
+                  <li>
+                    Пол: <span>{{ item.gender }}</span>
+                  </li>
+                  <li>
+                    Национальность: <span>{{ item.nationality }}</span>
+                  </li>
+                  <li>
+                    Паспорт: <span>{{ item.number_seria_passport }}</span>
+                  </li>
+                  <li>
+                    Дата выдачи: <span>{{ item.validity_period }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="accordion">
           <div
             v-for="(passenger, index) in ticket.passengers"
             :key="'passenger-' + index"
@@ -67,7 +111,7 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="ticket_total">
           <p>
             Бронирование действительно 10 дней, начиная со дня оплаты. Вы также
@@ -84,7 +128,7 @@
           <div class="ticket_total__price">
             <div class="col">
               <p>Общая стоимость</p>
-              <span>{{ currentTicket.price }} €</span>
+              <span>{{ currentOrder.price }} €</span>
             </div>
             <btn name="Оплатить" @click="payAirTicket()" />
           </div>
@@ -96,25 +140,18 @@
 
 <script setup lang="ts">
 import ContentView from "~/components/shared/ContentView.vue";
-import Inputs from "~/components/ui/inputs/Inputs.vue";
-import Select from "~/components/ui/inputs/Select.vue";
-import AirCard from "~/components/ui/card/AirCard.vue";
+// import Inputs from "~/components/ui/inputs/Inputs.vue";
+// import Select from "~/components/ui/inputs/Select.vue";
+// import AirCard from "~/components/ui/card/AirCard.vue";
 import btn from "~/components/ui/buttons/btn.vue";
-import PaymentForm from "~/components/shared/PaymentForm.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
-// import {
-//   useTicketAirStoreRefs,
-//   useTicketAirStore,
-// } from "~/store/useTicketAirStore";
 import { useRoute, useRouter } from "vue-router";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import { useToast } from "vue-toastification";
 
-// const { ticket, currentTicket } = useTicketAirStoreRefs();
-// const { bookingTicketAir } = useTicketAirStore();
-
 const {} = useTicketStore();
+const { currentOrder } = useTicketStoreRefs();
 
 const router = useRouter();
 const route = useRoute();

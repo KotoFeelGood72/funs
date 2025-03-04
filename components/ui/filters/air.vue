@@ -26,6 +26,7 @@
       icon="right"
       @click="onTicket()"
       theme="primary"
+      :loading="isLoading"
     />
   </div>
 </template>
@@ -36,54 +37,20 @@ import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
-import { useRouter, useRoute } from "vue-router";
-import { ref, watch, onMounted } from "vue";
-// import { useToast } from "vue-toastification";
-// import { useFetchPlace } from "@/composables/usePlace";
-// import { useFetchTickets } from "@/composables/useTicket";
-import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
+import { useTicketStoreRefs } from "~/store/useTicketStore";
 
-// const toast = useToast();
-// const { fetchPlace, places } = useFetchPlace();
-// const { getTickets } = useTicketStore();
 const { tickets, isLoading } = useTicketStoreRefs();
-// const { getTickets, tickets } = useFetchTickets();
-const route = useRoute();
-const router = useRouter();
 const emit = defineEmits(["getTicket"]);
 
 const onTicket = () => {
   emit("getTicket");
-  console.log("emit getTicket сработало!");
 };
 
-// Функция для запроса билетов
-const getTicketsUi = async () => {
-  // getTickets();
-
-  if (route.name !== "air") {
-    await router.push({
-      name: "air",
-      query: {
-        session_id: tickets.value.request_id,
-      },
-    });
-  }
-};
-
-// Функция смены городов местами
 const swapCities = () => {
   const temp = tickets.value.data.departure;
   tickets.value.data.departure = tickets.value.data.arrival;
   tickets.value.data.arrival = temp;
 };
-
-// При монтировании подтягиваем данные, если они уже есть
-// onMounted(() => {
-// if (route.name === "air") {
-//   getTicketsUi();
-// }
-// });
 </script>
 
 <style scoped lang="scss">
