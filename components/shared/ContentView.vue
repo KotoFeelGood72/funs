@@ -3,12 +3,12 @@
     <div class="container">
       <div class="area_main">
         <div class="area__head" v-if="title">
-          <div
-            class="area-back"
-            v-if="back && !isLoading"
-            @click="router.back()"
-          >
-            <Icon name="f:left" />
+          <div class="area-back">
+            <Icon
+              name="f:left"
+              v-if="back && !isLoading"
+              @click="router.back()"
+            />
           </div>
           <h3 v-if="title && !isLoading">{{ title }}</h3>
           <div class="square"></div>
@@ -43,10 +43,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     title?: any;
     back?: boolean;
@@ -60,16 +60,12 @@ const props = withDefaults(
 );
 
 const router = useRouter();
-
-// Реактивное свойство для точек
 const dots = ref<string>("");
 
 onMounted(() => {
   const interval = setInterval(() => {
     dots.value = dots.value.length < 3 ? dots.value + "." : "";
-  }, 500);
-
-  // Очистка интервала при размонтировании
+  }, 300);
   onUnmounted(() => clearInterval(interval));
 });
 
@@ -159,7 +155,7 @@ const animatedDots = computed(() => dots.value);
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 .fade-enter-from,
 .fade-leave-to {

@@ -8,7 +8,7 @@
       :range="isRange"
       :state="isError"
       :hide-navigation="['month', 'year', 'time']"
-      :min-date="today"
+      :min-date="minSelectableDate"
       :show-last-in-range="false"
       no-today
       locale="ru"
@@ -43,8 +43,13 @@ const emit = defineEmits<{
 }>();
 
 const localValue = ref<any>(null);
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+// const today = new Date();
+
+const minSelectableDate = new Date();
+minSelectableDate.setDate(minSelectableDate.getDate() + 1); // Завтрашний день
+minSelectableDate.setHours(0, 0, 0, 0);
+
+// today.setHours(0, 0, 0, 0);
 
 const formatToYYYYMMDD = (date: Date): string => {
   const year = date.getFullYear();
@@ -56,14 +61,12 @@ watch(
   () => [props.startDate, props.endDate],
   ([newStart, newEnd]) => {
     if (props.isRange) {
-      // Устанавливаем начальную дату на сегодня, если ничего не задано
       localValue.value = [
-        newStart ? new Date(newStart) : today,
+        newStart ? new Date(newStart) : minSelectableDate,
         newEnd ? new Date(newEnd) : null,
       ];
     } else {
-      // Для одиночного выбора
-      localValue.value = newStart ? new Date(newStart) : today; // Используем текущую дату
+      localValue.value = newStart ? new Date(newStart) : minSelectableDate;
     }
   },
   { immediate: true }

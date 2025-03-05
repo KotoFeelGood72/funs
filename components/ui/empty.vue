@@ -18,6 +18,7 @@ const props = defineProps<{
   flex-direction: column;
   gap: 3rem;
   min-height: 40rem;
+  text-align: center;
 
   @include bp($point_2) {
     justify-content: center;

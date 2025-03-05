@@ -91,12 +91,33 @@ const selectOption = (option: any) => {
   toggleDropdown(false);
 };
 
+// const onInput = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   emit("update:modelValue", {
+//     name: target.value,
+//     value: props.modelValue?.value || "",
+//   });
+//   selectedIndex.value = -1;
+// };
+
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit("update:modelValue", {
-    name: target.value,
-    value: props.modelValue?.value || "",
-  });
+  const userInput = target.value;
+
+  // Найти вариант, который совпадает с вводом
+  const matchedOption = places.value.find(
+    (option: any) => option.name.toLowerCase() === userInput.toLowerCase()
+  );
+
+  if (matchedOption) {
+    emit("update:modelValue", matchedOption);
+  } else {
+    emit("update:modelValue", {
+      name: userInput,
+      value: props.modelValue?.value || "",
+    });
+  }
+
   selectedIndex.value = -1;
 };
 

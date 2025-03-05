@@ -4,6 +4,8 @@ import { api } from "~/api/api";
 
 export const useHotelStore = defineStore("hotel-ticket", {
   state: () => ({
+    order: null as any,
+    load: false as boolean,
     ticket: {
       city: { name: "", value: "" } as any,
       check_in_date: null as string | null,
@@ -18,25 +20,28 @@ export const useHotelStore = defineStore("hotel-ticket", {
   }),
   actions: {
     async bookingHotel() {
+      this.load = true
       try {
+        const filteredTicket = Object.fromEntries(
+          Object.entries(this?.ticket || {}).filter(
+            ([_, value]) => value !== null && value !== undefined && value !== ""
+          )
+        );
         const response = await api.post("hotels", {
-          ...this?.ticket,
-          city: this?.ticket?.city?.name,
+          ...filteredTicket,
+          city: this?.ticket?.city?.name || undefined, 
         });
-
         this.ticket = response.data;
-
-        if (response.data.id) {
-          // await router.push(`hotels/${response.data.id}`);
-          // await this.getHotelId(response.data.id);
-        }
-
+        this.getHotelId(response.data.id)
+    
         return response.data.id;
       } catch (error) {
-        console.error("Ошибка при бронировании отеля:", error);
+        this.load = false
         return null;
+      } finally {
+        this.load = false
       }
-    },
+    },    
 
     async bookingHotelAddInfo(
       requestId: any,
@@ -94,19 +99,26 @@ export const useHotelStore = defineStore("hotel-ticket", {
       try {
         const response = await api.get(`/hotels/${id}`);
         this.ticket = response.data;
-
+    
         const { createPassengers } = usePassengers();
-
-        // Проверяем, пуст ли массив adults
-        if (!this.ticket.adults || this.ticket.adults.length === 0) {
+        const adults = response.data.adults || [];
+        const isPassengerEmpty = (adult: any) =>
+          Object.values(adult).every(value => !value || value.toString().trim() === "");
+        
+        const allPassengersEmpty = adults.length === 0 || adults.every(isPassengerEmpty);
+        
+        if (allPassengersEmpty) {
+          console.log("Создаю пассажиров:", this.ticket.adults_count);
           createPassengers(this.ticket.adults_count);
+        } else {
+          console.log("Пассажиры уже есть:", adults);
         }
-
-        console.log(this.ticket);
+    
       } catch (error) {
         console.error("Ошибка при загрузке отелей:", error);
       }
-    },
+    }
+    ,
 
     async getHotelPrice() {
       try {

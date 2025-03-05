@@ -54,65 +54,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="accordion">
-          <div
-            v-for="(passenger, index) in ticket.passengers"
-            :key="'passenger-' + index"
-            class="accordion_item"
-          >
-            <div class="accordion_item__head" @click="toggleAccordion(index)">
-              <p>Пассажир №{{ index + 1 }}, эконом</p>
-              <div class="accordion__icon">
-                <Icon
-                  :name="
-                    activeTab === index
-                      ? 'mynaui:chevron-up-solid'
-                      : 'mynaui:chevron-down-solid'
-                  "
-                />
-              </div>
-            </div>
-            <div v-if="activeTab === index" class="accordion_item__body">
-              <Inputs
-                label="Фамилия"
-                v-model="passenger.last_name"
-                :id="route.params.id + 'lastName' + index"
-              />
-              <Inputs
-                label="Имя"
-                v-model="passenger.first_name"
-                :id="route.params.id + 'firstName' + index"
-              />
-              <Inputs
-                type="date"
-                label="Дата рождения"
-                v-model="passenger.birth_date"
-                :id="route.params.id + 'birthDate' + index"
-              />
-              <Select
-                :options="[
-                  { name: 'Мужчина', value: 'M' },
-                  { name: 'Женщина', value: 'W' },
-                ]"
-                v-model="passenger.gender"
-                label="Пол"
-              />
-              <InputsMask
-                label="Номер загранпаспорта"
-                v-model="passenger.number_seria_passport"
-                :id="route.params.id + 'passportNumber' + index"
-                mask="##-## ###-###"
-              />
-              <Inputs label="Гражданство" v-model="passenger.nationality" />
-              <Inputs
-                type="date"
-                label="Срок действия"
-                v-model="passenger.validity_period"
-                :id="route.params.id + 'validityPeriod' + index"
-              />
-            </div>
-          </div>
-        </div> -->
         <div class="ticket_total">
           <p>
             Бронирование действительно 10 дней, начиная со дня оплаты. Вы также

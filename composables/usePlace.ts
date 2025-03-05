@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { api } from "~/api/api";
 
 export function useFetchPlace() {
-  const places = ref([]);
+  const places = ref<any>([]);
 
   const fetchPlace = async (query?: string) => {
     try {

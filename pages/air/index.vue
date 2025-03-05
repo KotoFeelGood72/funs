@@ -14,7 +14,7 @@
             <InputsSearch v-model="searchQuery" />
             <RadioGroup :items="sort" name="sortering" v-model="selectedSort" />
           </div>
-          <div class="content-col" v-if="tickets">
+          <div class="content-col" v-if="finalTickets.length > 0">
             <ul class="air-list">
               <li
                 v-for="(item, index) in finalTickets"

@@ -1,5 +1,6 @@
 <template>
   <ContentView
+    :back="false"
     :title="ticket.city?.name ? 'Отели в ' + ticket.city.name : 'Отели в'"
     :isLoading="false"
   >
@@ -68,15 +69,12 @@ import btn from "~/components/ui/buttons/btn.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-// import { usePaymentsStore } from "~/store/usePaymentsStore";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
-// import { usePassengers } from "@/composables/usePassengers";
 
 // const isLoading = ref<boolean>(true);
 const route = useRoute();
 const router = useRouter();
 const { ticket } = useHotelStoreRefs();
-// const { createPassengers } = usePassengers();
 const { bookingHotelAddInfo, getHotelPrice, getHotelId } = useHotelStore();
 const activeTab = ref<number>(0);
 
@@ -88,7 +86,9 @@ const price = ref<any>(null);
 
 onMounted(async () => {
   price.value = await getHotelPrice();
-  getHotelId(route.query.hotelId);
+  if (route.query.hotelId) {
+    getHotelId(route.query.hotelId);
+  }
 });
 
 const bookingHotelForNextPage = async () => {

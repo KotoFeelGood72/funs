@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Запускаем Nuxt сервер в production-режиме
-CMD ["npx", "nuxt", "dev"]
+CMD ["npm", "run", "preview"]

@@ -20,38 +20,56 @@
     <btn
       name="Забронировать"
       icon="right"
-      @click="nextHotelBooking"
+      @click="validateAndBook"
       theme="primary"
+      :loading="load"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter, useRoute } from "vue-router";
+import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
+import { watch, ref } from "vue";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import btn from "../buttons/btn.vue";
 import Calendar from "../inputs/Calendar.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-// import SelectPeopleHotel from "../inputs/SelectPeopleHotel.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
-
-import { watch, ref } from "vue";
+import { useToast } from "vue-toastification";
 
 const { bookingHotel, bookingHotelAddInfo } = useHotelStore();
-const { ticket } = useHotelStoreRefs();
-
+const { ticket, load } = useHotelStoreRefs();
 const router = useRouter();
 const route = useRoute();
 const requestId = ref<any>(null);
 
-const nextHotelBooking = async () => {
-  requestId.value = await bookingHotel();
-  console.log(requestId.value);
+const toast = useToast();
 
+const validateAndBook = async () => {
+  let errors = [];
+
+  if (!ticket.value.city || !ticket.value.city.name) {
+    errors.push("Выберите город");
+  }
+  if (!ticket.value.check_in_date) {
+    errors.push("Выберите дату заезда");
+  }
+  if (!ticket.value.check_out_date) {
+    errors.push("Выберите дату выезда");
+  }
+  if (!ticket.value.adults_count || ticket.value.adults_count < 1) {
+    errors.push("Выберите количество взрослых");
+  }
+
+  if (errors.length > 0) {
+    toast.error(errors.join("\n"));
+    return;
+  }
+
+  requestId.value = await bookingHotel();
   await router.push(`/hotels/?hotelId=${requestId.value}`);
 };
 
-// Отслеживаем только adults_count и вызываем PUT, если есть hotelId
 watch(
   () => ticket.value.adults_count,
   async (newValue, oldValue) => {
