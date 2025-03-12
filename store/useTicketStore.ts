@@ -67,6 +67,16 @@ export const useTicketStore = defineStore("tickets", {
       this.selectedAirlines = selected.includes("Все") ? [] : selected;
     },
 
+    async bookingTicket(ticketId: any) {
+      try {
+        const response = await api.post(
+          `/tickets/${this.tickets.request_id}/${ticketId}`,
+          this.currentOrder
+        );
+        return response.data;
+      } catch (error) {}
+    },
+
     async getTicketPrice() {
       try {
         const response = await api.get("/tickets/price");
@@ -80,7 +90,6 @@ export const useTicketStore = defineStore("tickets", {
         this.tickets = response.data;
 
         const { createPassengersAvia } = usePassengers();
-        console.log("Good", response.data);
 
         createPassengersAvia(this.tickets.data.adults);
         this.getTicketPrice();
@@ -92,11 +101,17 @@ export const useTicketStore = defineStore("tickets", {
     async getTickerForRequestToId(request_id: any, id: any) {
       try {
         const response = await api.get(`/tickets/requests/${request_id}/${id}`);
-        // this.tickets = response.data;
         return response.data;
       } catch (error) {
         console.error("Ошибка при загрузке билетов:", error);
       }
+    },
+
+    async getDataClient(uid: any) {
+      try {
+        const response = await api.get(`/tickets/data/${uid}`);
+        this.currentOrder = response.data;
+      } catch (error) {}
     },
 
     async fetchTickedId(id: any) {

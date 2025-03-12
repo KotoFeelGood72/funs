@@ -2,6 +2,7 @@
   <ContentView
     :title="tickets.data?.departure.name + ' - ' + tickets.data?.arrival.name"
     :isLoading="false"
+    :back="false"
   >
     <div class="passenger-form" v-if="currentOrder.adults.length > 0">
       <PaymentForm />
@@ -70,15 +71,7 @@
             name="Далее"
             theme="primary"
             size="normal"
-            @click="
-              router.push({
-                name: 'air-id-confirmId',
-                params: {
-                  id: route.params.id,
-                  confirmId: String(route.query.ticketsId),
-                },
-              })
-            "
+            @click="bookingUiTikcet()"
           />
         </div>
       </div>
@@ -98,11 +91,13 @@ import PaymentForm from "~/components/shared/PaymentForm.vue";
 
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
-const { getTickerForRequestToId, getTickerForRequest } = useTicketStore();
+const { getTickerForRequestToId, getTickerForRequest, bookingTicket } =
+  useTicketStore();
 const { currentOrder, tickets } = useTicketStoreRefs();
 const route = useRoute();
 const router = useRouter();
 const currentTicket = ref<any>(null);
+const uid = ref<any>("");
 const activeTab = ref(0);
 
 const setActiveTab = (index: number) => {
@@ -115,6 +110,25 @@ onMounted(() => {
     route.params.id
   );
 });
+
+const bookingUiTikcet = async () => {
+  try {
+    uid.value = await bookingTicket(route.params.id);
+
+    await router.push({
+      name: "air-id-confirmId",
+      params: {
+        id: route.params.id,
+        confirmId: String(route.query.ticketsId),
+      },
+      query: {
+        uid: uid.value.uuid,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <style scoped lang="scss">

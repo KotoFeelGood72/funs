@@ -2,10 +2,11 @@
   <ContentView
     title="Проверьте правильность введённых данных"
     :isLoading="false"
+    :back="false"
   >
     <div class="row">
       <div class="ticket__list">
-        <!-- <AirCard :card="currentTicket" :price="false" /> -->
+        <AirCard :card="currentOrder.ticket" :price="false" />
       </div>
       <div class="ticket_data">
         <div class="ticket_pass">
@@ -70,7 +71,7 @@
           <div class="ticket_total__price">
             <div class="col">
               <p>Общая стоимость</p>
-              <span>{{ currentOrder.price }} </span>
+              <span>{{ currentOrder?.ticket?.price }} </span>
             </div>
             <btn name="Оплатить" @click="payAirTicket()" />
           </div>
@@ -86,10 +87,12 @@ import btn from "~/components/ui/buttons/btn.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 import { useRoute, useRouter } from "vue-router";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
+import AirCard from "~/components/ui/card/AirCard.vue";
 import { useToast } from "vue-toastification";
 
 const { currentOrder } = useTicketStoreRefs();
-const { getTickerForRequestToId, getTickerForRequest } = useTicketStore();
+const { getTickerForRequestToId, getTickerForRequest, getDataClient } =
+  useTicketStore();
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
@@ -105,8 +108,9 @@ const payAirTicket = async () => {
 
 onMounted(() => {
   // fetchTickedId(route.params.id);
-  getTickerForRequest(route.params.confirmId);
-  getTickerForRequestToId(route.params.confirmId, route.params.id);
+  // getTickerForRequest(route.params.confirmId);
+  // getTickerForRequestToId(route.params.confirmId, route.params.id);
+  getDataClient(route.query.uid);
 });
 </script>
 

@@ -10,10 +10,7 @@
       />
     </div>
     <div class="air-content">
-      <AirHead
-        :title="card?.airline"
-        :logo="card?.itineraries[0].segments[0].carrier_logo"
-      />
+      <AirHead :title="card?.airline" :logo="logo" />
       <div class="air_info__list">
         <AirInfo
           v-for="(item, i) in card?.itineraries"
@@ -40,6 +37,10 @@ const nextToAir = async () => {
     params: { id: props.card.id },
   });
 };
+
+const logo = computed(() => {
+  return props.card?.itineraries?.[0]?.segments?.[0]?.carrier_logo || "";
+});
 
 const props = withDefaults(
   defineProps<{
