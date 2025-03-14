@@ -9,7 +9,7 @@
             <h1><b>Funbooking</b> — это бронь</h1>
           </div>
           <h2>авиабилетов, отелей и визы на срок до 14 дней․</h2>
-          <p class="txt">а также страховые полисы стран евросоюза</p>
+          <!-- <p class="txt">а также страховые полисы стран евросоюза</p> -->
         </div>
         <h3 v-if="!title" class="hero_subtitle">
           Забронируйте авиабилет для визы без полной оплаты
@@ -128,6 +128,7 @@ const getTicket = async () => {
 .hero__content {
   background-color: $white;
   border-radius: 3.2rem;
+  margin-bottom: 5rem;
 }
 
 .hero_subtitle {

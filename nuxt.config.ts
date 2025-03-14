@@ -49,7 +49,7 @@ export default defineNuxtConfig({
       charset: "utf-8",
       viewport: "width=device-width, initial-scale=1",
       title:
-        "Funbooking - Дешевые авиабилеты в рассрочку и кредит, страховки. Бронь авиабилетов и отелей для визы.",
+        "Funbooking - бронь для визы, оплата Е-Виз и ЕТА. Авиабронь и бронь отеля без полной оплаты билета",
       meta: [
         {
           name: "keywords",
