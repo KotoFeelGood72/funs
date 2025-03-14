@@ -3,11 +3,11 @@
     <p>{{ label }}</p>
     <div class="counter-buttons">
       <button @click="decrease">
-        <Icon name="f:minus" />
+        <Icon name="ic:round-minus" />
       </button>
       <span>{{ localValue }}</span>
       <button @click="increase">
-        <Icon name="f:plus" />
+        <Icon name="ic:round-plus" />
       </button>
     </div>
   </div>

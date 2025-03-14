@@ -1,13 +1,13 @@
 <template>
   <div v-if="isClient && !isCookieAccepted" class="cookies">
     <p>
-      Кстати, действия представителей оппозиции представлены в исключительно
-      положительном свете. Бронь авиабилета можно проверить на сайте
-      авиакомпании после оплаты заказа.
+      Мы используем cookie-файлы для предоставления наилучшего пользовательского
+      опыта. Продолжая использовать сайт, Вы соглашаетесь с Политикой
+      использования cookie-файлов.
     </p>
     <div class="row">
       <btn name="Отклонить" @click="declineCookie" />
-      <btn theme="primary" name="Принять" @click="acceptCookie" />
+      <btn theme="primary" name="Я согласен" @click="acceptCookie" />
     </div>
   </div>
 </template>
