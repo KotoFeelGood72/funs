@@ -90,6 +90,18 @@ const getTicket = async () => {
 
 .hero_row {
   @include flex-start;
+  @include bp($point_2) {
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  img {
+    max-width: 26rem;
+    @include bp($point_2) {
+      max-width: 10rem;
+      margin-top: 1rem;
+    }
+  }
   h1 {
     font-size: 10rem;
     line-height: 9.5rem;
