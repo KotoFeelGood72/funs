@@ -1,7 +1,7 @@
 <template>
   <div class="payment-form">
     <div class="payment-form__head">
-      <p>Покупатель</p>
+      <p>Ваши данные</p>
     </div>
     <div class="payment-form__action">
       <Inputs

@@ -1,103 +1,65 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect
-        label="Откуда"
-        :options="places"
-        v-model="selectedCityFrom"
-      />
-    </div>
-    <div class="filter-change" @click="swapCities">
-      <div class="filter-change__ic">
-        <Icon name="f:right" />
-      </div>
-      <div class="filter-change__ic">
-        <Icon name="f:left" />
-      </div>
-    </div>
-    <div class="filter-group">
-      <SearchSelect label="Куда" :options="places" v-model="selectedCityTo" />
+      <SearchSelect label="Выберите страну" v-model="eta.country" />
     </div>
     <div class="filter-group">
       <Calendar
-        v-model:startDate="filterData.date_backward"
-        v-model:endDate="filterData.date_forward"
+        v-model:startDate="eta.date_forward"
+        v-model:endDate="eta.date_backward"
         :isRange="true"
+        :isError="true"
       />
     </div>
     <div class="filter-group">
-      <SelectPeopleETA />
+      <SelectPeople v-model:adults="eta.adults" />
     </div>
-    <btn name="Искать для визы" icon="right" @click="applyFilters" />
+    <btn
+      name="Оплатить визу"
+      icon="right"
+      @click="onTicket()"
+      theme="primary"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useFiltersStoreRefs } from "~/store/useFilterStore";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
-import SelectPeopleETA from "../inputs/SelectPeopleETA.vue";
+import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
-import { useFiltersStore } from "~/store/useFilterStore";
+import { useETAStoreRefs } from "~/store/useETAStore";
 
-// Доступ к фильтрам через хранилище
-const { places, filterData, selectedCityFrom, selectedCityTo } =
-  useFiltersStoreRefs();
-const { fetchPlace, fetchTickets, clearPlace } = useFiltersStore();
-const emit = defineEmits();
+const { eta } = useETAStoreRefs();
 
-const applyFilters = () => {
-  fetchTickets();
+const emit = defineEmits(["getEta"]);
+
+const onTicket = () => {
+  emit("getEta");
 };
-
-const swapCities = () => {
-  const temp = selectedCityFrom.value;
-  selectedCityFrom.value = selectedCityTo.value;
-  selectedCityTo.value = temp;
-  clearPlace();
-};
-
-watch(
-  () => selectedCityFrom.value,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
-
-watch(
-  () => selectedCityTo.value,
-  (newValue) => {
-    if (newValue.name) fetchPlace(newValue.name);
-  }
-);
 </script>
 
 <style scoped lang="scss">
 .filters {
   @include flex-space;
   gap: 2.4rem;
+  @include bp($point_2) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .filter-group {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  @include bp($point_2) {
+    width: 100%;
+  }
 }
 
 .people-ic {
   @include flex-center;
   color: $blue;
-}
-
-.filter-change {
-  @include flex-center;
-  flex-direction: column;
-  gap: 0.4rem;
-  cursor: pointer;
-}
-
-.filter-change__ic {
-  @include flex-center;
 }
 </style>

@@ -5,7 +5,7 @@
   >
     <div class="hotel_passenger">
       <div class="hotel_passenger__head">
-        <div class="hotel_passenger__title">Покупатель</div>
+        <div class="hotel_passenger__title">Ваши данные</div>
         <div class="hotel_passenger__row">
           <div class="hotel_passenger__email">
             E-Mail:

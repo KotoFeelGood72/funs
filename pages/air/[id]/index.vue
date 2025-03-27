@@ -32,8 +32,8 @@
 
           <Select
             :options="[
-              { name: 'Мужчина', value: 'M' },
-              { name: 'Женщина', value: 'W' },
+              { name: 'Мужской', value: 'M' },
+              { name: 'Женский', value: 'W' },
             ]"
             v-model="currentOrder.adults[activeTab].gender"
             label="Пол"
@@ -45,11 +45,16 @@
             type="text"
             mask="##-## ###-###"
           />
-          <Inputs
+          <!-- <Inputs
             label="Гражданство"
             v-model="currentOrder.adults[activeTab].nationality"
             :id="'nationality' + activeTab"
             mode="english"
+          /> -->
+          <SearchSelect
+            label="Гражданство"
+            v-model="currentOrder.adults[activeTab].nationality"
+            :national="true"
           />
           <Inputs
             type="date"
@@ -60,12 +65,15 @@
         </div>
         <div class="note">
           Бронирование будет направлено на ваш email с доступом в вашем личном
-          кабинете
+          кабинете --> Направим лист с маршрутом на ваш email. Также он доступен
+          в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">{{ currentOrder?.price }} €</p>
+            <p class="price">
+              {{ currentOrder?.price }} <span class="walet">₽</span>
+            </p>
           </div>
           <btn
             name="Далее"
@@ -88,6 +96,7 @@ import PassengerTabs from "~/components/ui/PassengerTabs.vue";
 import { useRouter, useRoute } from "vue-router";
 import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 import PaymentForm from "~/components/shared/PaymentForm.vue";
+import SearchSelect from "~/components/ui/inputs/SearchSelect.vue";
 
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
@@ -114,6 +123,8 @@ onMounted(() => {
 const bookingUiTikcet = async () => {
   try {
     uid.value = await bookingTicket(route.params.id);
+
+    console.log(uid, "uid");
 
     await router.push({
       name: "air-id-confirmId",

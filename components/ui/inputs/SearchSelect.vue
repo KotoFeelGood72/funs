@@ -15,9 +15,30 @@
         class="input"
       />
 
-      <ul v-if="dropdownOpen && places.length > 0" class="options">
+      <ul v-if="dropdownOpen && places.length > 0 && places" class="options">
         <li
           v-for="(option, index) in places"
+          :key="index"
+          :class="{ selected: index === selectedIndex }"
+          @mousedown="selectOption(option)"
+        >
+          <p>
+            {{ option.name }}
+          </p>
+          <p class="val">
+            {{ option.value }}
+          </p>
+        </li>
+        <li v-if="places.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
+      </ul>
+      <ul
+        v-if="dropdownOpen && nationals.length > 0 && nationals"
+        class="options"
+      >
+        <li
+          v-for="(option, index) in nationals"
           :key="index"
           :class="{ selected: index === selectedIndex }"
           @mousedown="selectOption(option)"
@@ -41,10 +62,14 @@
 import { ref, computed, defineEmits, watchEffect } from "vue";
 import { useFetchPlace } from "@/composables/usePlace";
 
-const props = defineProps<{ modelValue: any; label?: string }>();
+const props = defineProps<{
+  modelValue: any;
+  label?: string;
+  national?: boolean;
+}>();
 const emit = defineEmits(["update:modelValue"]);
 
-const { fetchPlace, clear, places } = useFetchPlace();
+const { fetchPlace, clear, places, fetchNational, nationals } = useFetchPlace();
 
 const dropdownOpen = ref(false);
 const selectedIndex = ref(-1);
@@ -52,8 +77,14 @@ const selectedIndex = ref(-1);
 const displayName = computed(() => props.modelValue?.name || "");
 
 watchEffect(() => {
-  if (displayName.value && displayName.value.length > 1) {
+  if (displayName.value && displayName.value.length > 1 && !props.national) {
     fetchPlace(displayName.value);
+  } else if (
+    displayName.value &&
+    displayName.value.length > 1 &&
+    props.national
+  ) {
+    fetchNational(displayName.value);
   } else {
     clear();
   }
@@ -65,15 +96,15 @@ watchEffect(() => {
   }
 });
 
-watchEffect(() => {
-  if (typeof props.modelValue === "string" && props.modelValue.length > 1) {
-    fetchPlace(props.modelValue);
-  } else if (typeof props.modelValue === "object" && props.modelValue?.name) {
-    fetchPlace(props.modelValue.name);
-  } else {
-    clear();
-  }
-});
+// watchEffect(() => {
+//   if (typeof props.modelValue === "string" && props.modelValue.length > 1) {
+//     fetchPlace(props.modelValue);
+//   } else if (typeof props.modelValue === "object" && props.modelValue?.name) {
+//     fetchPlace(props.modelValue.name);
+//   } else {
+//     clear();
+//   }
+// });
 
 const toggleDropdown = (open: boolean) => {
   setTimeout(() => {
@@ -90,15 +121,6 @@ const selectOption = (option: any) => {
   clear();
   toggleDropdown(false);
 };
-
-// const onInput = (event: Event) => {
-//   const target = event.target as HTMLInputElement;
-//   emit("update:modelValue", {
-//     name: target.value,
-//     value: props.modelValue?.value || "",
-//   });
-//   selectedIndex.value = -1;
-// };
 
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;

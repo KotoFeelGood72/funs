@@ -11,7 +11,7 @@
       <div class="ticket_data">
         <div class="ticket_pass">
           <div class="tickets__row">
-            <div class="tickets_row__header">Покупатель</div>
+            <div class="tickets_row__header">Ваши данные</div>
             <div class="tickets_row__body">
               <div class="tickets_row__output">
                 Телефон: <span>{{ currentOrder.phone_number }}</span>

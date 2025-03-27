@@ -12,7 +12,7 @@
         <div class="content">
           <div class="top-content" v-if="tickets">
             <InputsSearch v-model="searchQuery" />
-            <RadioGroup :items="sort" name="sortering" v-model="selectedSort" />
+            <!-- <RadioGroup :items="sort" name="sortering" v-model="selectedSort" /> -->
           </div>
           <div class="content-col" v-if="finalTickets.length > 0">
             <ul class="air-list">
@@ -54,12 +54,12 @@ const { tickets, isLoading, airlines } = useTicketStoreRefs();
 const route = useRoute();
 const router = useRouter();
 
-const sort = ref([
-  { name: "Сначала дешевле", val: "downprice" },
-  { name: "Сначала дороже", val: "upprice" },
-]);
+// const sort = ref([
+//   { name: "Сначала дешевле", val: "downprice" },
+//   { name: "Сначала дороже", val: "upprice" },
+// ]);
 
-const selectedSort = ref("downprice");
+// const selectedSort = ref("downprice");
 
 const filters = ref({
   transfer: [] as number[],
@@ -104,16 +104,16 @@ const finalTickets = computed(() => {
     });
   }
 
-  switch (selectedSort.value) {
-    case "downprice":
-      result.sort((a: any, b: any) => a.price - b.price);
-      break;
-    case "upprice":
-      result.sort((a: any, b: any) => b.price - a.price);
-      break;
-    default:
-      break;
-  }
+  // switch (selectedSort.value) {
+  //   case "downprice":
+  //     result.sort((a: any, b: any) => a.price - b.price);
+  //     break;
+  //   case "upprice":
+  //     result.sort((a: any, b: any) => b.price - a.price);
+  //     break;
+  //   default:
+  //     break;
+  // }
 
   return result;
 });

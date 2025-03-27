@@ -22,6 +22,9 @@
             <template #tab-1>
               <hotel />
             </template>
+            <template #tab-2>
+              <eta />
+            </template>
           </Tabs>
         </div>
       </div>
@@ -32,6 +35,7 @@
 <script setup lang="ts">
 import air from "../ui/filters/air.vue";
 import hotel from "../ui/filters/hotel.vue";
+import eta from "../ui/filters/eta.vue";
 import Tabs from "../ui/Tabs.vue";
 import { useTicketStore } from "~/store/useTicketStore";
 import { useRouter } from "vue-router";
@@ -49,7 +53,7 @@ const requestId = ref<string | null>(null);
 
 const { getTickets } = useTicketStore();
 
-const list = [{ label: "Билеты" }, { label: "Отели" }];
+const list = [{ label: "Билеты" }, { label: "Отели" }, { label: "ETA" }];
 
 const getTicket = async () => {
   requestId.value = await getTickets();

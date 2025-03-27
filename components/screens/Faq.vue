@@ -10,13 +10,20 @@
             v-for="(item, index) in visibleQuestions"
             :key="index"
             :class="{
-              blur: !showAll && index >= visibleQuestions.length - 2,
+              blur:
+                !showAll &&
+                visibleQuestions.length > 5 &&
+                index >= visibleQuestions.length - 2,
               [`blur-${index}`]:
-                !showAll && index >= visibleQuestions.length - 2,
+                !showAll &&
+                visibleQuestions.length > 5 &&
+                index >= visibleQuestions.length - 2,
             }"
             :style="{
               pointerEvents:
-                !showAll && index >= visibleQuestions.length - 2
+                !showAll &&
+                visibleQuestions.length > 5 &&
+                index >= visibleQuestions.length - 2
                   ? 'none'
                   : 'auto',
             }"
@@ -41,14 +48,14 @@
               }"
               ref="answers"
             >
-              <p>{{ item.answer }}</p>
+              <p>{{ item.response }}</p>
             </div>
           </div>
         </div>
         <div class="show-more">
           <btn
             name="Показать все"
-            v-if="!showAll"
+            v-if="!showAll && props.faqs?.length > 5"
             @click="showAllQuestions"
             theme="white"
           />
@@ -67,61 +74,13 @@ const props = defineProps<{
   faqs: any;
 }>();
 
-// console.log(props.faqs);
-
-const questions = [
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-  {
-    question: "Вопрос?",
-    answer:
-      "Современные технологии достигли такого уровня, что консультация с широким активом напрямую зависит от модели развития.",
-  },
-];
-
 const activeIndex = ref<number | null>(null);
 const heights = ref<number[]>([]);
 const answers = ref<HTMLElement[]>([]);
 const showAll = ref(false);
-const visibleQuestions = ref(questions.slice(0, 5));
+const visibleQuestions = ref(
+  Array.isArray(props.faqs) ? props.faqs.slice(0, 5) : []
+);
 
 const toggleQuestion = (index: number) => {
   if (showAll || index < visibleQuestions.value.length - 2) {
@@ -136,10 +95,21 @@ const calculateHeights = async () => {
 };
 
 const showAllQuestions = () => {
-  visibleQuestions.value = questions;
+  visibleQuestions.value = props.faqs;
   showAll.value = true;
   calculateHeights();
 };
+
+watch(
+  () => props.faqs,
+  (newFaqs) => {
+    if (Array.isArray(newFaqs)) {
+      visibleQuestions.value = newFaqs.slice(0, 5);
+      calculateHeights();
+    }
+  },
+  { immediate: true }
+);
 
 nextTick(() => calculateHeights());
 </script>

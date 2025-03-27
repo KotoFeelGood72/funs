@@ -114,8 +114,4 @@ const props = withDefaults(
     }
   }
 }
-
-.walet {
-  font-family: Arial, Helvetica, sans-serif;
-}
 </style>

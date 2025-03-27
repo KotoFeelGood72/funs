@@ -69,12 +69,25 @@ export const useTicketStore = defineStore("tickets", {
 
     async bookingTicket(ticketId: any) {
       try {
+        const mappedAdults = this.currentOrder.adults.map((passenger: any) => {
+          return {
+            ...passenger,
+            nationality: passenger.nationality.value,
+          };
+        });
+    
         const response = await api.post(
           `/tickets/${this.tickets.request_id}/${ticketId}`,
-          this.currentOrder
+          {
+            ...this.currentOrder,
+            adults: mappedAdults, 
+          }
         );
+    
         return response.data;
-      } catch (error) {}
+      } catch (error) {
+        console.error("Ошибка при бронировании билета:", error);
+      }
     },
 
     async getTicketPrice() {

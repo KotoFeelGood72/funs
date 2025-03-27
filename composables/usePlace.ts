@@ -3,6 +3,7 @@ import { api } from "~/api/api";
 
 export function useFetchPlace() {
   const places = ref<any>([]);
+  const nationals = ref<any>([]);
 
   const fetchPlace = async (query?: string) => {
     try {
@@ -21,9 +22,27 @@ export function useFetchPlace() {
     }
   };
 
-  const clear = () => {
-    places.value = [];
+  const fetchNational = async (query?: string) => {
+    try {
+      const response = await api.get("countries_array", {
+        params: { query },
+      });
+      nationals.value = response.data.map((item: any) => ({
+        name: item.ru_name,
+        value: item.eng_name,
+      }));
+    } catch (error) {
+      console.error("Ошибка при загрузке национальностей:", error);
+    }
   };
 
-  return { places, fetchPlace, clear };
+
+
+
+  const clear = () => {
+    places.value = [];
+    nationals.value = [];
+  };
+
+  return { places, fetchPlace, fetchNational, clear, nationals };
 }
