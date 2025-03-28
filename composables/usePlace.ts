@@ -24,20 +24,17 @@ export function useFetchPlace() {
 
   const fetchNational = async (query?: string) => {
     try {
-      const response = await api.get("countries_array", {
+      const response = await api.get("countries", {
         params: { query },
       });
       nationals.value = response.data.map((item: any) => ({
-        name: item.ru_name,
-        value: item.eng_name,
+        name: item.name,
+        value: item.code,
       }));
     } catch (error) {
       console.error("Ошибка при загрузке национальностей:", error);
     }
   };
-
-
-
 
   const clear = () => {
     places.value = [];

@@ -16,12 +16,7 @@
         ref="dropdown"
       >
         <!-- v-model="localAdults" привязан к props.adults (и событию update:adults) -->
-        <Counter
-          label="Взрослые"
-          v-model="localAdults"
-          :maxValue="20"
-          :minValue="1"
-        />
+        <Counter label="Взрослые" v-model="localAdults" :maxValue="20" :minValue="1" />
         <Counter label="Дети" v-model="children" :minValue="0" />
         <Counter
           label="Кол-во звезд"
@@ -149,17 +144,6 @@ watch(localClass, (newVal) => {
     localClass.value = "ECONOMY";
   }
 });
-
-// watch(
-//   [() => localAdults.value, () => children.value],
-//   ([newAdults, newChildren], [oldAdults, oldChildren]) => {
-//     // Если сумма действительно изменилась, эмитим новое значение
-//     if (newAdults + newChildren !== oldAdults + oldChildren) {
-//       emit("update:adults", newAdults + newChildren);
-//     }
-//   }
-// );
-
 watch(
   [() => localAdults.value, () => children.value],
   ([newAdults, newChildren], [oldAdults, oldChildren]) => {
@@ -167,14 +151,10 @@ watch(
     const newSum = newAdults + newChildren;
 
     if (newSum !== oldSum) {
-      // 1. Эмитим новое значение во внеший компонент
       emit("update:adults", newSum);
 
-      // 2. Вызываем нужный метод композабла:
-      //    - если classType нет => createPassengers
-      //    - если classType есть => createPassengersAvia
       if (!props.classType) {
-        createPassengers(newSum);
+        createPassengers(newAdults, newChildren);
       } else {
         createPassengersAvia(newSum);
       }
@@ -196,14 +176,13 @@ const calculateDropdownPosition = () => {
   if (!wrapper.value) return;
   const wrapperRect = wrapper.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-  dropdownPosition.value =
-    wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
+  dropdownPosition.value = wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
 onMounted(() => {
   const sum = localAdults.value + children.value;
   if (!props.classType) {
-    createPassengers(sum);
+    createPassengers(localAdults.value, children.value);
   } else {
     createPassengersAvia(sum);
   }

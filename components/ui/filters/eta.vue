@@ -1,7 +1,7 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Выберите страну" v-model="eta.country" />
+      <SearchSelect label="Выберите страну" v-model="eta.country" :national="true" />
     </div>
     <div class="filter-group">
       <Calendar
@@ -14,12 +14,7 @@
     <div class="filter-group">
       <SelectPeople v-model:adults="eta.adults" />
     </div>
-    <btn
-      name="Оплатить визу"
-      icon="right"
-      @click="onTicket()"
-      theme="primary"
-    />
+    <btn name="Оплатить визу" icon="right" @click="onTicket()" theme="primary" />
   </div>
 </template>
 

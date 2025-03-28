@@ -17,32 +17,29 @@
       <div class="tab-content" v-if="ticket.adults && ticket.adults.length > 0">
         <div class="form-grid">
           <Inputs
-            label="Фамилия"
-            v-model="ticket.adults[activeTab].last_name"
+            label="ФИО"
+            v-model="ticket.adults[activeTab].first_name"
             :id="'lastName' + activeTab"
           />
+
           <Inputs
-            label="Имя"
-            v-model="ticket.adults[activeTab].first_name"
-            :id="'firstName' + activeTab"
-          />
-          <Inputs
+            v-if="'birth_date' in ticket.adults[activeTab]"
             type="date"
             label="Дата рождения"
             v-model="ticket.adults[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
-          <InputsMask
+
+          <!-- <InputsMask
             label="Номер загранпаспорта"
             v-model="ticket.adults[activeTab].number_seria_passport"
             mask="##-## ###-###"
             :id="'number_serias_passport' + activeTab"
-          />
+          /> -->
         </div>
         <div class="note">
-          Бронирование будет направлено на ваш email с доступом в вашем личном
-          кабинете --> Направим лист с маршрутом на ваш email. Также он доступен
-          в Личном кабинете.
+          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
+          --> Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
