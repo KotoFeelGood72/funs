@@ -38,8 +38,9 @@
           /> -->
         </div>
         <div class="note">
-          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
-          --> Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
+          Бронирование будет направлено на ваш email с доступом в вашем личном
+          кабинете --> Направим лист с маршрутом на ваш email. Также он доступен
+          в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
@@ -91,7 +92,7 @@ onMounted(async () => {
 
 const bookingHotelForNextPage = async () => {
   await bookingHotelAddInfo(route.query.hotelId, "post");
-  if (ticket.value && ticket.value.id) {
+  if (ticket.value) {
     await router.push({
       name: "hotels-id",
       params: { id: String(route.query.hotelId) },

@@ -73,6 +73,7 @@ onMounted(() => {
   gap: 2rem;
 }
 
+.order_list,
 .order_list__w {
   display: flex;
   flex-direction: column;

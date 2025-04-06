@@ -23,7 +23,7 @@
               <hotel />
             </template>
             <template #tab-2>
-              <eta />
+              <eta @get-eta=""/>
             </template>
           </Tabs>
         </div>

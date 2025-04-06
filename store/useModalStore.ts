@@ -1,40 +1,63 @@
 import { defineStore, storeToRefs } from "pinia";
 
+type ModalName = "auth" | "payment"; 
+
 export const useModalStore = defineStore("modal", {
-  state: (): { modals: any } => ({
+  state: (): { modals: Record<ModalName, boolean> } => ({
     modals: {
       auth: false,
       payment: false,
     },
   }),
+
   actions: {
-    openModal(modalName: any) {
-      this.modals[modalName] = !this.modals[modalName];
+    openModal(
+      modalName: ModalName,
+      options?: {
+        router?: any;
+        route?: any;
+        query?: Record<string, any>;
+      }
+    ) {
+      this.modals[modalName] = true;
+
+      if (options?.router && options?.route && options.query) {
+        options.router.replace({
+          query: {
+            ...options.route.query,
+            ...options.query,
+            modal: modalName,
+          },
+        });
+      }
     },
-    closeModal(modalName: any): void {
+
+    closeModal(modalName: ModalName, router?: any, route?: any): void {
       this.modals[modalName] = false;
+
+      if (router && route) {
+        const query = { ...route.query };
+        delete query.modal;
+
+        router.replace({
+          query: Object.keys(query).length ? query : null,
+        });
+      }
     },
+
     closeAllModals(router?: any, route?: any) {
       Object.keys(this.modals).forEach((modalName) => {
-        // if (modalName !== "AlertPromo" && modalName !== "AlertSquare") {
-        this.modals[modalName as keyof any] = false;
-        // }
+        this.modals[modalName as ModalName] = false;
       });
 
-      if (router && route && Object.keys(route.query).length > 0) {
-        const newQuery = { ...route.query };
-        delete newQuery["task"];
-        delete newQuery["booster"];
+      if (router && route) {
+        router.replace({ query: null });
+      }
+    },
 
-        if (Object.keys(newQuery).length > 0) {
-          router.replace({
-            query: newQuery,
-          });
-        } else {
-          router.replace({
-            query: null,
-          });
-        }
+    checkQueryAndOpenModal(modalFromQuery: any) {
+      if (typeof modalFromQuery === "string" && modalFromQuery in this.modals) {
+        this.modals[modalFromQuery as ModalName] = true;
       }
     },
   },

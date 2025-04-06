@@ -1,7 +1,11 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Выберите страну" v-model="eta.country" :national="true" />
+      <SearchSelect
+        label="Выберите страну"
+        v-model="eta.country"
+        :national="true"
+      />
     </div>
     <div class="filter-group">
       <Calendar
@@ -14,7 +18,12 @@
     <div class="filter-group">
       <SelectPeople v-model:adults="eta.adults" />
     </div>
-    <btn name="Оплатить визу" icon="right" @click="onTicket()" theme="primary" />
+    <btn
+      name="Оплатить визу"
+      icon="right"
+      @click="getVisaTypes(route, router)"
+      theme="primary"
+    />
   </div>
 </template>
 
@@ -23,15 +32,14 @@ import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
-import { useETAStoreRefs } from "~/store/useETAStore";
+import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
+import { useRouter, useRoute } from "vue-router";
 
 const { eta } = useETAStoreRefs();
+const { getVisaTypes } = useETAStore();
 
-const emit = defineEmits(["getEta"]);
-
-const onTicket = () => {
-  emit("getEta");
-};
+const router = useRouter();
+const route = useRoute();
 </script>
 
 <style scoped lang="scss">

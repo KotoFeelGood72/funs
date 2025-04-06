@@ -11,7 +11,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт
-    const { accessToken } = useAuth(); // Получение токенов в момент запроса
+    const { accessToken } = useAuth(); 
 
     if (accessToken.value) {
       config.headers.Authorization = `Bearer ${accessToken.value}`;
@@ -60,8 +60,7 @@ api.interceptors.response.use(
       const status = error.response.status;
 
       if (status === 401 && !isRefreshing) {
-        // Проверяем статус 401 и флаг обновления токена
-        isRefreshing = true; // Устанавливаем флаг
+        isRefreshing = true; 
 
         try {
           const { useAuth } = await import("~/composables/useAuth"); // Ленивый импорт

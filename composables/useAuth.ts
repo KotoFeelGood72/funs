@@ -121,14 +121,14 @@ export function useAuth(store?: any, router?: any) {
   };
 
   // Очистка токенов
-  const logout = () => {
+  const logout = async () => {
     accessToken.value = null;
     refreshToken.value = null;
     user.value = null;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     toast.success("Вы вышли из системы");
-    router.push("/");
+    await router.push("/");
   };
 
   return {
