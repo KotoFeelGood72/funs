@@ -1,5 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
 import { usePassengers } from "@/composables/usePassengers";
+import { useToast } from "vue-toastification";
 import { api } from "~/api/api";
 
 export const useHotelStore = defineStore("hotel-ticket", {
@@ -20,28 +21,29 @@ export const useHotelStore = defineStore("hotel-ticket", {
   }),
   actions: {
     async bookingHotel() {
-      this.load = true
+      this.load = true;
       try {
         const filteredTicket = Object.fromEntries(
           Object.entries(this?.ticket || {}).filter(
-            ([_, value]) => value !== null && value !== undefined && value !== ""
+            ([_, value]) =>
+              value !== null && value !== undefined && value !== ""
           )
         );
         const response = await api.post("hotels", {
           ...filteredTicket,
-          city: this?.ticket?.city?.name || undefined, 
+          city: this?.ticket?.city?.name || undefined,
         });
         this.ticket = response.data;
-        this.getHotelId(response.data.id)
-    
+        this.getHotelId(response.data.id);
+
         return response.data.id;
       } catch (error) {
-        this.load = false
+        this.load = false;
         return null;
       } finally {
-        this.load = false
+        this.load = false;
       }
-    },    
+    },
 
     async bookingHotelAddInfo(
       requestId: any,
@@ -96,30 +98,32 @@ export const useHotelStore = defineStore("hotel-ticket", {
     // },
 
     async getHotelId(id: any) {
+      const toast = useToast();
       try {
         const response = await api.get(`/hotels/${id}`);
         this.ticket = response.data;
-    
+
         const { createPassengers } = usePassengers();
         const adults = response.data.adults || [];
         const isPassengerEmpty = (adult: any) =>
-          Object.values(adult).every(value => !value || value.toString().trim() === "");
-        
-        const allPassengersEmpty = adults.length === 0 || adults.every(isPassengerEmpty);
-        
+          Object.values(adult).every(
+            (value) => !value || value.toString().trim() === ""
+          );
+
+        const allPassengersEmpty =
+          adults.length === 0 || adults.every(isPassengerEmpty);
+
         if (allPassengersEmpty) {
           console.log("Создаю пассажиров:", this.ticket.adults_count);
           createPassengers(this.ticket.adults_count);
         } else {
           console.log("Пассажиры уже есть:", adults);
         }
-    
       } catch (error) {
-        console.error("Ошибка при загрузке отелей:", error);
+        toast.warning("Зарегистрируйтесь, для того что бы забронировать отель");
+        // console.error("Ошибка при загрузке отелей:", error);
       }
-    }
-    ,
-
+    },
     async getHotelPrice() {
       try {
         const response = await api.get("/hotels/price");
