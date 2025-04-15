@@ -21,7 +21,7 @@
     <btn
       name="Оплатить визу"
       icon="right"
-      @click="getVisaTypes(route, router)"
+      @click="onBooking()"
       theme="primary"
     />
   </div>
@@ -34,12 +34,21 @@ import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { useRouter, useRoute } from "vue-router";
+import { useCheckAuth } from "@/composables/useCheckAuth";
 
 const { eta } = useETAStoreRefs();
 const { getVisaTypes } = useETAStore();
 
 const router = useRouter();
 const route = useRoute();
+
+const { checkAuthThen } = useCheckAuth();
+
+const onBooking = () => {
+  checkAuthThen(() => {
+    getVisaTypes(route, router);
+  });
+};
 </script>
 
 <style scoped lang="scss">

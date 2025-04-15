@@ -20,7 +20,7 @@
     <btn
       name="Забронировать"
       icon="right"
-      @click="validateAndBook"
+      @click="onBooking()"
       theme="primary"
       :loading="load"
     />
@@ -36,6 +36,7 @@ import btn from "../buttons/btn.vue";
 import Calendar from "../inputs/Calendar.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import { useToast } from "vue-toastification";
+import { useCheckAuth } from "@/composables/useCheckAuth";
 
 const { bookingHotel, bookingHotelAddInfo } = useHotelStore();
 const { ticket, load } = useHotelStoreRefs();
@@ -44,6 +45,14 @@ const route = useRoute();
 const requestId = ref<any>(null);
 
 const toast = useToast();
+
+const { checkAuthThen } = useCheckAuth();
+
+const onBooking = () => {
+  checkAuthThen(() => {
+    validateAndBook();
+  });
+};
 
 const validateAndBook = async () => {
   let errors = [];

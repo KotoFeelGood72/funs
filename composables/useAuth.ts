@@ -127,8 +127,8 @@ export function useAuth(store?: any, router?: any) {
     user.value = null;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    toast.success("Вы вышли из системы");
-    await router.push("/");
+    // toast.success("Вы вышли из системы");
+    // await router.push("/");
   };
 
   return {

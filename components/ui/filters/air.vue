@@ -38,12 +38,17 @@ import SelectPeople from "../inputs/SelectPeople.vue";
 import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
 import { useTicketStoreRefs } from "~/store/useTicketStore";
+import { useCheckAuth } from "@/composables/useCheckAuth";
 
 const { tickets, isLoading } = useTicketStoreRefs();
 const emit = defineEmits(["getTicket"]);
 
+const { checkAuthThen } = useCheckAuth();
+
 const onTicket = () => {
-  emit("getTicket");
+  checkAuthThen(() => {
+    emit("getTicket");
+  });
 };
 
 const swapCities = () => {

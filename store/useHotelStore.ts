@@ -1,5 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
 import { usePassengers } from "@/composables/usePassengers";
+import { useModalStore } from "./useModalStore";
 import { useToast } from "vue-toastification";
 import { api } from "~/api/api";
 
@@ -99,6 +100,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
 
     async getHotelId(id: any) {
       const toast = useToast();
+      const {openModal} = useModalStore()
       try {
         const response = await api.get(`/hotels/${id}`);
         this.ticket = response.data;
@@ -120,8 +122,9 @@ export const useHotelStore = defineStore("hotel-ticket", {
           console.log("Пассажиры уже есть:", adults);
         }
       } catch (error) {
-        toast.warning("Зарегистрируйтесь, для того что бы забронировать отель");
+        // toast.warning("Зарегистрируйтесь, для того что бы забронировать отель");
         // console.error("Ошибка при загрузке отелей:", error);
+        openModal('auth');
       }
     },
     async getHotelPrice() {

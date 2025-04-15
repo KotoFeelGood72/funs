@@ -29,9 +29,14 @@
             {{ option.value }}
           </p>
         </li>
-        <li v-if="places.length === 0" class="no-options">Нет доступных вариантов</li>
+        <li v-if="places.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
       </ul>
-      <ul v-if="dropdownOpen && nationals.length > 0 && nationals" class="options">
+      <ul
+        v-if="dropdownOpen && nationals.length > 0 && nationals"
+        class="options"
+      >
         <li
           v-for="(option, index) in nationals"
           :key="index"
@@ -45,7 +50,9 @@
             {{ option.value }}
           </p>
         </li>
-        <li v-if="places.length === 0" class="no-options">Нет доступных вариантов</li>
+        <li v-if="places.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
       </ul>
     </div></ClientOnly
   >
@@ -72,7 +79,11 @@ const displayName = computed(() => props.modelValue?.name || "");
 watchEffect(() => {
   if (displayName.value && displayName.value.length > 1 && !props.national) {
     fetchPlace(displayName.value);
-  } else if (displayName.value && displayName.value.length > 1 && props.national) {
+  } else if (
+    displayName.value &&
+    displayName.value.length > 1 &&
+    props.national
+  ) {
     fetchNational(displayName.value);
   } else {
     clear();
@@ -125,7 +136,10 @@ const onInput = (event: Event) => {
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === "ArrowDown") {
     event.preventDefault();
-    selectedIndex.value = Math.min(selectedIndex.value + 1, places.value.length - 1);
+    selectedIndex.value = Math.min(
+      selectedIndex.value + 1,
+      places.value.length - 1
+    );
   } else if (event.key === "ArrowUp") {
     event.preventDefault();
     selectedIndex.value = Math.max(selectedIndex.value - 1, 0);
@@ -134,6 +148,15 @@ const handleKeyDown = (event: KeyboardEvent) => {
     selectOption(places.value[selectedIndex.value]);
   }
 };
+
+watchEffect(() => {
+  if (typeof props.modelValue === "string") {
+    emit("update:modelValue", {
+      name: props.modelValue,
+      value: "",
+    });
+  }
+});
 </script>
 
 <style scoped lang="scss">
