@@ -100,7 +100,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
 
     async getHotelId(id: any) {
       const toast = useToast();
-      const {openModal} = useModalStore()
+      const { openModal } = useModalStore();
       try {
         const response = await api.get(`/hotels/${id}`);
         this.ticket = response.data;
@@ -124,7 +124,7 @@ export const useHotelStore = defineStore("hotel-ticket", {
       } catch (error) {
         // toast.warning("Зарегистрируйтесь, для того что бы забронировать отель");
         // console.error("Ошибка при загрузке отелей:", error);
-        openModal('auth');
+        openModal("auth");
       }
     },
     async getHotelPrice() {

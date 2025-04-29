@@ -30,6 +30,7 @@ export function useFetchPlace() {
       nationals.value = response.data.map((item: any) => ({
         name: item.name,
         value: item.code,
+        id: item.id,
       }));
     } catch (error) {
       console.error("Ошибка при загрузке национальностей:", error);

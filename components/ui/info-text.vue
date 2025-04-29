@@ -1,7 +1,7 @@
 <template>
   <div class="info-text">
     <div class="info_text__icon">
-      <Icon :name="info.icon" :size="18" />
+      <Icon :name="info.icon" :size="20" />
     </div>
     <div class="info_text__label">{{ info.label }}</div>
     <div class="info_text__info">
@@ -28,6 +28,7 @@ defineProps<{
 
 .info_text__label {
   font-size: 1.8rem;
+  font-family: $font_2;
 }
 
 .info_text__icon {

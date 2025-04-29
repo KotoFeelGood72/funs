@@ -29,30 +29,28 @@
             {{ option.value }}
           </p>
         </li>
-        <li v-if="places.length === 0" class="no-options">
-          Нет доступных вариантов
-        </li>
+        <li v-if="places.length === 0" class="no-options">Нет доступных вариантов</li>
       </ul>
       <ul
-        v-if="dropdownOpen && nationals.length > 0 && nationals"
+        v-if="dropdownOpen && (places.length > 0 || nationals.length > 0)"
         class="options"
       >
         <li
-          v-for="(option, index) in nationals"
+          v-for="(option, index) in combinedOptions"
           :key="index"
           :class="{ selected: index === selectedIndex }"
           @mousedown="selectOption(option)"
         >
-          <p>
-            {{ option.name }}
-          </p>
-          <p class="val">
-            {{ option.value }}
-          </p>
+          <p>{{ option.name }}</p>
+          <p class="val">{{ option.value }}</p>
         </li>
-        <li v-if="places.length === 0" class="no-options">
-          Нет доступных вариантов
-        </li>
+      </ul>
+
+      <ul
+        v-if="dropdownOpen && places.length === 0 && nationals.length === 0"
+        class="options"
+      >
+        <li class="no-options">Нет доступных вариантов</li>
       </ul>
     </div></ClientOnly
   >
@@ -79,15 +77,15 @@ const displayName = computed(() => props.modelValue?.name || "");
 watchEffect(() => {
   if (displayName.value && displayName.value.length > 1 && !props.national) {
     fetchPlace(displayName.value);
-  } else if (
-    displayName.value &&
-    displayName.value.length > 1 &&
-    props.national
-  ) {
+  } else if (displayName.value && displayName.value.length > 1 && props.national) {
     fetchNational(displayName.value);
   } else {
     clear();
   }
+});
+
+const combinedOptions = computed(() => {
+  return places.value.length > 0 ? places.value : nationals.value;
 });
 
 watchEffect(() => {
@@ -116,8 +114,7 @@ const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const userInput = target.value;
 
-  // Найти вариант, который совпадает с вводом
-  const matchedOption = places.value.find(
+  const matchedOption = combinedOptions.value.find(
     (option: any) => option.name.toLowerCase() === userInput.toLowerCase()
   );
 
@@ -134,18 +131,20 @@ const onInput = (event: Event) => {
 };
 
 const handleKeyDown = (event: KeyboardEvent) => {
+  if (combinedOptions.value.length === 0) return;
+
   if (event.key === "ArrowDown") {
     event.preventDefault();
     selectedIndex.value = Math.min(
       selectedIndex.value + 1,
-      places.value.length - 1
+      combinedOptions.value.length - 1
     );
   } else if (event.key === "ArrowUp") {
     event.preventDefault();
     selectedIndex.value = Math.max(selectedIndex.value - 1, 0);
   } else if (event.key === "Enter" && selectedIndex.value !== -1) {
     event.preventDefault();
-    selectOption(places.value[selectedIndex.value]);
+    selectOption(combinedOptions.value[selectedIndex.value]);
   }
 };
 
