@@ -1,7 +1,11 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Выберите страну" v-model="eta.country" :national="true" />
+      <SearchSelect
+        label="Выберите страну"
+        v-model="eta.country"
+        :national="true"
+      />
     </div>
     <div class="filter-group">
       <Calendar
@@ -14,7 +18,7 @@
     <div class="filter-group">
       <SelectPeople v-model:adults="eta.adults" />
     </div>
-    <btn name="Оплатить визу" icon="right" @click="onBooking()" theme="primary" />
+    <btn :name="isTextBtn" icon="right" @click="onBooking()" theme="primary" />
   </div>
 </template>
 
@@ -41,11 +45,9 @@ const onBooking = () => {
   });
 };
 
-// onMounted(() => {
-//   if (eta.value.country) {
-//     getVisaTypes(route, router, route.query.request_id);
-//   }
-// });
+const isTextBtn = computed(() => {
+  return route.name === "eta" ? "Обновить" : "Оплатить визу";
+});
 </script>
 
 <style scoped lang="scss">

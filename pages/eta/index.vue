@@ -1,157 +1,20 @@
 <template>
   <div class="eta">
-    <ContentView :is-loading="false">
-      <div class="eta__head">
-        <eta />
-      </div>
-      <div class="eta_main">
-        <div class="eta__forms">
-          <div class="grid_data">
-            <infoText
-              :info="{
-                icon: 'carbon:time',
-                label: 'Одобрение до: 14 ноября 2024',
-                notice:
-                  'Требуется подать заявку минимум за 4 дня, максимум за 30 дней до прибытия.',
-              }"
-            />
-            <infoText
-              :info="{
-                icon: 'solar:map-point-outline',
-                label: 'Макс. время посещения: 30 д.',
-                notice:
-                  'Требуется подать заявку минимум за 4 дня, максимум за 30 дней до прибытия.',
-              }"
-            />
-            <infoText
-              :info="{
-                icon: 'uiw:date',
-                label: 'Срок действия: 90 д.',
-                notice:
-                  'Требуется подать заявку минимум за 4 дня, максимум за 30 дней до прибытия.',
-              }"
-            />
-            <infoText
-              :info="{
-                icon: 'pepicons-pencil:internet',
-                label: 'Цель поездки: любая',
-                notice:
-                  'Требуется подать заявку минимум за 4 дня, максимум за 30 дней до прибытия.',
-              }"
-            />
-          </div>
-
-          <div class="eta_forms__change">
-            <div class="eta_selects">
-              <Select
-                :options="isListCurrentVisaType"
-                v-model="visaId"
-                label="Выберите тип"
-              />
-            </div>
-            <div class="eta__price">14 900 ₽</div>
-          </div>
-          <div class="notice">
-            По требованию Бюро иммиграции, мы просим вас раскрыть туристическую цель
-            поездки в Индию более подробно. Пожалуйста, отметьте один из пунктов в
-            качестве вашей основной цели:
-          </div>
-
-          <div v-if="currentVisaPurposes.length" class="eta__purposes">
-            <ul class="eta_visaPurposes__list">
-              <li
-                v-for="purpose in currentVisaPurposes"
-                :key="purpose.id"
-                class="eta_visaPurposes__list__item"
-              >
-                <input
-                  type="radio"
-                  :id="'purpose-' + purpose.id"
-                  :value="purpose.id"
-                  v-model="visaPurposeId"
-                />
-                <label :for="'purpose-' + purpose.id">
-                  <div class="purpose_icon">
-                    <Icon
-                      :size="22"
-                      :name="
-                        visaPurposeId === purpose.id
-                          ? 'ic:round-radio-button-checked'
-                          : 'ic:round-radio-button-unchecked'
-                      "
-                    />
-                  </div>
-                  <p>{{ purpose.name }}</p>
-                </label>
-              </li>
-            </ul>
-            <div class="notice">
-              Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы Индии
-              имеет право потребовать от вас подтверждение целей визита, а также обратный
-              билет и подтверждение проживания в отеле.
-            </div>
-            <div class="action">
-              Оформите <NuxtLink to="/">проверяемое бронирование для авиа</NuxtLink>, или
-              <NuxtLink to="/">бронирование отеля без его полной оплаты</NuxtLink> с нашим
-              сервисом.
-            </div>
-          </div>
-          <div class="documents">
-            <h2 class="documents__toggle" @click="isDocumentsOpen = !isDocumentsOpen">
-              Условия и документы
-              <Icon
-                :name="isDocumentsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'"
-                class="chevron"
-                size="20"
-              />
-            </h2>
-
-            <div
-              v-show="isDocumentsOpen"
-              class="documents__content"
-              v-html="visaList.conditions_and_document"
-            />
-          </div>
-        </div>
-
-        <div class="eta__img">
-          <img src="@/assets/img/eta.jpg" alt="" />
-        </div>
-      </div>
-    </ContentView>
+    <OneStep v-if="currentStep === 1" />
+    <TwoStep v-else-if="currentStep === 2" />
+    <FreeStep v-else-if="currentStep === 3" />
+    <FourStep v-else-if="currentStep === 4" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Select from "~/components/ui/inputs/Select.vue";
-import eta from "~/components/ui/filters/eta.vue";
-import ContentView from "~/components/shared/ContentView.vue";
-import infoText from "~/components/ui/info-text.vue";
+import OneStep from "./steps/OneStep.vue";
+import TwoStep from "./steps/TwoStep.vue";
+import FreeStep from "./steps/FreeStep.vue";
+import FourStep from "./steps/FourStep.vue";
 import { useETAStoreRefs } from "~/store/useETAStore";
-import { ref, computed, watch } from "vue";
 
-const { visaList, visaId } = useETAStoreRefs();
-
-const visaPurposeId = ref<number | null>(null);
-const isDocumentsOpen = ref(false);
-
-const isListCurrentVisaType = computed(() =>
-  visaList?.value.visa_types.map((el: any) => ({
-    name: el.name,
-    value: el.id,
-  }))
-);
-
-// Получение целей визита по выбранной визе
-const currentVisaPurposes = computed(() => {
-  const selectedVisa = visaList.value.visa_types?.find((v: any) => v.id === visaId.value);
-  return selectedVisa?.visa_purposes || [];
-});
-
-// Сброс выбранной цели при смене типа визы
-watch(visaId, () => {
-  visaPurposeId.value = null;
-});
+const { currentStep } = useETAStoreRefs();
 </script>
 
 <style scoped lang="scss">
@@ -228,11 +91,13 @@ watch(visaId, () => {
 
 .notice {
   font-size: 1.4rem;
+  padding: 1.6rem 0;
 }
 
 .documents {
   border: 0.1rem solid $light;
   border-radius: 1.6rem;
+  margin-bottom: 2.4rem;
   &:deep(h3) {
     font-size: 1.6rem;
     font-family: $font_2;
@@ -268,5 +133,22 @@ watch(visaId, () => {
 
 .documents__content {
   padding: 0 1.6rem 1.6rem 1.6rem;
+}
+
+.action {
+  padding: 1.6rem 0;
+  a {
+    color: $blue;
+  }
+}
+
+.row {
+  @include flex-space;
+
+  p {
+    font-size: 2.4rem;
+    font-family: $font_2;
+    font-weight: 600;
+  }
 }
 </style>
