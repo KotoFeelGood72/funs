@@ -51,9 +51,9 @@
           <div class="eta__price">{{ currentVisa?.price || "—" }} ₽</div>
         </div>
         <div class="notice">
-          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую
-          цель поездки в Индию более подробно. Пожалуйста, отметьте один из
-          пунктов в качестве вашей основной цели:
+          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую цель поездки
+          в Индию более подробно. Пожалуйста, отметьте один из пунктов в качестве вашей
+          основной цели:
         </div>
 
         <div v-if="currentVisa?.visa_purposes?.length" class="eta__purposes">
@@ -85,9 +85,9 @@
             </li>
           </ul>
           <div class="notice">
-            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы
-            Индии имеет право потребовать от вас подтверждение целей визита, а
-            также обратный билет и подтверждение проживания в отеле.
+            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы Индии
+            имеет право потребовать от вас подтверждение целей визита, а также обратный
+            билет и подтверждение проживания в отеле.
           </div>
           <div class="action">
             Оформите
@@ -97,10 +97,7 @@
           </div>
         </div>
         <div class="documents">
-          <h2
-            class="documents__toggle"
-            @click="isDocumentsOpen = !isDocumentsOpen"
-          >
+          <h2 class="documents__toggle" @click="isDocumentsOpen = !isDocumentsOpen">
             Условия и документы
             <Icon
               :name="isDocumentsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'"
@@ -142,7 +139,7 @@ import { ref, computed, watch } from "vue";
 import btn from "~/components/ui/buttons/btn.vue";
 
 const { visa, visaId, loading } = useETAStoreRefs();
-const { getVisaById, nextStep } = useETAStore();
+const { getVisaById, nextStep, getVisaByIdForm } = useETAStore();
 
 const visaPurposeId = ref<number | null>(null);
 const isDocumentsOpen = ref(false);
@@ -164,11 +161,13 @@ const currentVisa = computed(() => {
 // Сброс выбранной цели при смене типа визы
 watch(visaId, () => {
   visaPurposeId.value = null;
+  getVisaByIdForm(visaId.value);
 });
 
 onMounted(async () => {
   if (route.query.request_id) {
     await getVisaById(route.query.request_id);
+    console.log("visa", visaId.value);
     if (visa.value?.visa_types?.length && visaId?.value === null) {
       visaId.value = visa?.value?.visa_types[0]?.id;
     }

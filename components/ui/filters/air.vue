@@ -2,6 +2,7 @@
   <div class="filters">
     <div class="filter-group">
       <SearchSelect label="Откуда" v-model="tickets.data.departure" />
+      <!-- <DoubleDate /> -->
     </div>
     <SwapBtn @click="swapCities" />
     <div class="filter-group">
@@ -39,6 +40,7 @@ import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
 import { useTicketStoreRefs } from "~/store/useTicketStore";
 import { useCheckAuth } from "@/composables/useCheckAuth";
+import DoubleDate from "~/components/dates/DoubleDate.vue";
 
 const { tickets, isLoading } = useTicketStoreRefs();
 const emit = defineEmits(["getTicket"]);

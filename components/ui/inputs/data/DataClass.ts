@@ -1,1 +1,0 @@
-export const dataClass = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST']
