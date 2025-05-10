@@ -55,6 +55,12 @@
           в Индию более подробно. Пожалуйста, отметьте один из пунктов в качестве вашей
           основной цели:
         </div>
+        <visa_short_form
+          v-if="currentVisa && currentVisa.visa_form"
+          v-model="dynamicForm"
+          :fields="currentVisa.visa_form.fields"
+          class="visa_form"
+        />
 
         <div v-if="currentVisa?.visa_purposes?.length" class="eta__purposes">
           <ul class="eta_visaPurposes__list">
@@ -133,10 +139,12 @@ import Select from "~/components/ui/inputs/Select.vue";
 import eta from "~/components/ui/filters/eta.vue";
 import ContentView from "~/components/shared/ContentView.vue";
 import infoText from "~/components/ui/info-text.vue";
+import btn from "~/components/ui/buttons/btn.vue";
+import visa_short_form from "~/components/forms/visa_short_form.vue";
+
 import { useRoute } from "vue-router";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
-import { ref, computed, watch } from "vue";
-import btn from "~/components/ui/buttons/btn.vue";
+import { ref, computed, watch, onMounted } from "vue";
 
 const { visa, visaId, loading } = useETAStoreRefs();
 const { getVisaById, nextStep, getVisaByIdForm } = useETAStore();
@@ -144,35 +152,49 @@ const { getVisaById, nextStep, getVisaByIdForm } = useETAStore();
 const visaPurposeId = ref<number | null>(null);
 const isDocumentsOpen = ref(false);
 const route = useRoute();
+
+// СОЗДАЁМ ref для данных динамической формы
+const dynamicForm = ref<Record<string, any>>({});
+
+// Когда меняется тип визы – инициализируем пустой объект со всеми ключами
+
 const isListCurrentVisaType = computed(
-  () =>
-    visa?.value?.visa_types?.map((el: any) => ({
-      name: el.name,
-      value: el.id,
-    })) ?? []
+  () => visa.value?.visa_types?.map((el: any) => ({ name: el.name, value: el.id })) ?? []
 );
 
-// Получение целей визита по выбранной визе
 const currentVisa = computed(() => {
   if (!visa.value?.visa_types) return null;
   return visa.value.visa_types.find((v: any) => v.id === visaId.value) || null;
 });
 
-// Сброс выбранной цели при смене типа визы
+// при переключении визы — сбрасываем цель и форму
 watch(visaId, () => {
   visaPurposeId.value = null;
   getVisaByIdForm(visaId.value);
 });
 
+// остальной ваш код (onMounted, getVisaById и т.д.)
 onMounted(async () => {
   if (route.query.request_id) {
     await getVisaById(route.query.request_id);
-    console.log("visa", visaId.value);
     if (visa.value?.visa_types?.length && visaId?.value === null) {
       visaId.value = visa?.value?.visa_types[0]?.id;
     }
   }
 });
+
+watch(
+  () => currentVisa.value?.visa_form,
+  (formDef) => {
+    if (formDef) {
+      dynamicForm.value = formDef.fields.reduce(
+        (acc: any, f: any) => ({ ...acc, [f.name]: "" }),
+        {}
+      );
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">
@@ -308,5 +330,9 @@ onMounted(async () => {
     font-family: $font_2;
     font-weight: 600;
   }
+}
+
+.visa_form {
+  padding: 2rem 0;
 }
 </style>
