@@ -1,8 +1,5 @@
 <template>
   <div class="select" @click="toggleDropdown" ref="selectRef">
-    <label :class="{ active: dropdownOpen || modelValue }" class="label">
-      {{ label }}
-    </label>
     <div class="selected">
       <p class="selected-text">
         {{ selectedOption?.name || placeholder }}
@@ -74,33 +71,13 @@ const selectOption = (value: any) => {
 .select {
   position: relative;
   cursor: pointer;
-  border: 0.1rem solid transparent;
-  border-bottom: 0.1rem solid $blue;
-  height: 4.2rem;
+  border: 0.1rem solid $light-blue;
+  height: 4.6rem;
+  border-radius: 0.5rem;
+  flex-grow: 1;
 
   @include bp($point_2) {
     height: 3rem;
-  }
-
-  .label {
-    position: absolute;
-    left: 1.6rem;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    font-family: $font_2;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $dark;
-
-    &.active {
-      color: $blue;
-      font-size: 1.4rem;
-      top: 0;
-      @include bp($point_2) {
-        font-size: 1rem;
-      }
-      // top: -0.5rem;
-    }
   }
 
   .selected {

@@ -8,11 +8,17 @@
       />
     </div>
     <div class="filter-group">
-      <Calendar
+      <!-- <Calendar
         v-model:startDate="eta.date_forward"
         v-model:endDate="eta.date_backward"
         :isRange="true"
         :isError="true"
+      /> -->
+      <DoubleDate
+        v-model:end="eta.date_backward"
+        v-model:start="eta.date_forward"
+        placeStart="Дата начала поездки"
+        placeEnd="Дата окончания поездки"
       />
     </div>
     <div class="filter-group">
@@ -30,6 +36,7 @@ import btn from "../buttons/btn.vue";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { useRouter, useRoute } from "vue-router";
 import { useCheckAuth } from "@/composables/useCheckAuth";
+import DoubleDate from "@/components/dates/DoubleDate.vue";
 
 const { eta } = useETAStoreRefs();
 const { getVisaTypes } = useETAStore();

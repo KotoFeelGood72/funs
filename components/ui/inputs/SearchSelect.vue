@@ -1,10 +1,6 @@
 <template>
   <ClientOnly>
     <div class="select" :class="{ active: displayName || dropdownOpen }">
-      <label :class="{ active: dropdownOpen || displayName }" class="label">
-        {{ label }}
-      </label>
-
       <input
         type="text"
         :value="displayName"
@@ -13,6 +9,7 @@
         @input="onInput($event)"
         @keydown="handleKeyDown"
         class="input"
+        :placeholder="label"
       />
 
       <ul v-if="dropdownOpen && places.length > 0 && places" class="options">
@@ -29,7 +26,9 @@
             {{ option.value }}
           </p>
         </li>
-        <li v-if="places.length === 0" class="no-options">Нет доступных вариантов</li>
+        <li v-if="places.length === 0" class="no-options">
+          Нет доступных вариантов
+        </li>
       </ul>
       <ul
         v-if="dropdownOpen && (places.length > 0 || nationals.length > 0)"
@@ -77,7 +76,11 @@ const displayName = computed(() => props.modelValue?.name || "");
 watchEffect(() => {
   if (displayName.value && displayName.value.length > 1 && !props.national) {
     fetchPlace(displayName.value);
-  } else if (displayName.value && displayName.value.length > 1 && props.national) {
+  } else if (
+    displayName.value &&
+    displayName.value.length > 1 &&
+    props.national
+  ) {
     fetchNational(displayName.value);
   } else {
     clear();
@@ -163,41 +166,18 @@ watchEffect(() => {
   position: relative;
   width: 100%;
 
-  .label {
-    pointer-events: none;
-    font-family: $font_2;
-    font-size: 1.8rem;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 1.6rem;
-    transition: all 0.3s ease-in-out;
-    color: $dark;
-
-    @include bp($point_2) {
-      font-size: 1.4rem;
-    }
-
-    &.active {
-      color: $blue;
-      top: 0;
-      font-size: 1.4rem;
-      @include bp($point_2) {
-        font-size: 1rem;
-      }
-    }
-  }
-
   .input {
     @include app;
     font-family: $font_2;
-    padding: 1rem 1.6rem;
+    padding: 1.2rem 2rem;
     width: 100%;
     background: transparent;
     z-index: 1;
-    border-bottom: 0.1rem solid $blue;
+    border: 0.1rem solid $light-blue;
     font-size: 1.8rem;
     cursor: pointer;
+    height: 4.6rem;
+    border-radius: 0.5rem;
     @include bp($point_2) {
       font-size: 1.4rem;
     }
@@ -208,7 +188,7 @@ watchEffect(() => {
     top: calc(100% + 0.5rem);
     left: 0;
     width: 100%;
-    max-height: 200px;
+    max-height: 20rem;
     overflow-y: auto;
     background: $white;
     border: 0.1rem solid $light;

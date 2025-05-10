@@ -1,19 +1,14 @@
 <template>
   <div class="filters">
-    <div class="filter-group">
+    <div class="selects-group">
       <SearchSelect label="Откуда" v-model="tickets.data.departure" />
-      <!-- <DoubleDate /> -->
-    </div>
-    <SwapBtn @click="swapCities" />
-    <div class="filter-group">
+      <SwapBtn @click="swapCities" />
       <SearchSelect label="Куда" v-model="tickets.data.arrival" />
     </div>
-    <div class="filter-group">
-      <Calendar
-        v-model:startDate="tickets.data.date_forward"
-        v-model:endDate="tickets.data.date_backward"
-        :isRange="true"
-        :isError="true"
+    <div class="filter-group dates">
+      <DoubleDate
+        v-model:start="tickets.data.date_forward"
+        v-model:end="tickets.data.date_backward"
       />
     </div>
     <div class="filter-group">
@@ -63,7 +58,7 @@ const swapCities = () => {
 <style scoped lang="scss">
 .filters {
   @include flex-space;
-  gap: 2.4rem;
+  gap: 1.4rem;
   @include bp($point_2) {
     flex-direction: column;
     gap: 1rem;
@@ -82,5 +77,13 @@ const swapCities = () => {
 .people-ic {
   @include flex-center;
   color: $blue;
+}
+
+.selects-group {
+  @include flex-start;
+  gap: 1rem;
+}
+.dates {
+  max-width: 40rem;
 }
 </style>

@@ -10,7 +10,8 @@
 .filter-change {
   @include flex-center;
   cursor: pointer;
-  width: 4.5rem;
+  width: 3.5rem;
+  min-width: 3.5rem;
 
   img {
     width: 100%;

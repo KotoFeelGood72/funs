@@ -93,7 +93,7 @@ const validateInput = (event: Event) => {
 input {
   border-radius: 0.5rem;
   width: 100%;
-  height: 100%;
+  height: 4.6rem;
   font-size: 1.8rem;
   border: none;
   outline: none;

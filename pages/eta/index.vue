@@ -45,11 +45,12 @@ const { currentStep } = useETAStoreRefs();
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
   margin-bottom: 1.6rem;
+  padding-bottom: 1.6rem;
+  // border-bottom: 0.1rem solid $blue;
 }
 
 .eta__price {
   @include flex-start;
-  border-bottom: 0.1rem solid $blue;
   color: $blue;
   font-family: $font_2;
   padding-left: 2.8rem;

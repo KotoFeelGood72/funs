@@ -1,278 +1,163 @@
+<script setup lang="ts">
+import { ref, reactive, computed, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useETAStore, useETAStoreRefs } from "@/store/useETAStore";
+import Inputs from "~/components/ui/inputs/Inputs.vue";
+import Select from "~/components/ui/inputs/Select.vue";
+import CustomSelectPhone from "~/components/ui/inputs/CustomSelectPhone.vue";
+import ContentView from "@/components/shared/ContentView.vue";
+import AccardionSingle from "@/components/accardions/AccardionSingle.vue";
+
+// — Удаляем defaultSections entirely —
+
+// вместо этого достаём schema из стора:
+const { getVisaByIdForm } = useETAStore();
+const { formShema } = useETAStoreRefs();
+
+// секции берем из formShema.value
+const sections = computed(() => formShema.value.sections || []);
+
+// динамически строим пустой form на основе того, что пришло из schema
+const form = reactive<Record<string, any>>({});
+
+watch(
+  sections,
+  (secs) => {
+    secs.forEach((sec) =>
+      sec.fields.forEach((f: any) => {
+        // если ещё не инициализовано
+        if (!(f.name in form)) {
+          form[f.name] = f.default_value ?? (f.type === "boolean" ? false : "");
+        }
+      })
+    );
+  },
+  { immediate: true }
+);
+
+// аккордеоны: по умолчанию всё закрыто
+const openStates = reactive({} as Record<string, boolean>);
+watch(
+  sections,
+  (secs) => {
+    secs.forEach((s: any) => {
+      if (!(s.id in openStates)) {
+        openStates[s.id] = false;
+      }
+    });
+  },
+  { immediate: true }
+);
+
+const route = useRoute();
+
+onMounted(async () => {
+  const id = route.query.visa_id;
+  if (typeof id === "string") {
+    // метод должен заполнить formShema.value нужными полями
+    await getVisaByIdForm(id);
+    // и после этого перезапишем наш form значениями:
+    Object.assign(form, formShema.value);
+  }
+});
+
+function checkDependency(dep: Record<string, any>) {
+  const [[key, val]] = Object.entries(dep);
+  return form[key] === val;
+}
+
+function componentFor(field: any) {
+  if (field.type === "boolean") return Select;
+  if (field.options && field.options.length) return Select;
+  if (/phone|mobile|contact/.test(field.name)) return CustomSelectPhone;
+  return Inputs;
+}
+
+function propsFor(field: any) {
+  const common = {
+    id: field.name,
+    placeholder: field.label,
+    label: field.required ? field.label + " *" : field.label,
+  };
+  if (field.type === "boolean") {
+    return {
+      ...common,
+      options: [
+        { name: "Да", value: true },
+        { name: "Нет", value: false },
+      ],
+    };
+  }
+  if (field.options && field.options.length) {
+    return {
+      ...common,
+      options: field.options.map((o: any) => ({
+        name: o.name,
+        value: o.value,
+      })),
+    };
+  }
+  const typeMap: Record<string, string> = {
+    string: "text",
+    date: "date",
+    number: "number",
+  };
+  return {
+    ...common,
+    type: typeMap[field.type] || "text",
+  };
+}
+</script>
+
 <template>
   <ContentView :is-loading="false">
-    <div class="grid-1">
-      <!-- ─── Въезд/выезд и «быстрые» поля ─── -->
-      <div class="grid-2">
-        <Inputs v-model="form.entryCity" placeholder="Укажите город въезда в Индию" />
-        <Inputs
-          v-model="form.entryPort"
-          placeholder="Например, «Мумбаи круизный терминал», «DEL»"
-        />
-        <Inputs v-model="form.exitCity" placeholder="Укажите город выезда из Индии" />
-        <Inputs v-model="form.exitPort" placeholder="Например, «Гоа Даболим», «GOI»" />
-        <Inputs
-          v-model="form.shortVisitedPlaces"
-          placeholder="Перечислите места посещения"
-        />
-        <Select
-          v-model="form.visitedBefore"
-          :options="yesNoOptions"
-          placeholder="Посещали ли вы Индию ранее?"
-        />
-      </div>
-
-      <!-- ─── Последняя поездка в Индию ─── -->
+    <div v-for="section in sections" :key="section.id" class="section">
       <AccardionSingle
-        v-model="tripOpen"
-        title="Заполните эти сведения по вашей последней поездке в Индию:"
+        v-model="openStates[section.id]"
+        :title="section.title"
+        is-open
       >
-        <last_country_form
-          v-model:address="trip.address"
-          v-model:visaType="trip.visaType"
-          v-model:visaCity="trip.visaCity"
-          v-model:visitedPlaces="trip.visitedPlaces"
-          v-model:visaNumber="trip.visaNumber"
-          v-model:visaDate="trip.visaDate"
-        />
-      </AccardionSingle>
+        <p v-if="section.description" class="section-desc">
+          {{ section.description }}
+        </p>
 
-      <!-- ─── Refusal / Control No ─── -->
-      <div class="grid-2">
-        <Inputs
-          v-model="form.controlNo"
-          label="Если вы подавали заявку на визу, но получили отказ"
-          placeholder="Укажите Control No."
-        />
-        <Inputs v-model="form.controlDate" placeholder="ДД-ММ-ГГГГ" type="date" />
-      </div>
+        <div class="fields-grid">
+          <template v-for="field in section.fields" :key="field.name">
+            <!-- Если это Select (т.е. field.options или boolean) -->
+            <div v-if="componentFor(field) === Select" class="field-item">
+              <label :for="field.name" class="field-item__label">{{
+                propsFor(field).label
+              }}</label>
 
-      <!-- ─── Отметки на теле ─── -->
-      <Select
-        v-model="form.hasMarks"
-        :options="yesNoOptions"
-        placeholder="Имеете ли вы видимые родимые пятна, шрамы, татуировки…?"
-      />
-      <Inputs v-model="form.marksDetail" placeholder="Укажите их детально" />
+              <Select v-model="form[field.name]" v-bind="propsFor(field)" />
+            </div>
 
-      <!-- ─── Посещенные страны за 10 лет ─── -->
-      <Inputs
-        v-model="form.countriesLast10Years"
-        label="Какие страны вы посещали за последние 10 лет?"
-        placeholder="Укажите в свободном порядке"
-      />
-
-      <!-- ─── Образование / религия ─── -->
-      <div class="grid-2">
-        <Select
-          v-model="form.highestEducation"
-          :options="educationOptions"
-          placeholder="Наивысший достигнутый уровень образования"
-        />
-        <Select
-          v-model="form.religion"
-          :options="religionOptions"
-          placeholder="Религиозные взгляды"
-        />
-      </div>
-
-      <AccardionSingle is-open title="Посещали ли вы за последние 3 года:">
-        <country_form
-          :countries="[
-            'Пакистан',
-            'Мальдивы',
-            'Бангладеш',
-            'Непал',
-            'Бутан',
-            'Шри-Ланка',
-            'Афганистан',
-          ]"
-          v-model="visitData"
-        />
-      </AccardionSingle>
-
-      <!-- ─── Смена фамилии/имени ─── -->
-      <AccardionSingle v-model="familyOpen" title="Меняли ли вы свою фамилию…?">
-        <family_form
-          v-model:previousLastName="oldLastName"
-          v-model:previousFirstName="oldFirstName"
-        />
-      </AccardionSingle>
-
-      <!-- ─── Домашний адрес + телефон ─── -->
-      <AccardionSingle v-model="addressOpen" title="Введите свой домашний адрес:">
-        <address_form v-model:address="userAddress" v-model:phone="userPhone" />
-      </AccardionSingle>
-
-      <!-- ─── Родители ─── -->
-      <AccardionSingle v-model="parentsOpen" title="Сведения о ваших отце и матери:">
-        <father_form v-model:father="fatherData" v-model:mother="motherData" />
-      </AccardionSingle>
-
-      <!-- ─── Работодатель ─── -->
-      <div class="grid-2">
-        <Inputs
-          v-model="form.employment"
-          label="Ваша текущая занятость (профессия)"
-          placeholder="Введите занятость"
-        />
-        <Inputs v-model="form.employerName" placeholder="Наименование работодателя" />
-        <Inputs v-model="form.employerAddress" placeholder="Адрес работодателя" />
-        <CustomSelectPhone v-model="form.employerPhone" label="Телефон работодателя" />
-      </div>
-
-      <!-- ─── Адрес в Индии ─── -->
-      <AccardionSingle v-model="hotelOpen" title="Адрес в Индии (отель, жильё)">
-        <div class="grid-2">
-          <Inputs v-model="form.hotelAddress" placeholder="Введите адрес" />
-          <CustomSelectPhone v-model="form.hotelPhone" label="Телефон отеля" />
-        </div>
-      </AccardionSingle>
-
-      <!-- ─── Экстренный контакт ─── -->
-      <AccardionSingle
-        v-model="emergencyOpen"
-        title="Для экстренных случаев: ваш доверенное лицо"
-      >
-        <div class="grid-3">
-          <Inputs v-model="form.emergencyName" placeholder="Введите имя" />
-          <Inputs v-model="form.emergencyAddress" placeholder="Введите адрес" />
-          <CustomSelectPhone
-            v-model="form.emergencyPhone"
-            label="Телефон доверенного лица"
-          />
+            <!-- Иначе просто рендерим Inputs или CustomSelectPhone -->
+            <component
+              v-else
+              :is="componentFor(field)"
+              v-model="form[field.name]"
+              v-bind="propsFor(field)"
+            />
+          </template>
         </div>
       </AccardionSingle>
     </div>
   </ContentView>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive } from "vue";
-
-import family_form from "~/components/forms/family_form.vue";
-import address_form from "~/components/forms/address_form.vue";
-import father_form from "~/components/forms/father_form.vue";
-import country_form from "~/components/forms/country_form.vue";
-import last_country_form from "~/components/forms/last_country_form.vue";
-import ContentView from "~/components/shared/ContentView.vue";
-import AccardionSingle from "~/components/accardions/AccardionSingle.vue";
-import Inputs from "~/components/ui/inputs/Inputs.vue";
-import Select from "~/components/ui/inputs/Select.vue";
-import CustomSelectPhone from "~/components/ui/inputs/CustomSelectPhone.vue";
-
-// уже существующие рефы/реактивы
-const userAddress = ref("");
-const userPhone = ref("");
-
-const oldLastName = ref("");
-const oldFirstName = ref("");
-
-interface VisitRecord {
-  country: string;
-  visited: boolean;
-  lastYear: string;
-  totalVisits: string;
-}
-const visitData = ref<VisitRecord[]>([]);
-
-const trip = reactive({
-  address: "",
-  visaType: "",
-  visaCity: "",
-  visitedPlaces: "",
-  visaNumber: "",
-  visaDate: "",
-});
-
-interface ParentInfo {
-  name: string;
-  residenceCountry: string;
-  previousCitizenship: string;
-  birthCountry: string;
-  birthPlace: string;
-  currentCitizenship: string;
-}
-const fatherData = ref<ParentInfo>({
-  name: "",
-  residenceCountry: "",
-  previousCitizenship: "",
-  birthCountry: "",
-  birthPlace: "",
-  currentCitizenship: "",
-});
-const motherData = ref<ParentInfo>({ ...fatherData.value });
-
-// открытые аккордеоны
-const tripOpen = ref(true);
-const familyOpen = ref(false);
-const addressOpen = ref(false);
-const parentsOpen = ref(false);
-const hotelOpen = ref(false);
-const emergencyOpen = ref(false);
-
-// опции для Да/Нет
-const yesNoOptions = [
-  { name: "Да", value: true },
-  { name: "Нет", value: false },
-];
-// опции образования/религии (пример)
-const educationOptions = [
-  { name: "Среднее", value: "middle" },
-  { name: "Высшее", value: "higher" },
-];
-const religionOptions = [
-  { name: "Христианство", value: "christianity" },
-  { name: "Ислам", value: "islam" },
-  //…
-];
-
-// все остальные поля в одном объекте `form`
-const form = reactive({
-  entryCity: "",
-  entryPort: "",
-  exitCity: "",
-  exitPort: "",
-  shortVisitedPlaces: "",
-  visitedBefore: null as boolean | null,
-
-  controlNo: "",
-  controlDate: "",
-
-  hasMarks: null as boolean | null,
-  marksDetail: "",
-
-  countriesLast10Years: "",
-  highestEducation: "",
-  religion: "",
-
-  employment: "",
-  employerName: "",
-  employerAddress: "",
-  employerPhone: "",
-
-  hotelAddress: "",
-  hotelPhone: "",
-
-  emergencyName: "",
-  emergencyAddress: "",
-  emergencyPhone: "",
-});
-</script>
-
 <style scoped lang="scss">
-.grid-1 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+.section {
+  margin-bottom: 1.5rem;
 }
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+.section-desc {
+  margin: 2rem 0 1rem;
+  color: $gray;
+  font-size: 1.8rem;
 }
-.grid-3 {
+.fields-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
 }
 </style>

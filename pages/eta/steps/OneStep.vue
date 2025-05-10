@@ -1,7 +1,7 @@
 <template>
   <ContentView :is-loading="loading && visa">
     <div class="eta__head">
-      <eta />
+      <VisaFilterForm />
     </div>
     <div class="eta_main">
       <div class="eta__forms">
@@ -51,9 +51,9 @@
           <div class="eta__price">{{ currentVisa?.price || "—" }} ₽</div>
         </div>
         <div class="notice">
-          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую цель поездки
-          в Индию более подробно. Пожалуйста, отметьте один из пунктов в качестве вашей
-          основной цели:
+          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую
+          цель поездки в Индию более подробно. Пожалуйста, отметьте один из
+          пунктов в качестве вашей основной цели:
         </div>
         <visa_short_form
           v-if="currentVisa && currentVisa.visa_form"
@@ -91,9 +91,9 @@
             </li>
           </ul>
           <div class="notice">
-            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы Индии
-            имеет право потребовать от вас подтверждение целей визита, а также обратный
-            билет и подтверждение проживания в отеле.
+            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы
+            Индии имеет право потребовать от вас подтверждение целей визита, а
+            также обратный билет и подтверждение проживания в отеле.
           </div>
           <div class="action">
             Оформите
@@ -103,7 +103,10 @@
           </div>
         </div>
         <div class="documents">
-          <h2 class="documents__toggle" @click="isDocumentsOpen = !isDocumentsOpen">
+          <h2
+            class="documents__toggle"
+            @click="isDocumentsOpen = !isDocumentsOpen"
+          >
             Условия и документы
             <Icon
               :name="isDocumentsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'"
@@ -123,7 +126,11 @@
             <span>Общая стоимость</span>
             <p>{{ currentVisa?.price || "—" }} ₽</p>
           </div>
-          <btn name="Далее" theme="primary" @click="nextStep" />
+          <btn
+            name="Далее"
+            theme="primary"
+            @click="goToTheFormNextStep(visaId)"
+          />
         </div>
       </div>
 
@@ -136,13 +143,13 @@
 
 <script setup lang="ts">
 import Select from "~/components/ui/inputs/Select.vue";
-import eta from "~/components/ui/filters/eta.vue";
 import ContentView from "~/components/shared/ContentView.vue";
 import infoText from "~/components/ui/info-text.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import visa_short_form from "~/components/forms/visa_short_form.vue";
+import VisaFilterForm from "@/components/ui/filters/VisaFilterForm.vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { ref, computed, watch, onMounted } from "vue";
 
@@ -152,6 +159,7 @@ const { getVisaById, nextStep, getVisaByIdForm } = useETAStore();
 const visaPurposeId = ref<number | null>(null);
 const isDocumentsOpen = ref(false);
 const route = useRoute();
+const router = useRouter();
 
 // СОЗДАЁМ ref для данных динамической формы
 const dynamicForm = ref<Record<string, any>>({});
@@ -159,7 +167,11 @@ const dynamicForm = ref<Record<string, any>>({});
 // Когда меняется тип визы – инициализируем пустой объект со всеми ключами
 
 const isListCurrentVisaType = computed(
-  () => visa.value?.visa_types?.map((el: any) => ({ name: el.name, value: el.id })) ?? []
+  () =>
+    visa.value?.visa_types?.map((el: any) => ({
+      name: el.name,
+      value: el.id,
+    })) ?? []
 );
 
 const currentVisa = computed(() => {
@@ -195,6 +207,11 @@ watch(
   },
   { immediate: true }
 );
+
+const goToTheFormNextStep = async (id: number) => {
+  // await getVisaById(visaId.value);
+  await nextStep(router, route, visaId.value);
+};
 </script>
 
 <style scoped lang="scss">
@@ -229,7 +246,7 @@ watch(
 
 .eta__price {
   @include flex-start;
-  border-bottom: 0.1rem solid $blue;
+  // border-bottom: 0.1rem solid $blue;
   color: $blue;
   font-family: $font_2;
   padding-left: 2.8rem;
@@ -241,6 +258,13 @@ watch(
 
 .eta_visaPurposes__list__item {
   border-bottom: 0.1rem solid rgba(162, 208, 255, 0.2);
+  @include flex-start;
+  width: 100%;
+
+  p {
+    line-height: 0;
+    @include flex-start;
+  }
   input {
     display: none;
     &:checked + label {
@@ -261,6 +285,7 @@ watch(
     padding: 1.6rem;
     font-size: 1.6rem;
     gap: 1.6rem;
+    width: 100%;
   }
 }
 

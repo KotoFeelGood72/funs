@@ -1,352 +1,273 @@
 <template>
   <div class="date-picker" ref="pickerRef">
-    <!-- ───────── Инпуты ───────── -->
     <div class="inputs">
-      <div class="input-group" @click="toggleCalendar">
-        <input readonly :value="displayRangeStart" placeholder="Туда" />
-        <button v-if="rangeStart" class="clear-btn" @click.stop="clearStart">×</button>
+      <div class="input-group" @click="openCalendar">
+        <input
+          readonly
+          :value="displayStart"
+          :placeholder="placeStart ? placeStart : 'Дата начала'"
+        />
+        <button v-if="start" class="clear-btn" @click.stop="clearStart">
+          <Icon name="material-symbols:close" />
+        </button>
       </div>
-      <div class="input-group" @click="toggleCalendar">
-        <input readonly :value="displayRangeEnd" placeholder="Обратно" />
-        <button v-if="rangeEnd" class="clear-btn" @click.stop="clearEnd">×</button>
+      <div class="input-group" @click="openCalendar">
+        <input
+          readonly
+          :value="displayEnd"
+          :placeholder="placeEnd ? placeEnd : 'Дата окончания'"
+        />
+        <button v-if="end" class="clear-btn" @click.stop="clearEnd">
+          <Icon name="material-symbols:close" />
+        </button>
       </div>
     </div>
 
-    <!-- ───────── Два календаря ───────── -->
     <div v-if="showCalendar" class="double-calendar">
-      <!-- Левый -->
+      <!-- Левый календарь -->
       <div class="calendar">
         <div class="calendar__header">
-          <button class="nav-btn" @click="prevMonth">&lt;</button>
-          <div class="month-selector" @click="openLeft = !openLeft">
-            {{ months[currentMonth] }} {{ currentYear }}
-            <span class="chevron">▾</span>
+          <button class="nav-btn" :disabled="!canPrevMonth" @click="prevMonth">
+            <Icon name="material-symbols-light:chevron-left" :size="24" />
+          </button>
+          <div class="month-selector" @click.stop="openLeft = !openLeft">
+            <p>{{ months[currentMonth] }} {{ currentYear }}</p>
+            <span class="chevron"
+              ><Icon name="flowbite:chevron-sort-outline" :size="20"
+            /></span>
             <ul v-if="openLeft" class="month-list">
-              <!-- Текущий год -->
-              <li class="year-label">{{ currentYear }}</li>
-              <!-- Месяцы текущего года -->
-              <li
-                v-for="(m, idx) in months"
-                :key="`l-${currentYear}-${idx}`"
-                @click.stop="selectMonth(idx, currentYear)"
-                :class="{ active: currentYear === selYear && idx === currentMonth }"
-              >
-                {{ m }}
-              </li>
-
-              <!-- Следующий год -->
-              <li class="year-label">{{ currentYear + 1 }}</li>
-              <!-- Месяцы следующего года -->
-              <li
-                v-for="(m, idx) in months"
-                :key="`l-${currentYear + 1}-${idx}`"
-                @click.stop="selectMonth(idx, currentYear + 1)"
-                :class="{ active: currentYear + 1 === selYear && idx === currentMonth }"
-              >
-                {{ m }}
-              </li>
+              <template v-for="year in yearOptions" :key="year">
+                <li class="year-label">{{ year }}</li>
+                <li
+                  v-for="(m, idx) in months"
+                  :key="`l-${year}-${idx}`"
+                  :class="{
+                    active: currentYear === year && currentMonth === idx,
+                  }"
+                  @click.stop="selectMonth(idx, year)"
+                >
+                  {{ m }}
+                </li>
+              </template>
             </ul>
           </div>
         </div>
-        <div class="calendar__weekdays">
-          <span v-for="d in weekdays" :key="'l-w-' + d">{{ d }}</span>
-        </div>
-        <div class="calendar__days" @mouseleave="resetHover">
-          <span v-for="blank in blankDays" :key="'l-b-' + blank" class="day blank"></span>
-          <span
-            v-for="day in daysInMonth"
-            :key="'l-d-' + day"
-            class="day"
-            :class="dayClasses(currentYear, currentMonth, day)"
-            @click="selectDay(currentYear, currentMonth, day)"
-            @mouseenter="onHover(currentYear, currentMonth, day)"
-            >{{ day }}</span
-          >
-        </div>
-      </div>
 
-      <!-- Правый -->
-      <div class="calendar">
-        <div class="calendar__header">
-          <div class="month-selector" @click="openRight = !openRight">
-            {{ months[nextMonthIndex] }} {{ nextYear }}
-            <span class="chevron">▾</span>
-            <ul v-if="openRight" class="month-list">
-              <!-- Текущий год для правого -->
-              <li class="year-label">{{ nextYear }}</li>
-              <li
-                v-for="(m, idx) in months"
-                :key="`r-${nextYear}-${idx}`"
-                @click.stop="selectMonth(idx, nextYear)"
-                :class="{ active: nextYear === selYear && idx === nextMonthIndex }"
-              >
-                {{ m }}
-              </li>
-
-              <!-- Следующий год -->
-              <li class="year-label">{{ nextYear + 1 }}</li>
-              <li
-                v-for="(m, idx) in months"
-                :key="`r-${nextYear + 1}-${idx}`"
-                @click.stop="selectMonth(idx, nextYear + 1)"
-                :class="{ active: nextYear + 1 === selYear && idx === nextMonthIndex }"
-              >
-                {{ m }}
-              </li>
-            </ul>
-          </div>
-          <button class="nav-btn" @click="nextMonth">&gt;</button>
-        </div>
         <div class="calendar__weekdays">
-          <span v-for="d in weekdays" :key="'r-w-' + d">{{ d }}</span>
+          <span v-for="d in weekdays" :key="d">{{ d }}</span>
         </div>
+
         <div class="calendar__days" @mouseleave="resetHover">
           <span
-            v-for="blank in blankDaysNext"
-            :key="'r-b-' + blank"
+            v-for="blank in blankDays"
+            :key="'b' + blank"
             class="day blank"
           ></span>
           <span
-            v-for="day in daysInMonthNext"
-            :key="'r-d-' + day"
+            v-for="day in daysInMonth"
+            :key="day"
             class="day"
-            :class="dayClasses(nextYear, nextMonthIndex, day)"
-            @click="selectDay(nextYear, nextMonthIndex, day)"
-            @mouseenter="onHover(nextYear, nextMonthIndex, day)"
-            >{{ day }}</span
+            :class="[
+              dayClasses(currentYear, currentMonth, day),
+              { disabled: isDisabledDay(currentYear, currentMonth, day) },
+            ]"
+            @click="
+              !isDisabledDay(currentYear, currentMonth, day) &&
+                selectDay(currentYear, currentMonth, day)
+            "
+            @mouseenter="
+              !isDisabledDay(currentYear, currentMonth, day) &&
+                onHover(currentYear, currentMonth, day)
+            "
           >
+            {{ day }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Правый календарь -->
+      <div class="calendar">
+        <div class="calendar__header">
+          <div class="month-selector" @click.stop="openRight = !openRight">
+            <p>{{ months[nextMonthIndex] }} {{ nextYear }}</p>
+            <span class="chevron"
+              ><Icon name="flowbite:chevron-sort-outline" :size="20"
+            /></span>
+            <ul v-if="openRight" class="month-list">
+              <template v-for="year in yearOptions" :key="year">
+                <li class="year-label">{{ year }}</li>
+                <li
+                  v-for="(m, idx) in months"
+                  :key="`r-${year}-${idx}`"
+                  :class="{
+                    active: nextYear === year && nextMonthIndex === idx,
+                  }"
+                  @click.stop="selectMonth(idx, year)"
+                >
+                  {{ m }}
+                </li>
+              </template>
+            </ul>
+          </div>
+          <button class="nav-btn" :disabled="!canNextMonth" @click="nextMonth">
+            <Icon name="material-symbols-light:chevron-right" :size="24" />
+          </button>
+        </div>
+
+        <div class="calendar__weekdays">
+          <span v-for="d in weekdays" :key="d + 'r'">{{ d }}</span>
+        </div>
+
+        <div class="calendar__days" @mouseleave="resetHover">
+          <span
+            v-for="blank in blankDaysNext"
+            :key="'bn' + blank"
+            class="day blank"
+          ></span>
+          <span
+            v-for="d in daysInNextMonth"
+            :key="'dn' + d"
+            class="day"
+            :class="[
+              dayClasses(nextYear, nextMonthIndex, d),
+              { disabled: isDisabledDay(nextYear, nextMonthIndex, d) },
+            ]"
+            @click="
+              !isDisabledDay(nextYear, nextMonthIndex, d) &&
+                selectDay(nextYear, nextMonthIndex, d)
+            "
+            @mouseenter="
+              !isDisabledDay(nextYear, nextMonthIndex, d) &&
+                onHover(nextYear, nextMonthIndex, d)
+            "
+          >
+            {{ d }}
+          </span>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
+<script setup lang="ts">
+import { useDateRange } from "@/composables/useDateRange";
 
-// Локализация
+const props = defineProps<{
+  start: string | null;
+  end: string | null;
+  placeStart?: string;
+  placeEnd?: string;
+}>();
+const emit = defineEmits<{
+  (e: "update:start", v: string | null): void;
+  (e: "update:end", v: string | null): void;
+}>();
+
+const {
+  pickerRef,
+  showCalendar,
+  openLeft,
+  openRight,
+  displayStart,
+  displayEnd,
+  isDisabledDay,
+  startDate: start,
+  endDate: end,
+  prevMonth,
+  nextMonth,
+  canPrevMonth,
+  canNextMonth,
+  toggleCalendar,
+  currentMonth,
+  currentYear,
+  nextMonthIndex,
+  nextYear,
+  daysInMonth,
+  blankDays,
+  daysInNextMonth,
+  blankDaysNext,
+  selectDay,
+  onHover,
+  resetHover,
+  dayClasses,
+  clearStart,
+  clearEnd,
+  selectMonth,
+} = useDateRange(props, emit);
+
 const months = [
-  "Январь",
-  "Февраль",
-  "Март",
-  "Апрель",
+  "Янв",
+  "Фев",
+  "Мар",
+  "Апр",
   "Май",
-  "Июнь",
-  "Июль",
-  "Август",
-  "Сентябрь",
-  "Октябрь",
-  "Ноябрь",
-  "Декабрь",
+  "Июн",
+  "Июл",
+  "Авг",
+  "Сен",
+  "Окт",
+  "Ноя",
+  "Дек",
 ];
 const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+// диапазон годов: текущий и следующий
+const thisYear = new Date().getFullYear();
+const yearOptions = [thisYear, thisYear + 1];
 
-// Состояние
-const today = new Date();
-const currentMonth = ref(today.getMonth());
-const currentYear = ref(today.getFullYear());
-const selYear = computed(() => currentYear.value); // для подсветки active в списках
-
-const showCalendar = ref(false);
-function toggleCalendar() {
-  showCalendar.value = !showCalendar.value;
-}
-
-// Клик вне
-const pickerRef = ref(null);
-function handleClickOutside(e) {
-  if (pickerRef.value && !pickerRef.value.contains(e.target)) {
-    showCalendar.value = false;
+const openCalendar = () => {
+  if (!showCalendar.value) {
+    toggleCalendar(); // открываем только если закрыто
   }
-}
-onMounted(() => document.addEventListener("click", handleClickOutside));
-onBeforeUnmount(() => document.removeEventListener("click", handleClickOutside));
-
-// Дропдауны
-const openLeft = ref(false);
-const openRight = ref(false);
-
-// Диапазон
-const rangeStart = ref(null);
-const rangeEnd = ref(null);
-const hoverDate = ref(null);
-function onHover(y, m, d) {
-  if (rangeStart.value && !rangeEnd.value) {
-    hoverDate.value = new Date(y, m, d);
-  }
-}
-function resetHover() {
-  hoverDate.value = null;
-}
-
-// Навигация
-function prevMonth() {
-  if (currentMonth.value > 0) currentMonth.value--;
-  else {
-    currentMonth.value = 11;
-    currentYear.value--;
-  }
-}
-function nextMonth() {
-  if (currentMonth.value < 11) currentMonth.value++;
-  else {
-    currentMonth.value = 0;
-    currentYear.value++;
-  }
-}
-
-// Правый
-const nextMonthIndex = computed(() => (currentMonth.value + 1) % 12);
-const nextYear = computed(() =>
-  currentMonth.value === 11 ? currentYear.value + 1 : currentYear.value
-);
-
-// Дни
-function makeDays(y, m) {
-  return Array.from({ length: new Date(y, m + 1, 0).getDate() }, (_, i) => i + 1);
-}
-function makeBlank(y, m) {
-  return (new Date(y, m, 1).getDay() + 6) % 7;
-}
-
-const daysInMonth = computed(() => makeDays(currentYear.value, currentMonth.value));
-const blankDays = computed(() => makeBlank(currentYear.value, currentMonth.value));
-const daysInMonthNext = computed(() => makeDays(nextYear.value, nextMonthIndex.value));
-const blankDaysNext = computed(() => makeBlank(nextYear.value, nextMonthIndex.value));
-
-// Выбор месяца из дропдауна (idx, год)
-function selectMonth(idx, year) {
-  currentMonth.value = idx;
-  currentYear.value = year;
-  openLeft.value = openRight.value = false;
-}
-
-// Выбор дат
-function selectDay(y, m, d) {
-  const c = new Date(y, m, d);
-  if (!rangeStart.value || (rangeStart.value && rangeEnd.value)) {
-    rangeStart.value = c;
-    rangeEnd.value = null;
-  } else if (c < rangeStart.value) {
-    rangeStart.value = c;
-  } else {
-    rangeEnd.value = c;
-    showCalendar.value = false;
-  }
-}
-
-// Классы ячеек
-function isSame(dt, y, m, d) {
-  return dt?.getFullYear() === y && dt?.getMonth() === m && dt?.getDate() === d;
-}
-function dayClasses(y, m, d) {
-  const cls = {
-    "selected-start": isSame(rangeStart.value, y, m, d),
-    "selected-end": isSame(rangeEnd.value, y, m, d),
-  };
-  const end = rangeEnd.value || hoverDate.value;
-  if (rangeStart.value && end) {
-    const t = new Date(y, m, d).getTime(),
-      a = rangeStart.value.getTime(),
-      b = end.getTime();
-    if ((t > a && t < b) || (t < b && t > a)) cls["in-range"] = true;
-  }
-  return cls;
-}
-
-// Инпуты
-const displayRangeStart = computed(() => {
-  if (!rangeStart.value) return "";
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    weekday: "short",
-  }).format(rangeStart.value);
-});
-const displayRangeEnd = computed(() => {
-  if (!rangeEnd.value) return "";
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    weekday: "short",
-  }).format(rangeEnd.value);
-});
-
-// Эмиты ISO
-const dateForwardIso = computed(() =>
-  rangeStart.value ? rangeStart.value.toISOString().slice(0, 10) : ""
-);
-const dateBackwardIso = computed(() =>
-  rangeEnd.value ? rangeEnd.value.toISOString().slice(0, 10) : ""
-);
-const emit = defineEmits(["update:date_forward", "update:date_backward"]);
-watch(dateForwardIso, (val) => emit("update:date_forward", val));
-watch(dateBackwardIso, (val) => emit("update:date_backward", val));
-
-// Очистка
-function clearStart() {
-  rangeStart.value = null;
-  rangeEnd.value = null;
-}
-function clearEnd() {
-  rangeEnd.value = null;
-}
+};
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .date-picker {
-  display: inline-block;
 }
 .inputs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  @include flex-start;
+  gap: 1rem;
 }
 .input-group {
   position: relative;
-  flex: 1;
+  flex-grow: 1;
 }
 .input-group input {
-  width: 100%;
-  padding: 6px 28px 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.95em;
-  background: #fff;
+  @include app;
+  border: 0.1rem solid $light-blue;
+  padding: 1.2rem 2rem;
+  border-radius: 0.5rem;
   cursor: pointer;
 }
 .clear-btn {
   position: absolute;
-  right: 6px;
   top: 50%;
   transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  font-size: 1.1em;
-  line-height: 1;
+  right: 0.6rem;
+  @include flex-center;
   cursor: pointer;
+  &:hover {
+    color: red;
+  }
 }
 .double-calendar {
   position: absolute;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: $white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
   z-index: 100;
-  display: flex;
-  gap: 16px;
-  margin-top: 4px;
+  @include flex-start;
+  align-items: flex-start;
+  gap: 2rem;
 }
 .calendar {
-  width: 280px;
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 6px;
+  width: 32rem;
   user-select: none;
 }
 .calendar__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  @include flex-space;
+  margin-bottom: 2rem;
 }
 .nav-btn {
   background: none;
@@ -357,11 +278,14 @@ function clearEnd() {
 .month-selector {
   position: relative;
   cursor: pointer;
-  font-weight: bold;
+  font-family: $font_3;
+  font-size: 2rem;
+  @include flex-start;
+  gap: 0.5rem;
 }
 .month-selector .chevron {
-  margin-left: 4px;
-  font-size: 0.8em;
+  @include flex-center;
+  margin-top: -0.5rem;
 }
 .month-list {
   position: absolute;
@@ -393,41 +317,73 @@ function clearEnd() {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  font-size: 0.85em;
-  color: #666;
-  margin-bottom: 4px;
+  span {
+    @include flex-center;
+    font-family: $font_2;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: $light-blue;
+  }
 }
 .calendar__days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  gap: 2px;
+  gap: 0.6rem;
 }
 .day {
-  padding: 6px 2px;
+  @include flex-center;
+  font-size: 1.6rem;
+  font-family: $font_2;
+  padding: 1rem;
+  width: 4rem;
+  height: 4rem;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+  line-height: 0;
 }
 .day.blank {
   visibility: hidden;
   cursor: default;
 }
-.day:hover {
+.day:hover:not(.selected-end, .selected-start) {
   background: #eef;
 }
 .day.in-range {
   background: #cbe8ff;
 }
 .day.selected-start {
-  background: #339af0;
-  color: #fff;
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
+  background-color: $blue;
+  color: $white !important;
+  @include flex-center;
 }
 .day.selected-end {
-  background: #339af0;
-  color: #fff;
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
+  background-color: $blue;
+  color: $white !important;
+  @include flex-center;
+}
+
+.day.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.nav-btn {
+  background-color: #5fd2f864;
+  @include flex-center;
+  color: $blue;
+  width: 4.5rem;
+  height: 3.5rem;
+  border-radius: 0.4rem;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: $light;
+  }
+}
+
+input {
+  width: 100%;
 }
 </style>

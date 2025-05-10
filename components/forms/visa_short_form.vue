@@ -1,7 +1,10 @@
 <template>
   <form class="visa_short_form">
-    <div v-for="field in fields" :key="field.name" class="visa_short_form__field">
-      <!-- Телефон -->
+    <div
+      v-for="field in fields"
+      :key="field.name"
+      class="visa_short_form__field"
+    >
       <CustomSelectPhone
         v-if="field.name === 'institution_phone'"
         v-model="form[field.name]"
@@ -22,8 +25,6 @@
         "
         :placeholder="field.label"
       />
-
-      <!-- Обычный текстовый инпут -->
       <Inputs
         v-else
         v-model="form[field.name]"
@@ -65,7 +66,10 @@ const emit = defineEmits<{
 // (если default_value не нужен — просто замените f.default_value на '')
 const form = reactive(
   Object.fromEntries(
-    props.fields.map((f) => [f.name, props.modelValue[f.name] ?? f.default_value ?? ""])
+    props.fields.map((f) => [
+      f.name,
+      props.modelValue[f.name] ?? f.default_value ?? "",
+    ])
   )
 ) as Record<string, any>;
 
@@ -90,6 +94,16 @@ watch(form, (val) => emit("update:modelValue", { ...val }), { deep: true });
   grid-template-columns: repeat(2, 1fr);
   column-gap: 24px;
   row-gap: 16px;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+
+    // если это единственное поле в последнем ряду (2n+1 и последнее)
+    &:nth-last-child(1):nth-child(2n + 1) {
+      grid-column: 1 / -1;
+    }
+  }
 }
 
 .visa_short_form__field {

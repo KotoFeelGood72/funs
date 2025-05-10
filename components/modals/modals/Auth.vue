@@ -7,10 +7,10 @@
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
       </div>
       <div class="auth_body">
-        <Inputs v-model="email" label="E-Mail" id="auth-email" />
+        <Inputs v-model="email" placeholder="E-Mail" id="auth-email" />
         <Inputs
           v-model="password"
-          label="Пароль"
+          placeholder="Пароль"
           id="auth-password"
           type="password"
         />

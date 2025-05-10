@@ -57,7 +57,7 @@ export const useETAStore = defineStore("eta", {
     async getVisaByIdForm(id: any) {
       this.loading = true;
       try {
-        const response = await api.get("/form-shema/?visa_type_id=" + id);
+        const response = await api.get("/form-schema/" + id);
         this.formShema = response.data;
       } catch (error) {
         console.error("Error fetching visa by ID:", error);
@@ -66,9 +66,17 @@ export const useETAStore = defineStore("eta", {
         this.loading = false;
       }
     },
-    nextStep() {
-      this.currentStep++;
-    },
+  nextStep(router?: any, route?: any, visaId?: string) {
+    this.currentStep++;
+
+    router.push({
+      query: {
+        ...route.query,
+        step: this.currentStep,
+        visa_id: visaId,
+      }
+    });
+  },
     prevStep() {
       if (this.currentStep > 1) this.currentStep--;
     },

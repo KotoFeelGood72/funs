@@ -9,7 +9,6 @@
             <h1><b>Funbooking</b> — это бронь</h1>
           </div>
           <h2>авиабилетов, отелей и визы на срок до 14 дней․</h2>
-          <!-- <p class="txt">а также страховые полисы стран евросоюза</p> -->
         </div>
         <h3 v-if="!title" class="hero_subtitle">
           Забронируйте авиабилет для визы без полной оплаты
@@ -17,13 +16,13 @@
         <div class="hero_bottom">
           <Tabs :tabs="list">
             <template #tab-0>
-              <air @get-ticket="getTicket" />
+              <AirFilterForm @get-ticket="getTicket" />
             </template>
             <template #tab-1>
-              <hotel />
+              <HotelFilterForm />
             </template>
             <template #tab-2>
-              <eta @get-eta=""/>
+              <VisaFilterForm />
             </template>
           </Tabs>
         </div>
@@ -33,8 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import air from "../ui/filters/air.vue";
-import hotel from "../ui/filters/hotel.vue";
+import AirFilterForm from "@/components/ui/filters/AirFilterForm.vue";
+import HotelFilterForm from "@/components/ui/filters/HotelFilterForm.vue";
+import VisaFilterForm from "@/components/ui/filters/VisaFilterForm.vue";
 import eta from "../ui/filters/eta.vue";
 import Tabs from "../ui/Tabs.vue";
 import { useTicketStore } from "~/store/useTicketStore";

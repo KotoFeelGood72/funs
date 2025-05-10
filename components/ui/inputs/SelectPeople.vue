@@ -4,9 +4,6 @@
       <div class="header_col">
         <p>{{ passengerText }}</p>
       </div>
-      <div class="header_ic">
-        <Icon name="f:user" :size="16" />
-      </div>
     </div>
 
     <transition name="fade">
@@ -16,7 +13,12 @@
         ref="dropdown"
       >
         <!-- v-model="localAdults" привязан к props.adults (и событию update:adults) -->
-        <Counter label="Взрослые" v-model="localAdults" :maxValue="20" :minValue="1" />
+        <Counter
+          label="Взрослые"
+          v-model="localAdults"
+          :maxValue="20"
+          :minValue="1"
+        />
         <Counter label="Дети" v-model="children" :minValue="0" />
         <Counter
           label="Кол-во звезд"
@@ -28,11 +30,11 @@
 
         <!-- Аналогично для класса -->
         <Checkbox
-          v-if="classType"
+          v-if="!props.isHotel"
           id="isBusinessClass"
           label="Бизнес класс"
           value="BUSINESS"
-          v-model="localClass"
+          v-model="isBusiness"
           name="isBusinessClass"
         />
       </div>
@@ -59,14 +61,15 @@ const props = defineProps<{
   adults: number;
   classType?: string;
   stars?: any;
+  isHotel?: boolean;
 }>();
 
 const emit = defineEmits(["update:adults", "update:classType", "update:stars"]);
 const { createPassengers, createPassengersAvia } = usePassengers();
 
-const localClass = computed<any>({
-  get: () => props.classType,
-  set: (newValue) => emit("update:classType", newValue),
+const isBusiness = computed<boolean>({
+  get: () => props.classType === "BUSINESS",
+  set: (val) => emit("update:class-type", val ? "BUSINESS" : "ECONOMY"),
 });
 
 const localStars = computed<any>({
@@ -139,11 +142,6 @@ const toggleDropdown = async () => {
   }
 };
 
-watch(localClass, (newVal) => {
-  if (!newVal && props.classType) {
-    localClass.value = "ECONOMY";
-  }
-});
 watch(
   [() => localAdults.value, () => children.value],
   ([newAdults, newChildren], [oldAdults, oldChildren]) => {
@@ -176,7 +174,8 @@ const calculateDropdownPosition = () => {
   if (!wrapper.value) return;
   const wrapperRect = wrapper.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-  dropdownPosition.value = wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
+  dropdownPosition.value =
+    wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
 onMounted(() => {
@@ -196,7 +195,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 .people-wrapper {
   position: relative;
   width: 100%;
-  min-height: 4.1rem;
+  height: 4.6rem;
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
@@ -212,15 +211,12 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 }
 .header {
   @include flex-space;
-  align-items: flex-end;
   gap: 2rem;
-  border-bottom: 0.1rem solid $blue;
-  padding-bottom: 1rem;
+  border: 0.1rem solid $light-blue;
   cursor: pointer;
-
-  @include bp($point_2) {
-    padding: 0.85rem 1.6rem !important;
-  }
+  height: 100%;
+  padding: 1.2rem 2rem;
+  border-radius: 0.5rem;
 
   span {
     font-size: 1.4rem;

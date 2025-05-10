@@ -4,17 +4,18 @@
       <SearchSelect label="Город" v-model="ticket.city" />
     </div>
     <div class="filter-group date">
-      <Calendar
-        label="Дата заезда"
+      <DoubleDate
+        placeStart="Дата заезда"
+        placeEnd="Дата выезда"
         v-model:startDate="ticket.check_in_date"
         v-model:endDate="ticket.check_out_date"
-        :isRange="true"
       />
     </div>
     <div class="filter-group">
       <SelectPeople
         v-model:adults="ticket.adults_count"
         v-model:stars="ticket.hotel_class"
+        :isHotel="true"
       />
     </div>
     <btn
@@ -33,7 +34,8 @@ import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 import { watch, ref } from "vue";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import btn from "../buttons/btn.vue";
-import Calendar from "../inputs/Calendar.vue";
+// import Calendar from "../inputs/Calendar.vue";
+import DoubleDate from "@/components/dates/DoubleDate.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import { useToast } from "vue-toastification";
 import { useCheckAuth } from "@/composables/useCheckAuth";
