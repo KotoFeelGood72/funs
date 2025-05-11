@@ -66,22 +66,56 @@ export const useETAStore = defineStore("eta", {
         this.loading = false;
       }
     },
-  nextStep(router?: any, route?: any, visaId?: string) {
-    this.currentStep++;
+    nextStep(router: any, route: any, visaId?: string) {
+      // увеличили шаг
+      this.currentStep++;
 
-    router.push({
-      query: {
-        ...route.query,
-        step: this.currentStep,
-        visa_id: visaId,
-      }
-    });
-  },
-    prevStep() {
-      if (this.currentStep > 1) this.currentStep--;
+      router.push({
+        // сохраняем текущий path/имя, чтобы не потерять маршрут
+        path: route.path, // или: name: route.name
+        query: {
+          // все что было в query
+          ...route.query,
+          // новый шаг
+          step: String(this.currentStep),
+          // и id визы
+          visa_id: visaId || route.query.visa_id,
+        },
+      });
     },
-    goToStep(step: number) {
-      if (step >= 1) this.currentStep = step;
+    prevStep(router: any, route: any) {
+      if (this.currentStep > 1) {
+        this.currentStep--;
+
+        router.push({
+          // можно использовать name: route.name
+          path: route.path,
+          query: {
+            ...route.query,
+            step: String(this.currentStep),
+            // если вы храните visa_id в query — оставляем его
+            visa_id: route.query.visa_id,
+          },
+        });
+      }
+    },
+    // если вы берёте router и route из аргументов:
+    goToStep(step: number, router: any, route: any, visaId?: string) {
+      if (step >= 1) {
+        this.currentStep = step;
+
+        router.push({
+          // или: name: route.name
+          path: route.path,
+          query: {
+            ...route.query,
+            // step всегда строкой
+            step: String(step),
+            // если передали новый visaId — ставим его, иначе оставляем старый
+            visa_id: visaId ?? route.query.visa_id,
+          },
+        });
+      }
     },
   },
 });

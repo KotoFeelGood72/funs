@@ -58,11 +58,7 @@
         </div>
 
         <div class="calendar__days" @mouseleave="resetHover">
-          <span
-            v-for="blank in blankDays"
-            :key="'b' + blank"
-            class="day blank"
-          ></span>
+          <span v-for="blank in blankDays" :key="'b' + blank" class="day blank"></span>
           <span
             v-for="day in daysInMonth"
             :key="day"
@@ -238,6 +234,8 @@ const openCalendar = () => {
   padding: 1.2rem 2rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  height: 4.6rem;
+  font-size: 1.8rem;
 }
 .clear-btn {
   position: absolute;

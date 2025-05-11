@@ -118,4 +118,11 @@ input {
 input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
 }
+
+.label {
+  font-size: 1.6rem;
+  color: $gray;
+  margin-bottom: 1rem;
+  display: flex;
+}
 </style>

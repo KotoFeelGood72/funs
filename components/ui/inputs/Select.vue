@@ -4,7 +4,12 @@
       <p class="selected-text">
         {{ selectedOption?.name || placeholder }}
       </p>
-      <slot />
+      <Icon
+        :name="
+          dropdownOpen ? 'fluent:chevron-up-16-filled' : 'fluent:chevron-down-16-filled'
+        "
+        :size="22"
+      />
     </div>
 
     <ul v-if="dropdownOpen" class="options">

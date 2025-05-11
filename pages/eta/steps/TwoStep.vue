@@ -7,6 +7,8 @@ import Select from "~/components/ui/inputs/Select.vue";
 import CustomSelectPhone from "~/components/ui/inputs/CustomSelectPhone.vue";
 import ContentView from "@/components/shared/ContentView.vue";
 import AccardionSingle from "@/components/accardions/AccardionSingle.vue";
+import VisaHeadSteps from "~/components/ui/VisaHeadSteps.vue";
+import btn from "~/components/ui/buttons/btn.vue";
 
 // — Удаляем defaultSections entirely —
 
@@ -23,7 +25,7 @@ const form = reactive<Record<string, any>>({});
 watch(
   sections,
   (secs) => {
-    secs.forEach((sec) =>
+    secs.forEach((sec: any) =>
       sec.fields.forEach((f: any) => {
         // если ещё не инициализовано
         if (!(f.name in form)) {
@@ -111,12 +113,9 @@ function propsFor(field: any) {
 
 <template>
   <ContentView :is-loading="false">
+    <VisaHeadSteps :title="formShema.country_name + ' - ' + formShema.visa_name" />
     <div v-for="section in sections" :key="section.id" class="section">
-      <AccardionSingle
-        v-model="openStates[section.id]"
-        :title="section.title"
-        is-open
-      >
+      <AccardionSingle v-model="openStates[section.id]" :title="section.title" is-open>
         <p v-if="section.description" class="section-desc">
           {{ section.description }}
         </p>
@@ -143,6 +142,9 @@ function propsFor(field: any) {
         </div>
       </AccardionSingle>
     </div>
+    <div class="form_bottom">
+      <btn name="Далее" />
+    </div>
   </ContentView>
 </template>
 
@@ -151,7 +153,7 @@ function propsFor(field: any) {
   margin-bottom: 1.5rem;
 }
 .section-desc {
-  margin: 2rem 0 1rem;
+  margin: 2rem 0 3rem 0;
   color: $gray;
   font-size: 1.8rem;
 }
@@ -159,5 +161,16 @@ function propsFor(field: any) {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
+}
+
+.field-item__label {
+  font-size: 1.6rem;
+  color: $gray;
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.form_bottom {
+  @include flex-end;
 }
 </style>

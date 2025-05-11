@@ -5,7 +5,7 @@
     :isLoading="false"
   >
     <div class="passenger-header">
-      <hotel />
+      <HotelFilterForm />
     </div>
     <div class="passenger-form">
       <PaymentFormHotel />
@@ -38,9 +38,8 @@
           /> -->
         </div>
         <div class="note">
-          Бронирование будет направлено на ваш email с доступом в вашем личном
-          кабинете --> Направим лист с маршрутом на ваш email. Также он доступен
-          в Личном кабинете.
+          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
+          --> Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
@@ -63,7 +62,7 @@
 import ContentView from "~/components/shared/ContentView.vue";
 import PaymentFormHotel from "~/components/shared/PaymentFormHotel.vue";
 import PassengerTabs from "~/components/ui/PassengerTabs.vue";
-import hotel from "~/components/ui/filters/hotel.vue";
+import HotelFilterForm from "~/components/ui/filters/HotelFilterForm.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import { useRouter, useRoute } from "vue-router";

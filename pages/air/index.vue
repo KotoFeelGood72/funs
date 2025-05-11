@@ -5,7 +5,7 @@
       :isLoading="isLoading"
     >
       <div class="top">
-        <air @getTicket="getTicket()" />
+        <AirFilterForm @getTicket="getTicket()" />
       </div>
       <div class="row">
         <FiltersSidebar v-model="filters" :airlines="airlines" v-if="tickets" />
@@ -38,7 +38,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ContentView from "~/components/shared/ContentView.vue";
 import FiltersSidebar from "~/components/shared/Sidebar.vue";
-import air from "~/components/ui/filters/air.vue";
+import AirFilterForm from "~/components/ui/filters/AirFilterForm.vue";
 import InputsSearch from "~/components/ui/inputs/InputsSearch.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";

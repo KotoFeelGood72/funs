@@ -2,7 +2,7 @@
   <div class="collapsible-block">
     <div class="collapsible-block__header" @click="toggle">
       <slot name="header">{{ title }}</slot>
-      <Icon :name="open ? 'mage:chevron-down' : 'mage:chevron-up'" size="25" />
+      <Icon :name="open ? 'mage:chevron-down' : 'mage:chevron-up'" :size="20" />
     </div>
 
     <div v-show="open" class="collapsible-block__body">
@@ -24,9 +24,9 @@ function toggle() {
 
 <style scoped lang="scss">
 .collapsible-block {
-  border: 0.1rem solid #d9d9d9;
+  border: 0.1rem solid $light;
   border-radius: 2rem;
-  overflow: hidden;
+  // overflow: hidden;
   padding: 2rem 3rem;
 }
 

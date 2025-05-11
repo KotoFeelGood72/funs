@@ -51,9 +51,9 @@
           <div class="eta__price">{{ currentVisa?.price || "—" }} ₽</div>
         </div>
         <div class="notice">
-          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую
-          цель поездки в Индию более подробно. Пожалуйста, отметьте один из
-          пунктов в качестве вашей основной цели:
+          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую цель поездки
+          в Индию более подробно. Пожалуйста, отметьте один из пунктов в качестве вашей
+          основной цели:
         </div>
         <visa_short_form
           v-if="currentVisa && currentVisa.visa_form"
@@ -91,9 +91,9 @@
             </li>
           </ul>
           <div class="notice">
-            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы
-            Индии имеет право потребовать от вас подтверждение целей визита, а
-            также обратный билет и подтверждение проживания в отеле.
+            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы Индии
+            имеет право потребовать от вас подтверждение целей визита, а также обратный
+            билет и подтверждение проживания в отеле.
           </div>
           <div class="action">
             Оформите
@@ -103,10 +103,7 @@
           </div>
         </div>
         <div class="documents">
-          <h2
-            class="documents__toggle"
-            @click="isDocumentsOpen = !isDocumentsOpen"
-          >
+          <h2 class="documents__toggle" @click="isDocumentsOpen = !isDocumentsOpen">
             Условия и документы
             <Icon
               :name="isDocumentsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'"
@@ -126,11 +123,7 @@
             <span>Общая стоимость</span>
             <p>{{ currentVisa?.price || "—" }} ₽</p>
           </div>
-          <btn
-            name="Далее"
-            theme="primary"
-            @click="goToTheFormNextStep(visaId)"
-          />
+          <btn name="Далее" theme="primary" @click="goToTheFormNextStep(visaId)" />
         </div>
       </div>
 
