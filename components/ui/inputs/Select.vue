@@ -2,11 +2,13 @@
   <div class="select" @click="toggleDropdown" ref="selectRef">
     <div class="selected">
       <p class="selected-text">
-        {{ selectedOption?.name || placeholder }}
+        {{ selectedOption?.label || placeholder }}
       </p>
       <Icon
         :name="
-          dropdownOpen ? 'fluent:chevron-up-16-filled' : 'fluent:chevron-down-16-filled'
+          dropdownOpen
+            ? 'fluent:chevron-up-16-filled'
+            : 'fluent:chevron-down-16-filled'
         "
         :size="22"
       />
@@ -19,7 +21,7 @@
         :class="{ selected: option.value === modelValue }"
         @click.stop="selectOption(option.value)"
       >
-        {{ option.name }}
+        {{ option.label }}
       </li>
       <li v-if="!options.length" class="no-options">Нет доступных опций</li>
     </ul>
@@ -30,10 +32,10 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps<{
-  options: { value: any; name: string }[]; // Теперь options - массив объектов
-  modelValue: any; // Текущее выбранное значение
-  label?: string; // Текст метки
-  placeholder?: string; // Placeholder, если значение не выбрано
+  options: any;
+  modelValue: any;
+  label?: string;
+  placeholder?: string;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -43,7 +45,7 @@ const selectRef = ref<HTMLDivElement | null>(null);
 
 // Найти выбранную опцию
 const selectedOption = computed(() =>
-  props.options.find((option) => option.value === props.modelValue)
+  props.options.find((option: any) => option.value === props.modelValue)
 );
 
 // Закрытие выпадающего списка при клике вне компонента
@@ -52,9 +54,28 @@ const handleClickOutside = (event: MouseEvent) => {
     dropdownOpen.value = false;
   }
 };
+function setFirstIfEmpty() {
+  if (
+    (props.modelValue === undefined ||
+      props.modelValue === null ||
+      props.modelValue === "") &&
+    Array.isArray(props.options) &&
+    props.options.length > 0
+  ) {
+    emit("update:modelValue", props.options[0].value);
+  }
+}
+
+watch(
+  () => props.options,
+  () => {
+    setFirstIfEmpty();
+  }
+);
 
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
+  setFirstIfEmpty();
 });
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);

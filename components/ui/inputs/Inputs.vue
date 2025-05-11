@@ -41,7 +41,7 @@ const props = withDefaults(
     type?: "text" | "email" | "password" | "date";
     label?: string;
     icon?: string;
-    placeholder?: string;
+    placeholder?: any;
     mode?: "english" | "default";
   }>(),
   {

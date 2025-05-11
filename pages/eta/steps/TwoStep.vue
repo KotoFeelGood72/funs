@@ -113,9 +113,15 @@ function propsFor(field: any) {
 
 <template>
   <ContentView :is-loading="false">
-    <VisaHeadSteps :title="formShema.country_name + ' - ' + formShema.visa_name" />
+    <VisaHeadSteps
+      :title="formShema.country_name + ' - ' + formShema.visa_name"
+    />
     <div v-for="section in sections" :key="section.id" class="section">
-      <AccardionSingle v-model="openStates[section.id]" :title="section.title" is-open>
+      <AccardionSingle
+        v-model="openStates[section.id]"
+        :title="section.title"
+        is-open
+      >
         <p v-if="section.description" class="section-desc">
           {{ section.description }}
         </p>
