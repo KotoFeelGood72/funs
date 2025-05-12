@@ -10,24 +10,20 @@ import AccardionSingle from "@/components/accardions/AccardionSingle.vue";
 import VisaHeadSteps from "~/components/ui/VisaHeadSteps.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 
-// — Удаляем defaultSections entirely —
-
-// вместо этого достаём schema из стора:
+// стейт и схема из стора
 const { getVisaByIdForm } = useETAStore();
 const { formShema } = useETAStoreRefs();
 
-// секции берем из formShema.value
+// секции
 const sections = computed(() => formShema.value.sections || []);
 
-// динамически строим пустой form на основе того, что пришло из schema
+// динамический form
 const form = reactive<Record<string, any>>({});
-
 watch(
   sections,
   (secs) => {
     secs.forEach((sec: any) =>
       sec.fields.forEach((f: any) => {
-        // если ещё не инициализовано
         if (!(f.name in form)) {
           form[f.name] = f.default_value ?? (f.type === "boolean" ? false : "");
         }
@@ -37,44 +33,40 @@ watch(
   { immediate: true }
 );
 
-// аккордеоны: по умолчанию всё закрыто
-const openStates = reactive({} as Record<string, boolean>);
+// аккордеоны
+const openStates = reactive<Record<string, boolean>>({});
 watch(
   sections,
   (secs) => {
     secs.forEach((s: any) => {
-      if (!(s.id in openStates)) {
-        openStates[s.id] = false;
-      }
+      if (!(s.id in openStates)) openStates[s.id] = false;
     });
   },
   { immediate: true }
 );
 
+// получение схемы из API
 const route = useRoute();
-
 onMounted(async () => {
   const id = route.query.visa_id;
   if (typeof id === "string") {
-    // метод должен заполнить formShema.value нужными полями
     await getVisaByIdForm(id);
-    // и после этого перезапишем наш form значениями:
+    // если API вернул начальные значения
     Object.assign(form, formShema.value);
   }
 });
 
+// вспомогательные из вашего кода
 function checkDependency(dep: Record<string, any>) {
   const [[key, val]] = Object.entries(dep);
   return form[key] === val;
 }
-
 function componentFor(field: any) {
   if (field.type === "boolean") return Select;
   if (field.options && field.options.length) return Select;
   if (/phone|mobile|contact/.test(field.name)) return CustomSelectPhone;
   return Inputs;
 }
-
 function propsFor(field: any) {
   const common = {
     id: field.name,
@@ -108,6 +100,44 @@ function propsFor(field: any) {
     ...common,
     type: typeMap[field.type] || "text",
   };
+}
+
+// ───── ВАЛИДАЦИЯ ─────
+const errors = reactive<Record<string, string>>({});
+
+function validateForm(): boolean {
+  // очистим старые ошибки
+  Object.keys(errors).forEach((k) => delete errors[k]);
+
+  // пройдём по всем полям
+  sections.value.forEach((sec: any) => {
+    sec.fields.forEach((f: any) => {
+      // проверяем зависимость, если есть условие отображения
+      if (f.dependency && !checkDependency(f.dependency)) return;
+
+      // если обязательное и пусто
+      const val = form[f.name];
+      const isEmpty =
+        val === "" ||
+        val === null ||
+        val === undefined ||
+        (Array.isArray(val) && val.length === 0);
+      if (f.required && isEmpty) {
+        errors[f.name] = "Это поле обязательно";
+      }
+    });
+  });
+
+  return Object.keys(errors).length === 0;
+}
+
+function onNext() {
+  if (!validateForm()) {
+    // здесь можно прокрутить к первой ошибке
+    return;
+  }
+  // TODO: ваша логика перехода дальше
+  console.log("Форма валидна, отправляем:", form);
 }
 </script>
 

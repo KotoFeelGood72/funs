@@ -63,7 +63,6 @@
           class="visa_form"
         />
         {{ dynamicForm }}
-
         <div v-if="currentVisa?.visa_purposes?.length" class="eta__purposes">
           <ul class="eta_visaPurposes__list">
             <li
@@ -128,11 +127,7 @@
             <span>Общая стоимость</span>
             <p>{{ currentVisa?.price || "—" }} ₽</p>
           </div>
-          <btn
-            name="Далее"
-            theme="primary"
-            @click="goToTheFormNextStep(visaId)"
-          />
+          <btn name="Далее" theme="primary" @click="submitVisa()" />
         </div>
       </div>
 
@@ -154,6 +149,7 @@ import VisaFilterForm from "@/components/ui/filters/VisaFilterForm.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { ref, computed, watch, onMounted } from "vue";
+import { api } from "~/api/api";
 
 const { visa, visaId, loading } = useETAStoreRefs();
 const { getVisaById, nextStep, getVisaByIdForm } = useETAStore();
@@ -213,14 +209,44 @@ watch(
   { immediate: true }
 );
 
-const goToTheFormNextStep = async (id: number) => {
-  // проверяем валидацию
-  if (visaFormRef.value && !visaFormRef.value.validate()) {
-    // можно прокрутить к первой ошибке или вывести общий тост
+// const goToTheFormNextStep = async (id: number) => {
+//   // проверяем валидацию
+//   if (visaFormRef.value && !visaFormRef.value.validate()) {
+//     // можно прокрутить к первой ошибке или вывести общий тост
+//     return;
+//   }
+
+//   await nextStep(router, route, visaId.value);
+// };
+
+const submitVisa = async () => {
+  if (!visaId.value || (visaFormRef.value && !visaFormRef.value.validate())) {
+    console.log("Good");
+    // toast.error('Не выбран тип визы');
     return;
   }
 
-  await nextStep(router, route, visaId.value);
+  console.log("Good2");
+  // Подготовим полезную нагрузку
+  const payload: any = {};
+  if (visa.value?.visa_form) {
+    // отправляем поля формы
+    payload.formData = dynamicForm.value;
+  } else if (visaPurposeId.value !== null) {
+    // отправляем просто ID цели
+    payload.purpose_id = visaPurposeId.value;
+  }
+
+  try {
+    await api.post(`/eta/${visaId.value}`, payload);
+    console.log(payload);
+    // toast.success('Данные успешно отправлены');
+    // Перейти к следующему шагу
+    nextStep(router, route, visaId.value?.toString());
+  } catch (err) {
+    console.error("Ошибка отправки:", err);
+    // toast.error('Не удалось отправить данные');
+  }
 };
 </script>
 

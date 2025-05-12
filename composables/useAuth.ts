@@ -3,8 +3,8 @@ import { api } from "~/api/api";
 // import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
-const accessToken = ref<any>(null);
-const refreshToken = ref<any>(null);
+const accessToken = ref<string | null>(null);
+const refreshToken = ref<string | null>(null);
 const user = ref<any>({
   id: 0,
   email: "",
@@ -19,13 +19,7 @@ const user = ref<any>({
 });
 
 export function useAuth(store?: any, router?: any) {
-  // const router = useRouter();
   const toast = useToast();
-  // Состояние для хранения токенов
-
-  // console.log(accessToken);
-
-  // Состояние для email и password
   const email = ref<string>("");
   const password = ref<string>("");
 
@@ -34,28 +28,66 @@ export function useAuth(store?: any, router?: any) {
     refreshToken.value = localStorage.getItem("refreshToken");
   }
 
-  // Регистрация пользователя
-  // const register = async () => {
-  //   try {
-  //     const response = await api.post("/auth", {
-  //       email: email.value,
-  //       password: password.value,
-  //     });
-  //     accessToken.value = response.data.access_token;
-  //     refreshToken.value = response.data.refresh_token;
-  //     await getProfile();
-  //     console.log("Registration successful:", response.data);
-  //     toast.success("Вы успешно зарегистрировались");
-  //     store.closeAllModals();
-  //     await router.push("/profile");
-  //   } catch (error) {
-  //     toast.error("Произошла ошибка, повторите позже");
-  //     console.error("Registration error:", error);
-  //     throw error;
-  //   }
-  // };
+  // Queue to hold requests during token refresh
+  let isRefreshing = false;
+  let failedQueue: Array<{ resolve: (token: string) => void; reject: (err: any) => void; }> = [];
 
-  // Авторизация пользователя
+  const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach(prom => {
+      if (error) prom.reject(error);
+      else prom.resolve(token!);
+    });
+    failedQueue = [];
+  };
+
+  // Request interceptor: attach token
+  api.interceptors.request.use(config => {
+    if (accessToken.value) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${accessToken.value}`;
+    }
+    return config;
+  });
+
+  // Response interceptor: handle 401
+  api.interceptors.response.use(
+    response => response,
+    error => {
+      const originalRequest = error.config;
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+          .then(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch(err => Promise.reject(err));
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        return new Promise(async (resolve, reject) => {
+          try {
+            const newToken = await refresh();
+            processQueue(null, newToken);
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(api(originalRequest));
+          } catch (err) {
+            processQueue(err, null);
+            logout();
+            reject(err);
+          } finally {
+            isRefreshing = false;
+          }
+        });
+      }
+      return Promise.reject(error);
+    }
+  );
+
   const login = async () => {
     try {
       const response = await api.post("/auth", {
@@ -82,11 +114,10 @@ export function useAuth(store?: any, router?: any) {
     }
   };
 
-  const updateProfile = async (updatedUser: any) => {
+  const updateProfile = async () => {
     try {
       const response = await api.patch("/profiles", user.value);
       user.value = response.data;
-      // console.log(user.value, 'Goo')
       toast.success("Профиль успешно обновлен");
     } catch (error) {
       console.error("Profile update error:", error);
@@ -94,23 +125,14 @@ export function useAuth(store?: any, router?: any) {
     }
   };
 
-  const refresh = async () => {
-    try {
-      if (!refreshToken.value) throw new Error("No refresh token available");
-
-      const response = await api.post("/refresh_token", {
-        refresh_token: refreshToken.value,
-      });
-      setTokens(response.data.access_token, response.data.refresh_token);
-      await getProfile();
-
-      if (response.status === 401) {
-        console.log("ss");
-      }
-    } catch (error) {
-      console.error("Token refresh error:", error);
-      logout(); // Очистка состояния при неудаче
-    }
+  const refresh = async (): Promise<string> => {
+    if (!refreshToken.value) throw new Error("No refresh token available");
+    const response = await api.post("/refresh_token", {
+      refresh_token: refreshToken.value,
+    });
+    setTokens(response.data.access_token, response.data.refresh_token);
+    await getProfile();
+    return response.data.access_token;
   };
 
   const setTokens = (access: string, refresh: string) => {
@@ -120,15 +142,12 @@ export function useAuth(store?: any, router?: any) {
     localStorage.setItem("refreshToken", refresh);
   };
 
-  // Очистка токенов
   const logout = async () => {
     accessToken.value = null;
     refreshToken.value = null;
     user.value = null;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    // toast.success("Вы вышли из системы");
-    // await router.push("/");
   };
 
   return {
@@ -137,11 +156,11 @@ export function useAuth(store?: any, router?: any) {
     email,
     password,
     user,
-    updateProfile,
     login,
+    getProfile,
+    updateProfile,
     refresh,
     logout,
     setTokens,
-    getProfile,
   };
 }
