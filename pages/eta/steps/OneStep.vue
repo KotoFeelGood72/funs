@@ -51,9 +51,9 @@
           <div class="eta__price">{{ currentVisa?.price || "—" }} ₽</div>
         </div>
         <div class="notice">
-          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую
-          цель поездки в Индию более подробно. Пожалуйста, отметьте один из
-          пунктов в качестве вашей основной цели:
+          По требованию Бюро иммиграции, мы просим вас раскрыть туристическую цель поездки
+          в Индию более подробно. Пожалуйста, отметьте один из пунктов в качестве вашей
+          основной цели:
         </div>
         <visa_short_form
           v-if="currentVisa && currentVisa.visa_form"
@@ -62,7 +62,6 @@
           ref="visaFormRef"
           class="visa_form"
         />
-        {{ dynamicForm }}
         <div v-if="currentVisa?.visa_purposes?.length" class="eta__purposes">
           <ul class="eta_visaPurposes__list">
             <li
@@ -92,9 +91,9 @@
             </li>
           </ul>
           <div class="notice">
-            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы
-            Индии имеет право потребовать от вас подтверждение целей визита, а
-            также обратный билет и подтверждение проживания в отеле.
+            Эти сведения будут указаны в E-визе. Сотрудник иммиграционной службы Индии
+            имеет право потребовать от вас подтверждение целей визита, а также обратный
+            билет и подтверждение проживания в отеле.
           </div>
           <div class="action">
             Оформите
@@ -104,10 +103,7 @@
           </div>
         </div>
         <div class="documents">
-          <h2
-            class="documents__toggle"
-            @click="isDocumentsOpen = !isDocumentsOpen"
-          >
+          <h2 class="documents__toggle" @click="isDocumentsOpen = !isDocumentsOpen">
             Условия и документы
             <Icon
               :name="isDocumentsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'"
@@ -222,30 +218,23 @@ watch(
 const submitVisa = async () => {
   if (!visaId.value || (visaFormRef.value && !visaFormRef.value.validate())) {
     console.log("Good");
-    // toast.error('Не выбран тип визы');
     return;
   }
 
-  console.log("Good2");
-  // Подготовим полезную нагрузку
+  // клонируем, чтобы избавиться от Proxy
   const payload: any = {};
-  if (visa.value?.visa_form) {
-    // отправляем поля формы
-    payload.formData = dynamicForm.value;
+  if (currentVisa.value?.visa_form) {
+    payload.formData = { ...dynamicForm.value };
   } else if (visaPurposeId.value !== null) {
-    // отправляем просто ID цели
     payload.purpose_id = visaPurposeId.value;
   }
 
   try {
-    await api.post(`/eta/${visaId.value}`, payload);
-    console.log(payload);
-    // toast.success('Данные успешно отправлены');
-    // Перейти к следующему шагу
-    nextStep(router, route, visaId.value?.toString());
+    await api.post(`/eta/${route.query.request_id}`, payload);
+    console.log("Отправили:", payload);
+    nextStep(router, route, visaId.value!.toString());
   } catch (err) {
     console.error("Ошибка отправки:", err);
-    // toast.error('Не удалось отправить данные');
   }
 };
 </script>
