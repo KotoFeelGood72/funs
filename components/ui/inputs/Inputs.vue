@@ -82,6 +82,10 @@ const validateInput = (event: Event) => {
 </script>
 
 <style scoped lang="scss">
+.input__w {
+  flex-grow: 1;
+  width: 100%;
+}
 .input {
   position: relative;
   width: 100%;
