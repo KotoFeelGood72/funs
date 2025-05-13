@@ -1,19 +1,14 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect
-        label="Выберите страну"
+      <Select
+        v-if="eta.country"
+        placeholder="Выберите страну"
         v-model="eta.country"
-        :national="true"
+        :options="countries"
       />
     </div>
     <div class="filter-group">
-      <!-- <Calendar
-        v-model:startDate="eta.date_forward"
-        v-model:endDate="eta.date_backward"
-        :isRange="true"
-        :isError="true"
-      /> -->
       <DoubleDate
         v-model:end="eta.date_backward"
         v-model:start="eta.date_forward"
@@ -31,6 +26,7 @@
 <script setup lang="ts">
 import SearchSelect from "../inputs/SearchSelect.vue";
 import Calendar from "../inputs/Calendar.vue";
+import Select from "../inputs/Select.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
@@ -55,6 +51,11 @@ const onBooking = () => {
 const isTextBtn = computed(() => {
   return route.name === "eta" ? "Обновить" : "Оплатить визу";
 });
+
+const countries = [
+  { label: "Индия", value: "1" },
+  { label: "Саудовская Аравия", value: "2" },
+];
 </script>
 
 <style scoped lang="scss">

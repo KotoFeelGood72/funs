@@ -25,10 +25,10 @@ export const useETAStore = defineStore("eta", {
     // },
   },
   actions: {
-    async getVisaTypes(route: any, router: any, country: any) {
+    async getVisaTypes(route: any, router: any, id: any) {
       this.loading = true;
       try {
-        const response = await api.get("/visa-types?country_id=" + country.id);
+        const response = await api.get("/visa-types?country_id=" + id);
 
         // Проверяем, если текущий маршрут не '/eta', то редиректим
         if (route.path !== "/eta") {

@@ -12,10 +12,10 @@ import btn from "~/components/ui/buttons/btn.vue";
 
 // стейт и схема из стора
 const { getVisaByIdForm } = useETAStore();
-const { formShema } = useETAStoreRefs();
+const { formShema, loading } = useETAStoreRefs();
 
 // секции
-const sections = computed(() => formShema.value.sections || []);
+const sections = computed(() => formShema.value?.sections || []);
 
 // динамический form
 const form = reactive<Record<string, any>>({});
@@ -142,16 +142,10 @@ function onNext() {
 </script>
 
 <template>
-  <ContentView :is-loading="false">
-    <VisaHeadSteps
-      :title="formShema.country_name + ' - ' + formShema.visa_name"
-    />
+  <ContentView :is-loading="loading">
+    <VisaHeadSteps :title="formShema?.country_name + ' - ' + formShema?.visa_name" />
     <div v-for="section in sections" :key="section.id" class="section">
-      <AccardionSingle
-        v-model="openStates[section.id]"
-        :title="section.title"
-        is-open
-      >
+      <AccardionSingle v-model="openStates[section.id]" :title="section.title" is-open>
         <p v-if="section.description" class="section-desc">
           {{ section.description }}
         </p>

@@ -4,11 +4,7 @@
     <div class="phone-input-wrapper">
       <div class="country-select">
         <select v-model="selectedCountry" @change="onCountryChange">
-          <option
-            v-for="country in countries"
-            :key="country.code"
-            :value="country"
-          >
+          <option v-for="country in countries" :key="country.code" :value="country">
             {{ country.flag }} {{ country.code }}
           </option>
         </select>
@@ -44,9 +40,7 @@ const props = defineProps<{
 }>();
 
 // 2) объявляем emit для update:modelValue
-const emit = defineEmits<{
-  (e: "update:modelValue", val: string): void;
-}>();
+const emit = defineEmits(["update:modelValue"]);
 
 // 3) список стран (оставили ваш полный список)
 const countries = ref<Country[]>([

@@ -43,9 +43,10 @@
         <div class="eta_forms__change">
           <div class="eta_selects">
             <Select
+              v-if="isListCurrentVisaType"
               :options="isListCurrentVisaType"
               v-model="visaId"
-              label="Выберите тип"
+              placeholder="Выберите тип"
             />
           </div>
           <div class="eta__price">{{ currentVisa?.price || "—" }} ₽</div>
@@ -182,7 +183,6 @@ watch(visaId, () => {
   getVisaByIdForm(visaId.value);
 });
 
-// остальной ваш код (onMounted, getVisaById и т.д.)
 onMounted(async () => {
   if (route.query.request_id) {
     await getVisaById(route.query.request_id);

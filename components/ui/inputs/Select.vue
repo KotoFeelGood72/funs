@@ -1,14 +1,13 @@
 <template>
   <div class="select" @click="toggleDropdown" ref="selectRef">
+    {{ selectedOption }}
     <div class="selected">
       <p class="selected-text">
         {{ selectedOption?.label || placeholder }}
       </p>
       <Icon
         :name="
-          dropdownOpen
-            ? 'fluent:chevron-up-16-filled'
-            : 'fluent:chevron-down-16-filled'
+          dropdownOpen ? 'fluent:chevron-up-16-filled' : 'fluent:chevron-down-16-filled'
         "
         :size="22"
       />
@@ -29,12 +28,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps<{
-  options: any;
+  options: { label: string; value: any }[];
   modelValue: any;
-  label?: string;
   placeholder?: string;
 }>();
 
@@ -43,9 +41,20 @@ const emit = defineEmits(["update:modelValue"]);
 const dropdownOpen = ref(false);
 const selectRef = ref<HTMLDivElement | null>(null);
 
-// Найти выбранную опцию
-const selectedOption = computed(() =>
-  props.options.find((option: any) => option.value === props.modelValue)
+// Авто-выбор первой опции, если modelValue пуст и опции появились
+watch(
+  () => props.options.length,
+  (len) => {
+    if (
+      (props.modelValue === undefined ||
+        props.modelValue === null ||
+        props.modelValue === "") &&
+      len > 0
+    ) {
+      emit("update:modelValue", props.options[0].value);
+    }
+  },
+  { immediate: true }
 );
 
 // Закрытие выпадающего списка при клике вне компонента
@@ -54,32 +63,19 @@ const handleClickOutside = (event: MouseEvent) => {
     dropdownOpen.value = false;
   }
 };
-function setFirstIfEmpty() {
-  if (
-    (props.modelValue === undefined ||
-      props.modelValue === null ||
-      props.modelValue === "") &&
-    Array.isArray(props.options) &&
-    props.options.length > 0
-  ) {
-    emit("update:modelValue", props.options[0].value);
-  }
-}
-
-watch(
-  () => props.options,
-  () => {
-    setFirstIfEmpty();
-  }
-);
 
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
-  setFirstIfEmpty();
 });
+
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
 });
+
+// Найти выбранную опцию
+const selectedOption = computed(() =>
+  props.options.find((option) => option.value === props.modelValue)
+);
 
 // Переключение состояния выпадающего списка
 const toggleDropdown = () => {
