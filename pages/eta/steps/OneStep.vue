@@ -177,6 +177,16 @@ const currentVisa = computed(() => {
   return visa.value.visa_types.find((v: any) => v.id === visaId.value) || null;
 });
 
+watch(
+  () => visa.value?.visa_types,
+  (newTypes) => {
+    if (newTypes?.length) {
+      visaId.value = newTypes[0].id;
+    }
+  },
+  { immediate: true }
+);
+
 // при переключении визы — сбрасываем цель и форму
 watch(visaId, () => {
   visaPurposeId.value = null;
@@ -205,16 +215,6 @@ watch(
   { immediate: true }
 );
 
-// const goToTheFormNextStep = async (id: number) => {
-//   // проверяем валидацию
-//   if (visaFormRef.value && !visaFormRef.value.validate()) {
-//     // можно прокрутить к первой ошибке или вывести общий тост
-//     return;
-//   }
-
-//   await nextStep(router, route, visaId.value);
-// };
-
 const submitVisa = async () => {
   if (!visaId.value || (visaFormRef.value && !visaFormRef.value.validate())) {
     console.log("Good");
@@ -230,7 +230,7 @@ const submitVisa = async () => {
   }
 
   try {
-    await api.post(`/eta/${route.query.request_id}`, payload);
+    await api.post(`/eta/${route.query.request_id}/${visaId.value}`, payload);
     console.log("Отправили:", payload);
     nextStep(router, route, visaId.value!.toString());
   } catch (err) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useETAStore, useETAStoreRefs } from "@/store/useETAStore";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import Select from "~/components/ui/inputs/Select.vue";
@@ -11,7 +11,7 @@ import VisaHeadSteps from "~/components/ui/VisaHeadSteps.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 
 // стейт и схема из стора
-const { getVisaByIdForm } = useETAStore();
+const { getVisaByIdForm, fetchMainVisaForm } = useETAStore();
 const { formShema, loading } = useETAStoreRefs();
 
 // секции
@@ -47,6 +47,11 @@ watch(
 
 // получение схемы из API
 const route = useRoute();
+const router = useRouter();
+
+const isCurrentRequestId = computed(() => {
+  return route.query.request_id;
+});
 onMounted(async () => {
   const id = route.query.visa_id;
   if (typeof id === "string") {
@@ -57,10 +62,24 @@ onMounted(async () => {
 });
 
 // вспомогательные из вашего кода
+// function checkDependency(dep: Record<string, any>) {
+//   const [[key, val]] = Object.entries(dep);
+//   return form[key] === val;
+// }
+
 function checkDependency(dep: Record<string, any>) {
-  const [[key, val]] = Object.entries(dep);
-  return form[key] === val;
+  const [[key, expected]] = Object.entries(dep);
+
+  // Пытаемся найти ближайшее существующее поле в form (например, заменить _last_3_years на "")
+  const fallbackKey = key.replace(/_last_3_years$/, "");
+  const realKey = key in form ? key : fallbackKey;
+
+  const actual = form[realKey];
+  const normalizedActual = actual === "Да" ? true : actual === "Нет" ? false : actual;
+
+  return normalizedActual === expected;
 }
+
 function componentFor(field: any) {
   if (field.type === "boolean") return Select;
   if (field.options && field.options.length) return Select;
@@ -82,11 +101,13 @@ function propsFor(field: any) {
       ],
     };
   }
+
+  // select или массив options
   if (field.options && field.options.length) {
     return {
       ...common,
       options: field.options.map((o: any) => ({
-        name: o.name,
+        label: o.label,
         value: o.value,
       })),
     };
@@ -139,41 +160,68 @@ function onNext() {
   // TODO: ваша логика перехода дальше
   console.log("Форма валидна, отправляем:", form);
 }
+
+const onSubmit = () => {
+  if (!validateForm()) return;
+
+  fetchMainVisaForm(
+    router,
+    isCurrentRequestId.value,
+    formShema.value?.visa_type_id,
+    form
+  );
+};
 </script>
 
 <template>
   <ContentView :is-loading="loading">
     <VisaHeadSteps :title="formShema?.country_name + ' - ' + formShema?.visa_name" />
-    <div v-for="section in sections" :key="section.id" class="section">
-      <AccardionSingle v-model="openStates[section.id]" :title="section.title" is-open>
-        <p v-if="section.description" class="section-desc">
-          {{ section.description }}
-        </p>
+    <template v-for="section in sections" :key="section.id">
+      <!-- если секция "Последняя поездка в Индию", проверяем зависимость от visited_india_before -->
+      <template
+        v-if="
+          section.id !== 'india_previous_visit' ||
+          checkDependency({ visited_india_before: true })
+        "
+      >
+        <div class="section">
+          <AccardionSingle
+            v-model="openStates[section.id]"
+            :title="section.title"
+            is-open
+          >
+            <p v-if="section.description" class="section-desc">
+              {{ section.description }}
+            </p>
 
-        <div class="fields-grid">
-          <template v-for="field in section.fields" :key="field.name">
-            <!-- Если это Select (т.е. field.options или boolean) -->
-            <div v-if="componentFor(field) === Select" class="field-item">
-              <label :for="field.name" class="field-item__label">{{
-                propsFor(field).label
-              }}</label>
+            <div class="fields-grid">
+              <template v-for="field in section.fields" :key="field.name">
+                <template
+                  v-if="!field.dependent_on || checkDependency(field.dependent_on)"
+                >
+                  <div v-if="componentFor(field) === Select" class="field-item">
+                    <label :for="field.name" class="field-item__label">
+                      {{ propsFor(field).label }}
+                    </label>
+                    <Select v-model="form[field.name]" v-bind="propsFor(field)" />
+                  </div>
 
-              <Select v-model="form[field.name]" v-bind="propsFor(field)" />
+                  <component
+                    v-else
+                    :is="componentFor(field)"
+                    v-model="form[field.name]"
+                    v-bind="propsFor(field)"
+                  />
+                </template>
+              </template>
             </div>
-
-            <!-- Иначе просто рендерим Inputs или CustomSelectPhone -->
-            <component
-              v-else
-              :is="componentFor(field)"
-              v-model="form[field.name]"
-              v-bind="propsFor(field)"
-            />
-          </template>
+          </AccardionSingle>
         </div>
-      </AccardionSingle>
-    </div>
+      </template>
+    </template>
+
     <div class="form_bottom">
-      <btn name="Далее" />
+      <btn name="Далее" @click="onSubmit()" />
     </div>
   </ContentView>
 </template>

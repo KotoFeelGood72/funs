@@ -1,6 +1,5 @@
 <template>
   <div class="select" @click="toggleDropdown" ref="selectRef">
-    {{ selectedOption }}
     <div class="selected">
       <p class="selected-text">
         {{ selectedOption?.label || placeholder }}

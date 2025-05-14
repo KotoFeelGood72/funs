@@ -81,10 +81,26 @@ const countries = ref<Country[]>([
 
 const selectedCountry = ref<Country>(countries.value[0]);
 
+// const localPhone = computed<string>({
+//   get: () => props.modelValue,
+//   set: (val: string) => {
+//     emit("update:modelValue", val);
+//   },
+// });
+
 const localPhone = computed<string>({
-  get: () => props.modelValue,
+  get: () => {
+    const full = props.modelValue;
+    const code = selectedCountry.value.code;
+    if (full?.startsWith(code)) {
+      return full.replace(code, "").trim();
+    }
+    return full;
+  },
   set: (val: string) => {
-    emit("update:modelValue", val);
+    const code = selectedCountry.value.code;
+    const formatted = `${code}${val}`.replace(/\s+/g, ""); // Убираем пробелы
+    emit("update:modelValue", formatted);
   },
 });
 

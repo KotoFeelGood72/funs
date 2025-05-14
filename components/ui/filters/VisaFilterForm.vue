@@ -1,12 +1,7 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <Select
-        v-if="eta.country"
-        placeholder="Выберите страну"
-        v-model="eta.country"
-        :options="countries"
-      />
+      <Select placeholder="Выберите страну" v-model="eta.country" :options="countries" />
     </div>
     <div class="filter-group">
       <DoubleDate

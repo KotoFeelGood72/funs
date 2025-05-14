@@ -29,8 +29,6 @@ export const useETAStore = defineStore("eta", {
       this.loading = true;
       try {
         const response = await api.get("/visa-types?country_id=" + id);
-
-        // Проверяем, если текущий маршрут не '/eta', то редиректим
         if (route.path !== "/eta") {
           router.push("/eta/" + "?request_id=" + response.data.request_id);
         }
@@ -40,6 +38,23 @@ export const useETAStore = defineStore("eta", {
         throw error;
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchMainVisaForm(
+      router: any,
+      request_id: any,
+      form_id: any,
+      formData: Record<string, any>
+    ) {
+      try {
+        const response = await api.post(
+          `/submit-eta-form/${request_id}/${form_id}`,
+          formData // 👈 отправка всех полей
+        );
+        // Переход на следующий шаг
+        this.nextStep(router, router.currentRoute.value, form_id);
+      } catch (error) {
+        console.error("Ошибка при отправке формы:", error);
       }
     },
     async getVisaById(id: any) {
