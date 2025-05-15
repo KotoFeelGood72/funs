@@ -177,7 +177,6 @@ const onSubmit = () => {
   <ContentView :is-loading="loading">
     <VisaHeadSteps :title="formShema?.country_name + ' - ' + formShema?.visa_name" />
     <template v-for="section in sections" :key="section.id">
-      <!-- если секция "Последняя поездка в Индию", проверяем зависимость от visited_india_before -->
       <template
         v-if="
           section.id !== 'india_previous_visit' ||

@@ -64,9 +64,9 @@ const transfer = ["1 пересадка", "2 пересадки", "3 перес�
 const localValueTransfers = ref<number[]>(props.modelValue.transfer || []);
 const localValueAirline = ref<string[]>(props.modelValue.airline || []);
 
-const isExpanded = ref(true);
+const isExpanded = ref<any>(true);
 
-const screenWidth = ref<number | null>(null);
+const screenWidth = ref<any>(null);
 const updateScreenWidth = () => {
   if (typeof window !== "undefined") {
     screenWidth.value = window.innerWidth;
@@ -74,9 +74,7 @@ const updateScreenWidth = () => {
 };
 
 const hasActiveFilters = computed(() => {
-  return (
-    localValueTransfers.value.length > 0 || localValueAirline.value.length > 0
-  );
+  return localValueTransfers.value.length > 0 || localValueAirline.value.length > 0;
 });
 
 watch(
@@ -91,7 +89,7 @@ watch(
 );
 
 const toggleFilters = () => {
-  if (screenWidth.value <= 1024) {
+  if (screenWidth?.value <= 1024) {
     // Работает только для мобильных и планшетов
     isExpanded.value = !isExpanded.value;
   }

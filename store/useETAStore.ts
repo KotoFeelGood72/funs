@@ -5,6 +5,7 @@ import { usePassengers } from "@/composables/usePassengers";
 export const useETAStore = defineStore("eta", {
   state: () => ({
     currentStep: 1 as number,
+    questions: null as any,
     eta: {
       country: "" as any,
       date_forward: "" as any,
@@ -69,6 +70,52 @@ export const useETAStore = defineStore("eta", {
         this.loading = false;
       }
     },
+    async getSecurityQuestions() {
+      this.loading = true;
+      try {
+        const response = await api.get("/security-questions");
+        this.questions = response.data[0];
+      } catch (error) {
+        console.error("Error fetching visa by ID:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async submitSecurityAnswers(
+      applicationId: number,
+      payload: Record<string, any>
+    ) {
+      this.loading = true;
+      try {
+        const formData = new URLSearchParams();
+        for (const key in payload) {
+          if (payload[key] !== null && payload[key] !== undefined) {
+            formData.append(key, payload[key].toString());
+          }
+        }
+
+        const response = await api.post(
+          `/security-questions/${applicationId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        // Вернёт URL для следующего шага (если есть)
+        return response.data;
+      } catch (error) {
+        console.error("Ошибка отправки вопросов безопасности:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async getVisaByIdForm(id: any) {
       this.loading = true;
       try {
