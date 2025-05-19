@@ -11,6 +11,14 @@
           :options="question.options"
           v-model="answers[question.name]"
         />
+        <div class="question_btn">
+          <btn
+            class="mt-6"
+            variant="primary"
+            @click="handleSubmitSecurityAnswers"
+            name="Подветрдить"
+          />
+        </div>
       </div>
       <div class="questions__details">
         <div class="question__quote">
@@ -37,7 +45,7 @@
             :text="doc.description"
             :accept="acceptMap[doc.name] || '*/*'"
             :maxSizeKb="maxSizeMap[doc.name] || 1024"
-            @file-selected="(files) => onFileSelected(doc.name, files)"
+            @file-selected="(files: any) => onFileSelected(doc.name, files)"
           />
         </div>
       </div>
@@ -65,11 +73,20 @@ import UploadBox from "~/components/ui/inputs/UploadBox.vue";
 import VisaHeadSteps from "~/components/ui/VisaHeadSteps.vue";
 import Checkbox from "~/components/ui/inputs/Checkbox.vue";
 import { useETAStore, useETAStoreRefs } from "~/store/useETAStore";
+import { useToast } from "vue-toastification";
 
 const route = useRoute();
 const router = useRouter();
 
-const { getVisaByIdForm, submitSecurityAnswers, getSecurityQuestions } = useETAStore();
+const toast = useToast();
+const isConfirmed = ref(false);
+
+const {
+  getVisaByIdForm,
+  submitSecurityAnswers,
+  getSecurityQuestions,
+  uploadFileVisa,
+} = useETAStore();
 const { questions, formShema } = useETAStoreRefs();
 
 const answers = ref<Record<string, string>>({});
@@ -92,15 +109,10 @@ function onFileSelected(name: string, files: File[]) {
   console.log(name, files);
 }
 
-async function goNext() {
+async function handleSubmitSecurityAnswers() {
   const applicationId = route.query.application_id;
   if (!applicationId) {
-    alert("Отсутствует ID заявки.");
-    return;
-  }
-
-  if (!agreement.value) {
-    alert("Вы должны согласиться с условиями.");
+    toast.error("Отсутствует ID заявки.");
     return;
   }
 
@@ -108,25 +120,92 @@ async function goNext() {
   const missingAnswers = requiredFields?.some((f: any) => answers.value[f.name] == null);
 
   if (missingAnswers) {
-    alert("Пожалуйста, ответьте на все обязательные вопросы.");
+    toast.info("Пожалуйста, ответьте на все обязательные вопросы.");
     return;
   }
 
-  const payload: Record<string, any> = {
-    ...answers.value,
-    confirmation_details: confirmationDetails.value || null,
-  };
+  const payload: Record<string, any> = {};
+  for (const key in answers.value) {
+    const val = answers.value[key];
+    payload[key] = val === "Да" ? true : val === "Нет" ? false : val;
+  }
+
+  payload.confirmation_details = confirmationDetails.value || null;
 
   try {
-    await submitSecurityAnswers(Number(applicationId), payload);
+    const result = await submitSecurityAnswers(Number(applicationId), payload);
+    isConfirmed.value = true;
+
+    console.log("Ответ отправлен, результат:", result);
+    toast.success("Ответы успешно сохранены.");
+  } catch (err) {
+    toast.error("Не удалось сохранить ответы. Попробуйте позже.");
+  }
+}
+
+async function goNext() {
+  const applicationId = route.query.application_id;
+  if (!applicationId) {
+    toast.error("Отсутствует ID заявки.");
+    return;
+  }
+
+  if (!isConfirmed.value) {
+    toast.info("Сначала подтвердите ответы на вопросы.");
+    return;
+  }
+
+  if (!agreement.value) {
+    toast.info("Вы должны согласиться с условиями.");
+    return;
+  }
+
+  const requiredFields = questions?.value?.fields.filter((f: any) => f.required);
+  const missingAnswers = requiredFields?.some((f: any) => answers.value[f.name] == null);
+
+  if (missingAnswers) {
+    toast.info("Пожалуйста, ответьте на все обязательные вопросы.");
+    return;
+  }
+
+  const payload: Record<string, any> = {};
+
+  for (const key in answers.value) {
+    const val = answers.value[key];
+    if (val === "Да") payload[key] = true;
+    else if (val === "Нет") payload[key] = false;
+    else payload[key] = val;
+  }
+
+  payload.confirmation_details = confirmationDetails.value || null;
+
+  try {
+    // 1. Отправка ответов на вопросы безопасности
+    // await submitSecurityAnswers(Number(applicationId), payload);
+
+    // 2. Получение и загрузка документов
+    const files = uploadedFiles.value;
+
+    const photo = files["photo"]?.[0];
+    const passport = files["passport_scan"]?.[0];
+
+    if (!photo || !passport) {
+      toast.info("Пожалуйста, загрузите фото и скан паспорта.");
+      return;
+    }
+
+    await uploadFileVisa(Number(applicationId), photo, passport);
+
+    // 3. Переход к следующему шагу
     const visaId = route.query.visa_id;
     if (typeof visaId === "string") {
       await getVisaByIdForm(visaId);
     }
+
     useETAStore().nextStep(router, route);
   } catch (err) {
-    console.error("Ошибка при отправке:", err);
-    alert("Не удалось отправить ответы. Попробуйте позже.");
+    console.error("Ошибка при отправке или загрузке:", err);
+    toast.error("Не удалось отправить данные. Попробуйте позже.");
   }
 }
 
@@ -190,5 +269,10 @@ onMounted(async () => {
     color: $gray;
     max-width: 80%;
   }
+}
+
+.question_btn {
+  @include flex-end;
+  padding-top: 3rem;
 }
 </style>

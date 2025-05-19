@@ -92,7 +92,7 @@ const selectOption = (value: any) => {
 .select {
   position: relative;
   cursor: pointer;
-  border: 0.1rem solid $light-blue;
+  border: 0.1rem solid #d8d7d7;
   height: 4.6rem;
   border-radius: 0.5rem;
   flex-grow: 1;

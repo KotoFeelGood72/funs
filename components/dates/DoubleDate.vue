@@ -1,7 +1,11 @@
 <template>
   <div class="date-picker" ref="pickerRef">
     <div class="inputs">
-      <div class="input-group" @click="openCalendar">
+      <div
+        class="input-group"
+        :class="{ 'has-error': props.errorStart }"
+        @click="openCalendar"
+      >
         <input
           readonly
           :value="displayStart"
@@ -11,7 +15,12 @@
           <Icon name="material-symbols:close" />
         </button>
       </div>
-      <div class="input-group" @click="openCalendar">
+
+      <div
+        class="input-group"
+        :class="{ 'has-error': props.errorEnd }"
+        @click="openCalendar"
+      >
         <input
           readonly
           :value="displayEnd"
@@ -153,6 +162,8 @@ const props = defineProps<{
   end: string | null;
   placeStart?: string;
   placeEnd?: string;
+  errorStart?: boolean | string | null;
+  errorEnd?: boolean | string | null;
 }>();
 const emit = defineEmits<{
   (e: "update:start", v: string | null): void;
@@ -227,10 +238,19 @@ const openCalendar = () => {
 .input-group {
   position: relative;
   flex-grow: 1;
+
+  &.has-error {
+    input {
+      border-color: red;
+      &::placeholder {
+        color: red;
+      }
+    }
+  }
 }
 .input-group input {
   @include app;
-  border: 0.1rem solid $light-blue;
+  border: 0.1rem solid #d8d7d7;
   padding: 1.2rem 2rem;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -283,7 +303,7 @@ const openCalendar = () => {
 }
 .month-selector .chevron {
   @include flex-center;
-  margin-top: -0.5rem;
+  // margin-top: -0.5rem;
 }
 .month-list {
   position: absolute;
@@ -369,9 +389,9 @@ const openCalendar = () => {
 }
 
 .nav-btn {
-  background-color: #5fd2f864;
+  background-color: $blue;
   @include flex-center;
-  color: $blue;
+  color: $white;
   width: 4.5rem;
   height: 3.5rem;
   border-radius: 0.4rem;

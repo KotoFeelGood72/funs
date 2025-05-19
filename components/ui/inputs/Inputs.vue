@@ -1,5 +1,5 @@
 <template>
-  <div class="input__w">
+  <div class="input__w" :class="{ error: error }">
     <div class="label" v-if="label">{{ label }}</div>
     <div class="input">
       <input
@@ -43,6 +43,7 @@ const props = withDefaults(
     icon?: string;
     placeholder?: any;
     mode?: "english" | "default";
+    error: string | null;
   }>(),
   {
     modelValue: "",
@@ -85,6 +86,18 @@ const validateInput = (event: Event) => {
 .input__w {
   flex-grow: 1;
   width: 100%;
+
+  &.error {
+    input {
+      border-color: red;
+      &::placeholder {
+        color: red;
+      }
+    }
+    .label {
+      color: red;
+    }
+  }
 }
 .input {
   position: relative;

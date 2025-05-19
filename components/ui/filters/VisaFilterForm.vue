@@ -9,18 +9,27 @@
         v-model:start="eta.date_forward"
         placeStart="Дата начала поездки"
         placeEnd="Дата окончания поездки"
+        :errorStart="vuelidate.data.date_forward.$error"
+        :errorEnd="vuelidate.data.date_backward.$error"
       />
     </div>
     <div class="filter-group">
-      <SelectPeople v-model:adults="eta.adults" />
+      <SelectPeople
+        v-model:adults="eta.adults"
+        style="pointer-events: none; user-select: none"
+      />
     </div>
-    <btn :name="isTextBtn" icon="right" @click="onBooking()" theme="primary" />
+    <btn
+      :name="isTextBtn"
+      icon="right"
+      @click="onBooking()"
+      theme="primary"
+      :loading="loading"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import SearchSelect from "../inputs/SearchSelect.vue";
-import Calendar from "../inputs/Calendar.vue";
 import Select from "../inputs/Select.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
@@ -28,9 +37,11 @@ import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { useRouter, useRoute } from "vue-router";
 import { useCheckAuth } from "@/composables/useCheckAuth";
 import DoubleDate from "@/components/dates/DoubleDate.vue";
+import { useValidation } from "~/composables/useValidation";
 
-const { eta } = useETAStoreRefs();
+const { eta, loading } = useETAStoreRefs();
 const { getVisaTypes } = useETAStore();
+const { v$, required, minValue, showValidationErrors } = useValidation();
 
 const router = useRouter();
 const route = useRoute();
@@ -38,10 +49,26 @@ const route = useRoute();
 const { checkAuthThen } = useCheckAuth();
 
 const onBooking = () => {
+  vuelidate.value.$touch();
+
+  if (vuelidate.value.$invalid) {
+    showValidationErrors(vuelidate.value);
+    return;
+  }
+
   checkAuthThen(() => {
     getVisaTypes(route, router, eta.value.country);
   });
 };
+
+const rules = computed(() => ({
+  data: {
+    date_forward: { required },
+    date_backward: { required },
+  },
+}));
+
+const vuelidate = v$(rules, { data: eta });
 
 const isTextBtn = computed(() => {
   return route.name === "eta" ? "Обновить" : "Оплатить визу";

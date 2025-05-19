@@ -15,20 +15,16 @@
 import { computed } from "vue";
 import AddressInput from "../ui/inputs/AddressInput.vue";
 import CustomSelectPhone from "../ui/inputs/CustomSelectPhone.vue";
-
-// --- 1. Определяем пропсы, включая два для v-model
 const props = defineProps<{
   address: string;
   phone: string;
 }>();
 
-// --- 2. Определяем эмиты для обновления каждого model
 const emit = defineEmits<{
   (e: "update:address", val: string): void;
   (e: "update:phone", val: string): void;
 }>();
 
-// --- 3. Проксируем каждый model в computed, чтобы можно было v-model внутри
 const localAddress = computed<string>({
   get: () => props.address,
   set: (val) => emit("update:address", val),

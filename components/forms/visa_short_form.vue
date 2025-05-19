@@ -1,3 +1,39 @@
+<template>
+  <form class="visa_short_form" @submit.prevent>
+    <div v-for="field in fields" :key="field.name" class="visa_short_form__field">
+      <CustomSelectPhone
+        v-if="field.name === 'institution_phone'"
+        v-model="form[field.name]"
+        :id="field.name"
+        :placeholder="field.placeholder || field.label"
+        :error="errors[field.name]"
+      />
+
+      <Select
+        v-else-if="field.type === 'select'"
+        v-model="form[field.name]"
+        :id="field.name"
+        :options="field.options"
+        :placeholder="field.placeholder || field.label"
+      />
+
+      <Inputs
+        v-else
+        v-model="form[field.name]"
+        :id="field.name"
+        type="text"
+        :placeholder="field.placeholder || field.label"
+        :error="errors[field.name]"
+      />
+
+      <!-- сообщение об ошибке -->
+      <span v-if="errors[field.name]" class="visa_short_form__error">
+        {{ errors[field.name] }}
+      </span>
+    </div>
+  </form>
+</template>
+
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import Inputs from "../ui/inputs/Inputs.vue";
@@ -27,10 +63,7 @@ const emit = defineEmits<{
 // Функция, чтобы для select-полей найти дефолт
 function getInitialValue(f: Field) {
   // если папа модельку передал — берём её
-  if (
-    props.modelValue[f.name] !== undefined &&
-    props.modelValue[f.name] !== null
-  ) {
+  if (props.modelValue[f.name] !== undefined && props.modelValue[f.name] !== null) {
     return props.modelValue[f.name];
   }
   // иначе если API дал default_value — берём его
@@ -77,48 +110,6 @@ const validate = (): boolean => {
 };
 defineExpose({ validate });
 </script>
-
-<template>
-  <form class="visa_short_form" @submit.prevent>
-    <div
-      v-for="field in fields"
-      :key="field.name"
-      class="visa_short_form__field"
-    >
-      <!-- <label v-if="field.label" class="visa_short_form__label">
-        {{ field.label }}
-      </label> -->
-
-      <CustomSelectPhone
-        v-if="field.name === 'institution_phone'"
-        v-model="form[field.name]"
-        :id="field.name"
-        :placeholder="field.placeholder || field.label"
-      />
-
-      <Select
-        v-else-if="field.type === 'select'"
-        v-model="form[field.name]"
-        :id="field.name"
-        :options="field.options"
-        :placeholder="field.placeholder || field.label"
-      />
-
-      <Inputs
-        v-else
-        v-model="form[field.name]"
-        :id="field.name"
-        type="text"
-        :placeholder="field.placeholder || field.label"
-      />
-
-      <!-- сообщение об ошибке -->
-      <span v-if="errors[field.name]" class="visa_short_form__error">
-        {{ errors[field.name] }}
-      </span>
-    </div>
-  </form>
-</template>
 
 <style scoped lang="scss">
 .visa_short_form {

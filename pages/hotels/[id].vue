@@ -1,8 +1,5 @@
 <template>
-  <ContentView
-    title="Проверьте правильность введённых данных"
-    :is-loading="false"
-  >
+  <ContentView title="Проверьте правильность введённых данных" :is-loading="false">
     <div class="hotel_passenger">
       <div class="hotel_passenger__head">
         <div class="hotel_passenger__title">Ваши данные</div>
@@ -50,14 +47,13 @@
         name="agreement"
       />
       <p>
-        Бронирование формируется в срок до 3-х часов. Лист бронирования
-        официальной платформы направим на указанный электронный адрес не позднее
-        19 ч МСК
+        Бронирование формируется в срок до 3-х часов. Лист бронирования официальной
+        платформы направим на указанный электронный адрес не позднее 19 ч МСК
       </p>
       <div class="row">
         <div class="price">
           <span>Общая стоимость</span>
-          <p>600</p>
+          <p>{{ price?.price }}</p>
         </div>
         <btn name="Оплатить" theme="primary" @click="openModal('payment')" />
       </div>
@@ -73,13 +69,16 @@ import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 import { useModalStore } from "~/store/useModalStore";
 
 const route = useRoute();
-const { getHotelId } = useHotelStore();
+const { getHotelId, getHotelPrice } = useHotelStore();
 const { ticket } = useHotelStoreRefs();
 const { openModal } = useModalStore();
 
+const price = ref<any>(null);
+
 const agreement = ref<boolean>(false);
-onMounted(() => {
+onMounted(async () => {
   getHotelId(route.params.id);
+  price.value = await getHotelPrice();
 });
 </script>
 

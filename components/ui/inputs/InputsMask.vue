@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="input"
-    :class="{ active: localValue || isFocused || type === 'date' }"
-  >
+  <div class="input" :class="{ active: localValue || isFocused || type === 'date' }">
     <label :for="id">{{ label }}</label>
     <input
       :type="isPasswordVisible ? 'text' : type"
@@ -19,11 +16,7 @@
       @click="togglePasswordVisibility"
     >
       <Icon
-        :name="
-          isPasswordVisible
-            ? 'fluent:eye-16-filled'
-            : 'fluent:eye-off-16-filled'
-        "
+        :name="isPasswordVisible ? 'fluent:eye-16-filled' : 'fluent:eye-off-16-filled'"
         :size="22"
       />
     </div>
@@ -68,69 +61,31 @@ defineExpose({ localValue });
 </script>
 
 <style scoped lang="scss">
+.input__w {
+  flex-grow: 1;
+  width: 100%;
+}
 .input {
   position: relative;
   width: 100%;
   height: 4.2rem;
-  border: 0.1rem solid transparent;
-  border-bottom: 0.1rem solid $blue;
+  border-radius: 0.5rem;
   transition: all 0.3s ease-in-out;
-
-  @include bp($point_2) {
-    height: 3rem;
-  }
-
-  &.active {
-    label {
-      top: 0;
-      font-size: 1.4rem;
-      color: $blue;
-      @include bp($point_2) {
-        font-size: 1rem;
-        top: -0.2rem;
-      }
-    }
-  }
-}
-
-label {
-  padding-left: 1.6rem;
-  color: $blue;
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 0.9rem;
-  padding: 0 0.7rem;
-  transition: all 0.3s ease-in-out;
-  font-family: $font_2;
-  font-size: 1.8rem;
-  color: $dark;
-
-  @include bp($point_2) {
-    font-size: 1.4rem;
-    padding: 0;
-  }
 }
 
 input {
   border-radius: 0.5rem;
   width: 100%;
-  height: 100%;
+  height: 4.6rem;
   font-size: 1.8rem;
   border: none;
   outline: none;
   padding: 1.1rem 1.6rem;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #d8d7d7;
 
-  @include bp($point_2) {
-    font-size: 1.4rem;
-    padding: 1rem;
-  }
-
-  &::-webkit-input-placeholder {
-    opacity: 1;
-    color: $dark;
+  &:focus {
+    border: 0.1rem solid $light-blue;
   }
 }
 
@@ -145,5 +100,12 @@ input {
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
+}
+
+.label {
+  font-size: 1.6rem;
+  color: $gray;
+  margin-bottom: 1rem;
+  display: flex;
 }
 </style>

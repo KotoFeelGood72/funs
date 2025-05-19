@@ -8,7 +8,7 @@
         <Inputs label="Имя" v-model="user.first_name" />
         <Inputs label="Фамилия" v-model="user.last_name" />
         <Inputs label="Email" v-model="user.email" />
-        <Inputs label="Номер телефона" v-model="user.phone_number" />
+        <CustomSelectPhone label="Номер телефона" v-model="user.phone_number" />
       </div>
       <Checkboxes
         :id="'agreement-profile-edit'"
@@ -23,6 +23,7 @@
           size="normal"
           theme="primary"
           @click="updateProfile"
+          :loading="isLoading"
         />
       </div>
     </div>
@@ -34,8 +35,9 @@ import Inputs from "~/components/ui/inputs/Inputs.vue";
 import Checkboxes from "~/components/ui/inputs/Checkboxes.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import { useAuth } from "~/composables/useAuth";
+import CustomSelectPhone from "~/components/ui/inputs/CustomSelectPhone.vue";
 
-const { updateProfile, user, getProfile } = useAuth();
+const { updateProfile, user, getProfile, isLoading } = useAuth();
 </script>
 
 <style scoped lang="scss">

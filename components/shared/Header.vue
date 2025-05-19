@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :class="{ isHome: route.name === 'index' }">
+  <header class="header">
     <div class="container">
       <div class="header_main">
         <div class="logo">
@@ -27,21 +27,19 @@ import listLink from "../ui/list/list-link.vue";
 import btn from "../ui/buttons/btn.vue";
 import { useModalStore } from "~/store/useModalStore";
 import { useAuth } from "~/composables/useAuth";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { computed } from "vue";
 
 const { user, accessToken } = useAuth();
 const { openModal } = useModalStore();
 const router = useRouter();
-const route = useRoute();
 
 const nav = [
   { link: "/air", name: "Билеты" },
   { link: "/hotels", name: "Отели" },
-  // { link: "/", name: "ETA" },
+  { link: "/", name: "ETA" },
 ];
 
-// Проверка, что пользователь авторизован
 const isUser = computed(() => {
   return (
     user.value &&
@@ -51,7 +49,6 @@ const isUser = computed(() => {
   );
 });
 
-// Переход в личный кабинет
 const goToProfile = () => {
   if (isUser.value === null) {
     openModal("auth");
@@ -65,18 +62,10 @@ const goToProfile = () => {
 .header {
   height: $header;
   background-color: $white;
-  border-bottom-right-radius: 3.2rem;
-  border-bottom-left-radius: 3.2rem;
   transition: all 0.3s ease-in-out;
 
   @include bp($point_2) {
     height: 8rem;
-    border-bottom-right-radius: 1.6rem;
-    border-bottom-left-radius: 1.6rem;
-  }
-  &.isHome {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
   }
 }
 .header_main {

@@ -11,12 +11,7 @@
           label="Email"
           v-model="ticket.email_address"
         />
-        <InputsMask
-          v-model="ticket.phone_number"
-          label="Номер телефона"
-          type="text"
-          mask="# (###) ###-##-##"
-        />
+        <CustomSelectPhone v-model="ticket.phone_number" label="Номер телефона" />
       </div>
     </div>
   </ClientOnly>
@@ -25,7 +20,7 @@
 <script setup lang="ts">
 import Inputs from "../ui/inputs/Inputs.vue";
 import { useHotelStoreRefs } from "~/store/useHotelStore";
-import InputsMask from "../ui/inputs/InputsMask.vue";
+import CustomSelectPhone from "../ui/inputs/CustomSelectPhone.vue";
 
 const { ticket } = useHotelStoreRefs();
 </script>

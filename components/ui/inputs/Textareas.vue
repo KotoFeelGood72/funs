@@ -1,26 +1,19 @@
 <template>
-  <div class="textarea">
-    <label :for="id" :class="{ active: localValue || isFocused }">{{
-      label
-    }}</label>
-    <textarea
-      v-model="localValue"
-      :id="id"
-      :rows="4"
-      @focus="isFocused = true"
-      @blur="isFocused = false"
-    ></textarea>
+  <div class="textarea" :class="{ error: error }">
+    <label :for="id">{{ label }}</label>
+    <textarea v-model="localValue" :id="id" :rows="4"></textarea>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
     modelValue?: string;
     label?: string;
     id?: string;
+    error: string | null;
   }>(),
   {
     modelValue: "",
@@ -30,7 +23,6 @@ const props = withDefaults(
 );
 
 const emit = defineEmits(["update:modelValue"]);
-const isFocused = ref(false);
 const localValue = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
@@ -44,16 +36,22 @@ const localValue = computed({
   width: 100%;
   border: 0;
   @include app;
+
+  &.error {
+    textarea {
+      border-color: red;
+    }
+    label {
+      color: red;
+    }
+  }
 }
 
 label {
-  position: absolute;
-  left: 1.6rem;
-  top: 1rem;
-  font-size: 1.8rem;
-  pointer-events: none;
-  transition: all 0.2s ease-in-out;
-  font-family: $font_2;
+  font-size: 1.6rem;
+  color: #757575;
+  margin-bottom: 1rem;
+  display: flex;
 
   @include bp($point_2) {
     font-size: 1.4rem;
@@ -65,10 +63,11 @@ textarea {
   width: 100%;
   padding: 1.6rem;
   font-size: 1.8rem;
-  border-bottom: 0.1rem solid $blue;
+  border: 0.1rem solid #d8d7d7;
   outline: none;
   resize: none;
   font-family: $font_2;
+  border-radius: 0.5rem;
 
   @include bp($point_2) {
     font-size: 1.4rem;
@@ -77,19 +76,5 @@ textarea {
 
 textarea:focus {
   border-color: $blue;
-}
-
-label.active {
-  left: 1.4rem;
-  top: -1rem;
-  font-size: 1.4rem;
-  color: $blue;
-  background-color: $white;
-  padding: 0.5rem 1rem 0.5rem 0.4rem;
-  margin: -0.5rem 0 0 -0.5rem;
-
-  @include bp($point_2) {
-    font-size: 1.2rem;
-  }
 }
 </style>

@@ -28,6 +28,7 @@ function toggle() {
   border-radius: 2rem;
   // overflow: hidden;
   padding: 2rem 3rem;
+  margin: 2rem 0;
 }
 
 .collapsible-block__header {
@@ -37,6 +38,6 @@ function toggle() {
 }
 
 .collapsible-block__body {
-  padding: 2rem 0 0 0;
+  padding: 1rem 0 0 0;
 }
 </style>

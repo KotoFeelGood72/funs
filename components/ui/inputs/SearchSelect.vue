@@ -9,6 +9,7 @@
         @input="onInput($event)"
         @keydown="handleKeyDown"
         class="input"
+        :class="{ 'has-error': !!props.error }"
         :placeholder="label"
       />
 
@@ -26,9 +27,7 @@
             {{ option.value }}
           </p>
         </li>
-        <li v-if="places.length === 0" class="no-options">
-          Нет доступных вариантов
-        </li>
+        <li v-if="places.length === 0" class="no-options">Нет доступных вариантов</li>
       </ul>
       <ul
         v-if="dropdownOpen && (places.length > 0 || nationals.length > 0)"
@@ -63,6 +62,7 @@ const props = defineProps<{
   modelValue: any;
   label?: string;
   national?: boolean;
+  error?: boolean | string | null;
 }>();
 const emit = defineEmits(["update:modelValue"]);
 
@@ -76,11 +76,7 @@ const displayName = computed(() => props.modelValue?.name || "");
 watchEffect(() => {
   if (displayName.value && displayName.value.length > 1 && !props.national) {
     fetchPlace(displayName.value);
-  } else if (
-    displayName.value &&
-    displayName.value.length > 1 &&
-    props.national
-  ) {
+  } else if (displayName.value && displayName.value.length > 1 && props.national) {
     fetchNational(displayName.value);
   } else {
     clear();
@@ -173,13 +169,20 @@ watchEffect(() => {
     width: 100%;
     background: transparent;
     z-index: 1;
-    border: 0.1rem solid $light-blue;
+    border: 0.1rem solid #d8d7d7;
     font-size: 1.8rem;
     cursor: pointer;
     height: 4.6rem;
     border-radius: 0.5rem;
     @include bp($point_2) {
       font-size: 1.4rem;
+    }
+
+    &.has-error {
+      border-color: red;
+      &::placeholder {
+        color: red;
+      }
     }
   }
 

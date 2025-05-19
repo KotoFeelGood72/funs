@@ -12,13 +12,7 @@
         :class="['dropdown', dropdownPosition]"
         ref="dropdown"
       >
-        <!-- v-model="localAdults" привязан к props.adults (и событию update:adults) -->
-        <Counter
-          label="Взрослые"
-          v-model="localAdults"
-          :maxValue="20"
-          :minValue="1"
-        />
+        <Counter label="Взрослые" v-model="localAdults" :maxValue="20" :minValue="1" />
         <Counter label="Дети" v-model="children" :minValue="0" />
         <Counter
           label="Кол-во звезд"
@@ -69,7 +63,7 @@ const { createPassengers, createPassengersAvia } = usePassengers();
 
 const isBusiness = computed<boolean>({
   get: () => props.classType === "BUSINESS",
-  set: (val) => emit("update:class-type", val ? "BUSINESS" : "ECONOMY"),
+  set: (val) => emit("update:classType", val ? "BUSINESS" : "ECONOMY"),
 });
 
 const localStars = computed<any>({
@@ -174,8 +168,7 @@ const calculateDropdownPosition = () => {
   if (!wrapper.value) return;
   const wrapperRect = wrapper.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-  dropdownPosition.value =
-    wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
+  dropdownPosition.value = wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
 onMounted(() => {
@@ -212,7 +205,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 .header {
   @include flex-space;
   gap: 2rem;
-  border: 0.1rem solid $light-blue;
+  border: 0.1rem solid #d8d7d7;
   cursor: pointer;
   height: 100%;
   padding: 1.2rem 2rem;

@@ -10,7 +10,7 @@ import AccardionSingle from "@/components/accardions/AccardionSingle.vue";
 import VisaHeadSteps from "~/components/ui/VisaHeadSteps.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 
-// стейт и схема из стора
+// store
 const { getVisaByIdForm, fetchMainVisaForm } = useETAStore();
 const { formShema, loading } = useETAStoreRefs();
 
@@ -33,7 +33,7 @@ watch(
   { immediate: true }
 );
 
-// аккордеоны
+// открытые аккордеоны
 const openStates = reactive<Record<string, boolean>>({});
 watch(
   sections,
@@ -45,41 +45,34 @@ watch(
   { immediate: true }
 );
 
-// получение схемы из API
+// загрузка схемы
 const route = useRoute();
 const router = useRouter();
-
-const isCurrentRequestId = computed(() => {
-  return route.query.request_id;
-});
 onMounted(async () => {
   const id = route.query.visa_id;
-  if (typeof id === "string") {
-    await getVisaByIdForm(id);
-    // если API вернул начальные значения
-    Object.assign(form, formShema.value);
-  }
+  await getVisaByIdForm(id);
+  Object.assign(form, formShema.value);
 });
+watch(
+  () => route.query.visa_id,
+  async (id) => {
+    if (id) {
+      await getVisaByIdForm(id);
+      Object.assign(form, formShema.value);
+    }
+  },
+  { immediate: true }
+);
 
-// вспомогательные из вашего кода
-// function checkDependency(dep: Record<string, any>) {
-//   const [[key, val]] = Object.entries(dep);
-//   return form[key] === val;
-// }
-
+// helper
 function checkDependency(dep: Record<string, any>) {
   const [[key, expected]] = Object.entries(dep);
-
-  // Пытаемся найти ближайшее существующее поле в form (например, заменить _last_3_years на "")
   const fallbackKey = key.replace(/_last_3_years$/, "");
   const realKey = key in form ? key : fallbackKey;
-
   const actual = form[realKey];
-  const normalizedActual = actual === "Да" ? true : actual === "Нет" ? false : actual;
-
-  return normalizedActual === expected;
+  const norm = actual === "Да" ? true : actual === "Нет" ? false : actual;
+  return norm === expected;
 }
-
 function componentFor(field: any) {
   if (field.type === "boolean") return Select;
   if (field.options && field.options.length) return Select;
@@ -101,15 +94,10 @@ function propsFor(field: any) {
       ],
     };
   }
-
-  // select или массив options
   if (field.options && field.options.length) {
     return {
       ...common,
-      options: field.options.map((o: any) => ({
-        label: o.label,
-        value: o.value,
-      })),
+      options: field.options.map((o: any) => ({ label: o.label, value: o.value })),
     };
   }
   const typeMap: Record<string, string> = {
@@ -123,59 +111,51 @@ function propsFor(field: any) {
   };
 }
 
-// ───── ВАЛИДАЦИЯ ─────
+// ─── валидация ───
 const errors = reactive<Record<string, string>>({});
 
 function validateForm(): boolean {
-  // очистим старые ошибки
   Object.keys(errors).forEach((k) => delete errors[k]);
-
-  // пройдём по всем полям
   sections.value.forEach((sec: any) => {
     sec.fields.forEach((f: any) => {
-      // проверяем зависимость, если есть условие отображения
       if (f.dependency && !checkDependency(f.dependency)) return;
-
-      // если обязательное и пусто
       const val = form[f.name];
-      const isEmpty =
+      const empty =
         val === "" ||
         val === null ||
         val === undefined ||
         (Array.isArray(val) && val.length === 0);
-      if (f.required && isEmpty) {
+      if (f.required && empty) {
         errors[f.name] = "Это поле обязательно";
       }
     });
   });
-
   return Object.keys(errors).length === 0;
 }
 
-function onNext() {
-  if (!validateForm()) {
-    // здесь можно прокрутить к первой ошибке
-    return;
-  }
-  // TODO: ваша логика перехода дальше
-  console.log("Форма валидна, отправляем:", form);
+function isVisitSection(id: string): boolean {
+  return id.endsWith("_visits");
 }
 
-const onSubmit = () => {
-  if (!validateForm()) return;
-
-  fetchMainVisaForm(
+async function onSubmit() {
+  if (!validateForm()) {
+    // можно прокрутить к первой ошибке
+    return;
+  }
+  // ваша логика отправки:
+  await fetchMainVisaForm(
     router,
-    isCurrentRequestId.value,
+    route.query.request_id,
     formShema.value?.visa_type_id,
     form
   );
-};
+}
 </script>
 
 <template>
   <ContentView :is-loading="loading">
     <VisaHeadSteps :title="formShema?.country_name + ' - ' + formShema?.visa_name" />
+
     <template v-for="section in sections" :key="section.id">
       <template
         v-if="
@@ -183,44 +163,38 @@ const onSubmit = () => {
           checkDependency({ visited_india_before: true })
         "
       >
-        <div class="section">
-          <AccardionSingle
-            v-model="openStates[section.id]"
-            :title="section.title"
-            is-open
-          >
-            <p v-if="section.description" class="section-desc">
-              {{ section.description }}
-            </p>
+        <AccardionSingle
+          v-model="openStates[section.id]"
+          :title="section.title"
+          :is-open="true"
+        >
+          <p v-if="section.description" class="section-desc">
+            {{ section.description }}
+          </p>
 
-            <div class="fields-grid">
-              <template v-for="field in section.fields" :key="field.name">
-                <template
-                  v-if="!field.dependent_on || checkDependency(field.dependent_on)"
-                >
-                  <div v-if="componentFor(field) === Select" class="field-item">
-                    <label :for="field.name" class="field-item__label">
-                      {{ propsFor(field).label }}
-                    </label>
-                    <Select v-model="form[field.name]" v-bind="propsFor(field)" />
-                  </div>
-
+          <div class="fields-grid" :class="{ country_row: isVisitSection(section.id) }">
+            <template v-for="field in section.fields" :key="field.name">
+              <template v-if="!field.dependent_on || checkDependency(field.dependent_on)">
+                <div class="field-item">
+                  <label v-if="componentFor(field) === Select" :for="field.name">
+                    {{ propsFor(field).label }}
+                  </label>
                   <component
-                    v-else
                     :is="componentFor(field)"
                     v-model="form[field.name]"
                     v-bind="propsFor(field)"
+                    :error="errors[field.name]"
                   />
-                </template>
+                </div>
               </template>
-            </div>
-          </AccardionSingle>
-        </div>
+            </template>
+          </div>
+        </AccardionSingle>
       </template>
     </template>
 
     <div class="form_bottom">
-      <btn name="Далее" @click="onSubmit()" />
+      <btn name="Далее" @click="onSubmit" />
     </div>
   </ContentView>
 </template>
@@ -230,13 +204,18 @@ const onSubmit = () => {
   margin-bottom: 1.5rem;
 }
 .section-desc {
-  margin: 2rem 0 3rem 0;
+  margin: 0.5rem 0 1.5rem 0;
   color: $gray;
   font-size: 1.8rem;
 }
 .fields-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+.country_row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
@@ -249,5 +228,14 @@ const onSubmit = () => {
 
 .form_bottom {
   @include flex-end;
+}
+
+.field-item {
+  label {
+    font-size: 1.6rem;
+    color: #757575;
+    margin-bottom: 1rem;
+    display: flex;
+  }
 }
 </style>

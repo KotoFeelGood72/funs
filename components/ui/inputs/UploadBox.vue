@@ -137,7 +137,7 @@ function getIcon(file: File): string {
 <style scoped lang="scss">
 .upload-box {
   border: 0.1rem dashed #ccc;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   padding: 2.6rem;
   text-align: center;
   width: 100%;
@@ -146,30 +146,31 @@ function getIcon(file: File): string {
 }
 
 .upload-box.drag-over {
-  border-color: #0066d6;
+  border-color: $blue;
   background-color: #f0f8ff;
 }
 
 .upload-icon {
-  margin-bottom: 12px;
+  margin-bottom: 1.2rem;
   color: #666;
 }
 
 .upload-text {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: $dark;
+  margin-bottom: 1.6rem;
   white-space: pre-line;
 }
 
 .upload-btn {
-  background-color: #0066d6;
+  background-color: $blue;
   color: #fff;
-  font-size: 18px;
-  width: 32px;
-  height: 32px;
+  font-size: 1.8rem;
+  line-height: 0;
+  width: 3.2rem;
+  height: 3.2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.5rem;
   cursor: pointer;
 }
 
@@ -218,22 +219,22 @@ function getIcon(file: File): string {
 }
 
 .progress-bar {
-  height: 6px;
+  height: 0.6rem;
   background-color: #e0e0e0;
-  border-radius: 3px;
+  border-radius: 0.3rem;
   overflow: hidden;
   margin-top: 0.5rem;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #2196f3;
+  background-color: $blue;
   transition: width 0.3s ease;
 }
 
 .progress-label {
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 1.2rem;
+  margin-top: 0.4rem;
   color: #555;
 }
 </style>

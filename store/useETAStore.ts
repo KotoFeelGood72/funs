@@ -6,6 +6,7 @@ export const useETAStore = defineStore("eta", {
   state: () => ({
     currentStep: 1 as number,
     questions: null as any,
+    application: null as any,
     eta: {
       country: "" as any,
       date_forward: "" as any,
@@ -18,13 +19,6 @@ export const useETAStore = defineStore("eta", {
     formShema: null as any,
     loading: false as boolean,
   }),
-  getters: {
-    // currentVisa(state): any {
-    //   return (
-    //     state.visa?.find((visa: any) => visa.id === state.visaId) || null
-    //   );
-    // },
-  },
   actions: {
     async getVisaTypes(route: any, router: any, id: any) {
       this.loading = true;
@@ -50,12 +44,93 @@ export const useETAStore = defineStore("eta", {
       try {
         const response = await api.post(
           `/submit-eta-form/${request_id}/${form_id}`,
-          formData // 👈 отправка всех полей
+          formData
         );
-        // Переход на следующий шаг
-        this.nextStep(router, router.currentRoute.value, form_id);
-      } catch (error) {
+
+        // Дожидаемся, пока application_id появится
+        const applicationId = response?.data?.application_id;
+
+        if (!applicationId) {
+          console.warn("application_id не получен:", response.data);
+          return;
+        }
+
+        const currentRoute = { ...router.currentRoute.value };
+        console.log("→ applicationId OK:", applicationId);
+
+        this.nextStep(router, currentRoute, form_id, applicationId);
+      } catch (error: any) {
+        // Если сервер вернул 404 — отправляем пользователя на главную
+        if (error.response?.status === 404) {
+          console.warn("Форма не найдена, редирект на главную");
+          // router.push("/");
+          return;
+        }
+
+        // Иначе — просто логируем и пробрасываем (или можно показать тост)
         console.error("Ошибка при отправке формы:", error);
+        throw error;
+      }
+    },
+
+    async submitQuestions(applicationId: number, payload: Record<string, any>) {
+      this.loading = true;
+      try {
+        const formData = new URLSearchParams();
+
+        for (const key in payload) {
+          if (payload[key] !== null && payload[key] !== undefined) {
+            formData.append(key, payload[key].toString());
+          }
+        }
+
+        const response = await api.post(
+          `/security-questions/${applicationId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        // API возвращает URL следующего шага (upload_documents)
+        return response.data;
+      } catch (error) {
+        console.error("Ошибка при отправке вопросов:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async uploadFileVisa(
+      applicationId: number,
+      photoFile: File,
+      passportScanFile: File
+    ) {
+      this.loading = true;
+      try {
+        const formData = new FormData();
+        formData.append("photo", photoFile);
+        formData.append("passport_scan", passportScanFile);
+
+        const response = await api.post(
+          `/upload-documents/${applicationId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        // Возвращает URL следующего шага (например, confirm/submit)
+        return response.data;
+      } catch (error) {
+        console.error("Ошибка загрузки документов:", error);
+        throw error;
+      } finally {
+        this.loading = false;
       }
     },
     async getVisaById(id: any) {
@@ -75,6 +150,18 @@ export const useETAStore = defineStore("eta", {
       try {
         const response = await api.get("/security-questions");
         this.questions = response.data[0];
+      } catch (error) {
+        console.error("Error fetching visa by ID:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getApplication(application_id: any) {
+      this.loading = true;
+      try {
+        const response = await api.get(`/review-application/${application_id}`);
+        this.application = response.data;
       } catch (error) {
         console.error("Error fetching visa by ID:", error);
         throw error;
@@ -128,20 +215,16 @@ export const useETAStore = defineStore("eta", {
         this.loading = false;
       }
     },
-    nextStep(router: any, route: any, visaId?: string) {
-      // увеличили шаг
+    nextStep(router: any, route: any, visaId?: string, applicationId?: string) {
       this.currentStep++;
 
       router.push({
-        // сохраняем текущий path/имя, чтобы не потерять маршрут
-        path: route.path, // или: name: route.name
+        path: route.path,
         query: {
-          // все что было в query
           ...route.query,
-          // новый шаг
           step: String(this.currentStep),
-          // и id визы
           visa_id: visaId || route.query.visa_id,
+          application_id: applicationId || route.query.application_id,
         },
       });
     },

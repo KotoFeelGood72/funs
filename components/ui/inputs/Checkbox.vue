@@ -10,7 +10,7 @@
     />
     <label :for="id">
       {{ label }}
-      <div class="ic-check"><Icon name="f:check" /></div>
+      <div class="ic-check"><Icon name="material-symbols-light:check" /></div>
     </label>
   </div>
 </template>
@@ -111,6 +111,7 @@ label {
     height: 1.5rem;
     opacity: 0;
     transition: all 0.2s ease-in-out;
+    color: $white;
   }
 }
 </style>

@@ -77,16 +77,10 @@
                 v-model="visaPurposeId"
               />
               <label :for="'purpose-' + purpose.id">
-                <div class="purpose_icon">
-                  <Icon
-                    :size="22"
-                    :name="
-                      visaPurposeId === purpose.id
-                        ? 'ic:round-radio-button-checked'
-                        : 'ic:round-radio-button-unchecked'
-                    "
-                  />
-                </div>
+                <div
+                  class="purpose_icon"
+                  :class="{ active: visaPurposeId === purpose.id }"
+                ></div>
                 <p>{{ purpose.name }}</p>
               </label>
             </li>
@@ -138,7 +132,7 @@
 <script setup lang="ts">
 import Select from "~/components/ui/inputs/Select.vue";
 import ContentView from "~/components/shared/ContentView.vue";
-import infoText from "~/components/ui/info-text.vue";
+import InfoText from "~/components/ui/InfoText.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import visa_short_form from "~/components/forms/visa_short_form.vue";
 import VisaFilterForm from "@/components/ui/filters/VisaFilterForm.vue";
@@ -311,12 +305,38 @@ const submitVisa = async () => {
     font-size: 1.6rem;
     gap: 1.6rem;
     width: 100%;
+    user-select: none;
   }
 }
 
 .purpose_icon {
   @include flex-center;
   color: $light;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0.2rem solid $light;
+  border-radius: 100%;
+  position: relative;
+  &:before {
+    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.4rem;
+    height: 1.4rem;
+    background-color: $blue;
+    content: "";
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+  }
+  &.active {
+    &:before {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
 }
 
 .notice {

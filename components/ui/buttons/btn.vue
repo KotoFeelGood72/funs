@@ -9,7 +9,7 @@
       <Icon :name="'f:' + icon" :size="15" />
     </div>
     <div class="loading" v-if="loading">
-      <Icon name="svg-spinners:eclipse" />
+      <Icon name="svg-spinners:180-ring" />
     </div>
   </div>
 </template>

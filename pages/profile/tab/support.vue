@@ -8,7 +8,11 @@
             {{ item.question }}
             <span class="faq-icon" :class="{ open: activeIndex === index }"
               ><Icon
-                :name="activeIndex !== index ? 'f:acc-plus' : 'f:acc-minus'"
+                :name="
+                  activeIndex !== index
+                    ? 'mdi-light:chevron-down'
+                    : 'mdi-light:chevron-up'
+                "
                 :size="40"
             /></span>
           </div>
@@ -20,8 +24,8 @@
 
       <div class="faq-support">
         <p>
-          Задайте вопрос в поддержку.<br />Ответ придёт на электронную почту в
-          течение 24 часов
+          Задайте вопрос в поддержку.<br />Ответ придёт на электронную почту в течение 24
+          часов
         </p>
         <Textareas placeholder="Введите ваше обращение" label="Обращение" />
       </div>
@@ -125,6 +129,7 @@ const toggleAnswer = (index: number) => {
   transform: translateY(-50%);
   right: 1.6rem;
   @include flex-center;
+  color: $blue;
 }
 
 .faq-support {

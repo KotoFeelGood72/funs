@@ -32,8 +32,8 @@
 
           <Select
             :options="[
-              { name: 'Мужской', value: 'M' },
-              { name: 'Женский', value: 'W' },
+              { label: 'Мужской', value: 'M' },
+              { label: 'Женский', value: 'W' },
             ]"
             v-model="currentOrder.adults[activeTab].gender"
             label="Пол"
@@ -45,12 +45,6 @@
             type="text"
             mask="##-## ###-###"
           />
-          <!-- <Inputs
-            label="Гражданство"
-            v-model="currentOrder.adults[activeTab].nationality"
-            :id="'nationality' + activeTab"
-            mode="english"
-          /> -->
           <SearchSelect
             label="Гражданство"
             v-model="currentOrder.adults[activeTab].nationality"
@@ -64,23 +58,15 @@
           />
         </div>
         <div class="note">
-          Бронирование будет направлено на ваш email с доступом в вашем личном
-          кабинете --> Направим лист с маршрутом на ваш email. Также он доступен
-          в Личном кабинете.
+          Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
+          --> Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
             <span>Общая стоимость</span>
-            <p class="price">
-              {{ currentOrder?.price }} <span class="walet">₽</span>
-            </p>
+            <p class="price">{{ currentOrder?.price }} <span class="walet">₽</span></p>
           </div>
-          <btn
-            name="Далее"
-            theme="primary"
-            size="normal"
-            @click="bookingUiTikcet()"
-          />
+          <btn name="Далее" theme="primary" size="normal" @click="bookingUiTikcet()" />
         </div>
       </div>
     </div>
@@ -100,8 +86,7 @@ import SearchSelect from "~/components/ui/inputs/SearchSelect.vue";
 
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 
-const { getTickerForRequestToId, getTickerForRequest, bookingTicket } =
-  useTicketStore();
+const { getTickerForRequestToId, getTickerForRequest, bookingTicket } = useTicketStore();
 const { currentOrder, tickets } = useTicketStoreRefs();
 const route = useRoute();
 const router = useRouter();
@@ -114,10 +99,7 @@ const setActiveTab = (index: number) => {
 };
 onMounted(() => {
   getTickerForRequest(route.query.ticketsId);
-  currentTicket.value = getTickerForRequestToId(
-    route.query.ticketsId,
-    route.params.id
-  );
+  currentTicket.value = getTickerForRequestToId(route.query.ticketsId, route.params.id);
 });
 
 const bookingUiTikcet = async () => {

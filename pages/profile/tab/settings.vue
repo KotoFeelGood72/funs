@@ -5,24 +5,21 @@
       <div class="settings-card">
         <h3 class="settings-card-title">Уведомления</h3>
 
-        <div
-          v-for="(value, key) in localSettings"
-          :key="key"
-          class="settings-item"
-        >
+        <div v-for="(value, key) in localSettings" :key="key" class="settings-item">
           <span class="settings-item-link">
             {{ labels[key] }}
           </span>
           <label class="switch">
-            <!-- Вместо :checked="value" + @change -- используем v-model -->
             <input
               type="checkbox"
-              v-model="localSettings[key]"
-              @change="updateSettings(key)"
+              :checked="value"
+              @change="toggleSetting(key)"
               :disabled="loadingKeys.includes(key)"
             />
             <span class="slider">
-              <span v-if="loadingKeys.includes(key)" class="loader"></span>
+              <div class="loader__w" v-if="loadingKeys.includes(key)">
+                <span class="loader"></span>
+              </div>
             </span>
           </label>
         </div>
@@ -38,20 +35,18 @@ import { useAuth } from "~/composables/useAuth";
 const { user, updateProfile } = useAuth();
 
 /**
- * В localSettings указываем только те поля, которые хотим показывать
+ * Инициализируем дефолтно «пустыми» или false,
+ * чтобы при user.value === null не было ошибок чтения.
  */
 const localSettings = ref({
-  remind_booking_completion: user.value.remind_booking_completion,
-  remind_booking_end_day: user.value.remind_booking_end_day,
-  offer_extend_booking: user.value.offer_extend_booking,
-  receive_email_notifications: user.value.receive_email_notifications,
-  receive_sms_notifications: user.value.receive_sms_notifications,
+  remind_booking_completion: false,
+  remind_booking_end_day: false,
+  offer_extend_booking: false,
+  receive_email_notifications: false,
+  receive_sms_notifications: false,
 });
 
-/**
- * Подписи для этих полей
- */
-const labels = {
+const labels: Record<string, string> = {
   remind_booking_completion: "Напоминать о завершении бронирования",
   remind_booking_end_day: "Напоминать в день окончания брони",
   offer_extend_booking: "Получать предложения о продлении брони за 2 дня",
@@ -61,30 +56,14 @@ const labels = {
 
 const loadingKeys = ref<string[]>([]);
 
-const updateSettings = async (key: keyof typeof localSettings.value) => {
-  // Посмотрим, что сейчас в localSettings, key и какой newValue
-  console.log("updateSettings", key, localSettings.value[key]);
-
-  try {
-    loadingKeys.value.push(key);
-    const newValue = localSettings.value[key];
-
-    // ...
-    setTimeout(async () => {
-      console.log("   -> отправляем на сервер", { [key]: newValue });
-      await updateProfile({ [key]: newValue });
-      user.value[key] = newValue;
-
-      loadingKeys.value = loadingKeys.value.filter((item) => item !== key);
-    }, 500);
-  } catch (error) {
-    // ...
-  }
-};
-
+/**
+ * Когда профиль загрузился (user.value получил данные),
+ * пересохраняем в localSettings реальные значения.
+ */
 watch(
   user,
   (newUser) => {
+    if (!newUser) return; // ещё не загрузился — пропускаем
     localSettings.value = {
       remind_booking_completion: newUser.remind_booking_completion,
       remind_booking_end_day: newUser.remind_booking_end_day,
@@ -95,6 +74,28 @@ watch(
   },
   { immediate: true, deep: true }
 );
+
+/**
+ * Переключаем значение. UI сразу реагирует,
+ * при ошибке вернём прежнее состояние.
+ */
+async function toggleSetting(key: keyof typeof localSettings.value) {
+  const oldValue = localSettings.value[key];
+  const newValue = !oldValue;
+
+  localSettings.value[key] = newValue;
+  loadingKeys.value.push(key);
+
+  try {
+    await updateProfile({ [key]: newValue });
+    user.value[key] = newValue; // синхронизуем глобальный user
+  } catch (e) {
+    // в случае ошибки откатываемся
+    localSettings.value[key] = oldValue;
+  } finally {
+    loadingKeys.value = loadingKeys.value.filter((k) => k !== key);
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -125,6 +126,16 @@ watch(
     &:not(:last-child) {
       margin-bottom: 1.2rem;
     }
+  }
+
+  .loader__w {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    @include flex-center;
   }
   .switch {
     position: relative;
@@ -170,13 +181,13 @@ watch(
   }
   .loader {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-top: 2px solid #007bff;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 0.2rem solid rgba(0, 0, 0, 0.2);
+    border-top: 0.2rem solid $blue;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }

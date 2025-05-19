@@ -29,13 +29,6 @@
             v-model="ticket.adults[activeTab].birth_date"
             :id="'birthDate' + activeTab"
           />
-
-          <!-- <InputsMask
-            label="Номер загранпаспорта"
-            v-model="ticket.adults[activeTab].number_seria_passport"
-            mask="##-## ###-###"
-            :id="'number_serias_passport' + activeTab"
-          /> -->
         </div>
         <div class="note">
           Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
@@ -67,7 +60,6 @@ import btn from "~/components/ui/buttons/btn.vue";
 import Inputs from "~/components/ui/inputs/Inputs.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
-import InputsMask from "~/components/ui/inputs/InputsMask.vue";
 
 // const isLoading = ref<boolean>(true);
 const route = useRoute();

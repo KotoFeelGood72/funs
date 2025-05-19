@@ -1,21 +1,19 @@
 <template>
-  <div class="phone-input">
-    <label for="phone" v-if="label">{{ label }}</label>
+  <div class="phone-input" :class="{ error: error }">
+    <label v-if="label">{{ label }}</label>
     <div class="phone-input-wrapper">
       <div class="country-select">
         <select v-model="selectedCountry" @change="onCountryChange">
-          <option v-for="country in countries" :key="country.code" :value="country">
-            {{ country.flag }} {{ country.code }}
+          <option v-for="country in countries" :key="country.flag" :value="country">
+            {{ country.flag }}
           </option>
         </select>
       </div>
-
       <input
         v-mask="currentMask"
         v-model="localPhone"
         :placeholder="currentMask"
         type="text"
-        id="phone"
         class="masked-input"
       />
     </div>
@@ -23,106 +21,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { mask as vMask } from "vue-the-mask";
 
 interface Country {
-  name: string;
-  code: string;
-  flag: string;
-  mask: string;
+  flag: string; // ISO-код, например "RU"
+  mask: string; // полный шаблон, например "+7 (###) ###-##-##"
 }
 
-// 1) объявляем props для v-model
-const props = defineProps<{
-  modelValue: string;
-  label?: string;
-}>();
+// Props & emit
+const props = defineProps<{ modelValue: string; label?: string; error: any }>();
+const emit = defineEmits<{ (e: "update:modelValue", v: string): void }>();
 
-// 2) объявляем emit для update:modelValue
-const emit = defineEmits(["update:modelValue"]);
-
-// 3) список стран (оставили ваш полный список)
+// Список стран с полным шаблоном в mask
 const countries = ref<Country[]>([
-  // СНГ + Америка + Азия + Европа + другие
-  { name: "Russia", code: "+7", flag: "🇷🇺", mask: " (###) ###-##-##" },
-  { name: "United States", code: "+1", flag: "🇺🇸", mask: " (###) ###-####" },
-  { name: "Canada", code: "+1", flag: "🇨🇦", mask: " (###) ###-####" },
-  { name: "Ukraine", code: "+380", flag: "🇺🇦", mask: " (##) ###-##-##" },
-  { name: "Kazakhstan", code: "+7", flag: "🇰🇿", mask: " (###) ###-##-##" },
-
-  // недавние
-  { name: "India", code: "+91", flag: "🇮🇳", mask: " #####-#####" },
-  { name: "Saudi Arabia", code: "+966", flag: "🇸🇦", mask: " ## #######" },
-  { name: "UAE (Dubai)", code: "+971", flag: "🇦🇪", mask: " ## ### ####" },
-  { name: "Turkey", code: "+90", flag: "🇹🇷", mask: " (###) ###-##-##" },
-
-  // Европа
-  { name: "Germany", code: "+49", flag: "🇩🇪", mask: " #### #######" },
-  { name: "France", code: "+33", flag: "🇫🇷", mask: " # ## ## ## ##" },
-  { name: "Spain", code: "+34", flag: "🇪🇸", mask: " ### ### ###" },
-  { name: "Italy", code: "+39", flag: "🇮🇹", mask: " ### ### ###" },
-  { name: "Poland", code: "+48", flag: "🇵🇱", mask: " ### ### ###" },
-  { name: "Netherlands", code: "+31", flag: "🇳🇱", mask: " ## ### ####" },
-  { name: "Sweden", code: "+46", flag: "🇸🇪", mask: " ##-### ### ###" },
-  { name: "United Kingdom", code: "+44", flag: "🇬🇧", mask: " #### ### ####" },
-  { name: "Portugal", code: "+351", flag: "🇵🇹", mask: " ### ### ###" },
-  { name: "Greece", code: "+30", flag: "🇬🇷", mask: " ### ### ###" },
-  { name: "Australia", code: "+61", flag: "🇦🇺", mask: " # #### ####" },
-  { name: "Japan", code: "+81", flag: "🇯🇵", mask: " ##-####-####" },
-  { name: "South Korea", code: "+82", flag: "🇰🇷", mask: " ##-####-####" },
-  { name: "China", code: "+86", flag: "🇨🇳", mask: " ## #### ####" },
-  { name: "Brazil", code: "+55", flag: "🇧🇷", mask: " (##) ####-####" },
-  { name: "Mexico", code: "+52", flag: "🇲🇽", mask: " ## #### ####" },
-  { name: "South Africa", code: "+27", flag: "🇿🇦", mask: " ## ### ####" },
-  { name: "Egypt", code: "+20", flag: "🇪🇬", mask: " ## ### ####" },
-  { name: "Israel", code: "+972", flag: "🇮🇱", mask: " ##-###-####" },
+  { flag: "RU", mask: "+7 (###) ###-##-##" },
+  { flag: "IN", mask: "+91 #####-#####" },
+  { flag: "SA", mask: "+966 ## #######" },
+  { flag: "AE", mask: "+971 ## ### ####" },
+  { flag: "TR", mask: "+90 (###) ###-##-##" },
+  { flag: "DE", mask: "+49 #### #######" },
+  { flag: "PL", mask: "+48 ### ### ###" },
+  { flag: "ZA", mask: "+27 ## ### ####" },
+  { flag: "EG", mask: "+20 ## ### ####" },
+  { flag: "IL", mask: "+972 ##-###-####" },
 ]);
 
+// Текущая выбранная страна
 const selectedCountry = ref<Country>(countries.value[0]);
 
-// const localPhone = computed<string>({
-//   get: () => props.modelValue,
-//   set: (val: string) => {
-//     emit("update:modelValue", val);
-//   },
-// });
-
-const localPhone = computed<string>({
-  get: () => {
-    const full = props.modelValue;
-    const code = selectedCountry.value.code;
-    if (full?.startsWith(code)) {
-      return full.replace(code, "").trim();
-    }
-    return full;
+// По вводу полного номера автоматически подбираем страну по префиксу
+watch(
+  () => props.modelValue,
+  (full) => {
+    if (!full) return;
+    // регуляркой берём префикс +числа
+    const prefixMatch = full.match(/^\+\d+/);
+    if (!prefixMatch) return;
+    const prefix = prefixMatch[0];
+    const found = countries.value.find((c) => c.mask.startsWith(prefix));
+    if (found) selectedCountry.value = found;
   },
+  { immediate: true }
+);
+
+// Маска для v-mask
+const currentMask = computed(() => selectedCountry.value.mask);
+
+// Локальная модель, которая просто читает/пишет полную строку
+const localPhone = computed<string>({
+  get: () => props.modelValue || "",
   set: (val: string) => {
-    const code = selectedCountry.value.code;
-    const formatted = `${code}${val}`.replace(/\s+/g, ""); // Убираем пробелы
-    emit("update:modelValue", formatted);
+    emit("update:modelValue", val);
   },
 });
 
-const currentMask = computed<string>(() => selectedCountry.value.mask);
-
+// При смене страны в селекте — сбрасываем номер
 function onCountryChange() {
   emit("update:modelValue", "");
 }
 </script>
 
 <style scoped lang="scss">
-.phone-input {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .phone-input-wrapper {
   position: relative;
   @include flex-start;
-  border: 0.1rem solid $light-blue;
+  border: 0.1rem solid #d8d7d7;
   border-radius: 0.5rem;
+  gap: 0.5rem;
 }
 
 .country-select select {
@@ -143,5 +109,28 @@ function onCountryChange() {
 .masked-input:focus {
   border-color: $blue;
   outline: none;
+}
+
+label {
+  font-size: 1.6rem;
+  color: #757575;
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.phone-input {
+  &.error {
+    .label {
+      color: red;
+    }
+    input {
+      &::placeholder {
+        color: red;
+      }
+    }
+    .phone-input-wrapper {
+      border-color: red;
+    }
+  }
 }
 </style>

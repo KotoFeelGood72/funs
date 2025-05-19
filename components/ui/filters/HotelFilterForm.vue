@@ -1,14 +1,20 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <SearchSelect label="Город" v-model="ticket.city" />
+      <SearchSelect
+        label="Город"
+        v-model="ticket.city"
+        :error="vuelidate.data.city.$error"
+      />
     </div>
     <div class="filter-group date">
       <DoubleDate
         placeStart="Дата заезда"
         placeEnd="Дата выезда"
-        v-model:startDate="ticket.check_in_date"
-        v-model:endDate="ticket.check_out_date"
+        v-model:start="ticket.check_in_date"
+        v-model:end="ticket.check_out_date"
+        :errorStart="vuelidate.data.check_in_date.$error"
+        :errorEnd="vuelidate.data.check_out_date.$error"
       />
     </div>
     <div class="filter-group">
@@ -34,21 +40,29 @@ import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 import { watch, ref } from "vue";
 import SearchSelect from "../inputs/SearchSelect.vue";
 import btn from "../buttons/btn.vue";
-// import Calendar from "../inputs/Calendar.vue";
 import DoubleDate from "@/components/dates/DoubleDate.vue";
 import SelectPeople from "../inputs/SelectPeople.vue";
-import { useToast } from "vue-toastification";
 import { useCheckAuth } from "@/composables/useCheckAuth";
+import { useValidation } from "~/composables/useValidation";
 
 const { bookingHotel, bookingHotelAddInfo } = useHotelStore();
 const { ticket, load } = useHotelStoreRefs();
+const { v$, required, requiredName, minValue, showValidationErrors } = useValidation();
 const router = useRouter();
 const route = useRoute();
 const requestId = ref<any>(null);
 
-const toast = useToast();
-
 const { checkAuthThen } = useCheckAuth();
+
+const rules = computed(() => ({
+  data: {
+    city: { requiredName },
+    check_in_date: { required },
+    check_out_date: { required },
+  },
+}));
+
+const vuelidate = v$(rules, { data: ticket });
 
 const onBooking = () => {
   checkAuthThen(() => {
@@ -57,23 +71,9 @@ const onBooking = () => {
 };
 
 const validateAndBook = async () => {
-  let errors = [];
-
-  if (!ticket.value.city || !ticket.value.city.name) {
-    errors.push("Выберите город");
-  }
-  if (!ticket.value.check_in_date) {
-    errors.push("Выберите дату заезда");
-  }
-  if (!ticket.value.check_out_date) {
-    errors.push("Выберите дату выезда");
-  }
-  if (!ticket.value.adults_count || ticket.value.adults_count < 1) {
-    errors.push("Выберите количество взрослых");
-  }
-
-  if (errors.length > 0) {
-    toast.error(errors.join("\n"));
+  vuelidate.value.$touch();
+  if (vuelidate.value.$invalid) {
+    showValidationErrors(vuelidate.value);
     return;
   }
 

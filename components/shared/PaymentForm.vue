@@ -10,12 +10,7 @@
         label="Email"
         v-model="currentOrder.email"
       />
-      <InputsMask
-        v-model="currentOrder.phone_number"
-        label="Номер телефона"
-        type="text"
-        mask="# (###) ###-##-##"
-      />
+      <CustomSelectPhone v-model="currentOrder.phone_number" label="Номер телефона" />
     </div>
   </div>
 </template>
@@ -23,7 +18,7 @@
 <script setup lang="ts">
 import Inputs from "../ui/inputs/Inputs.vue";
 import { useTicketStoreRefs } from "~/store/useTicketStore";
-import InputsMask from "../ui/inputs/InputsMask.vue";
+import CustomSelectPhone from "../ui/inputs/CustomSelectPhone.vue";
 
 const { currentOrder } = useTicketStoreRefs();
 </script>
