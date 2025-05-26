@@ -1,9 +1,6 @@
 <template>
-  <ContentView
-    title="Проверьте правильность введённых данных"
-    :is-loading="false"
-  >
-    <div class="hotel_passenger">
+  <ContentView title="Проверьте правильность введённых данных" :is-loading="false">
+    <div class="hotel_passenger" v-if="application">
       <div class="hotel_passenger__head">
         <div class="hotel_passenger__title">Ваши данные</div>
         <div class="hotel_passenger__row">
@@ -19,7 +16,6 @@
       </div>
       <div class="hotel_passenger__list">
         <div class="hotel_passenger__item">
-          <!-- <div class="hotel_passenger__title">Гость {{ i + 1 }}</div> -->
           <ul>
             <li>
               <p>Дата рождения:</p>
@@ -54,14 +50,13 @@
         name="agreement"
       />
       <p>
-        Бронирование формируется в срок до 3-х часов. Лист бронирования
-        официальной платформы направим на указанный электронный адрес не позднее
-        19 ч МСК
+        Бронирование формируется в срок до 3-х часов. Лист бронирования официальной
+        платформы направим на указанный электронный адрес не позднее 19 ч МСК
       </p>
-      <div class="row">
+      <div class="row" v-if="application">
         <div class="price">
           <span>Общая стоимость</span>
-          <p>{{ price?.price }}</p>
+          <p>{{ application.price }} {{ application.currency }}</p>
         </div>
         <btn name="Оплатить" theme="primary" @click="openModal('payment')" />
       </div>
