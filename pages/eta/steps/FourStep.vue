@@ -1,38 +1,45 @@
 <template>
-  <ContentView title="Проверьте правильность введённых данных" :is-loading="false">
-    <!-- <div class="hotel_passenger">
+  <ContentView
+    title="Проверьте правильность введённых данных"
+    :is-loading="false"
+  >
+    <div class="hotel_passenger">
       <div class="hotel_passenger__head">
         <div class="hotel_passenger__title">Ваши данные</div>
         <div class="hotel_passenger__row">
           <div class="hotel_passenger__email">
             E-Mail:
-            <p>{{ ticket.email_address }}</p>
+            <p>{{ application?.email }}</p>
           </div>
           <div class="hotel_passenger__phone">
             Телефон:
-            <p>{{ ticket.phone_number }}</p>
+            <p>{{ application?.phone_number }}</p>
           </div>
         </div>
       </div>
-      <div class="hotel_passenger__list" v-if="ticket && ticket.adults">
-        <div class="hotel_passenger__item" v-for="(item, i) in ticket.adults">
-          <div class="hotel_passenger__title">Гость {{ i + 1 }}</div>
+      <div class="hotel_passenger__list">
+        <div class="hotel_passenger__item">
+          <!-- <div class="hotel_passenger__title">Гость {{ i + 1 }}</div> -->
           <ul>
             <li>
               <p>Дата рождения:</p>
-              <span>{{ item.birth_date }}</span>
+              <span>{{ application.birth_date }}</span>
             </li>
             <li>
               <p>Имя:</p>
-              <span>{{ item.first_name }}</span>
+              <span>{{ application.first_name }}</span>
             </li>
             <li>
               <p>Фамилия:</p>
-              <span>{{ item.last_name }}</span>
+              <span>{{ application.last_name }}</span>
             </li>
             <li>
               <p>Номер паспорта:</p>
-              <span>{{ item.number_seria_passport }}</span>
+              <span>{{ application.seria_number_pass }}</span>
+            </li>
+            <li>
+              <p>Гражданство:</p>
+              <span>{{ application.citizenship }}</span>
             </li>
           </ul>
         </div>
@@ -47,8 +54,9 @@
         name="agreement"
       />
       <p>
-        Бронирование формируется в срок до 3-х часов. Лист бронирования официальной
-        платформы направим на указанный электронный адрес не позднее 19 ч МСК
+        Бронирование формируется в срок до 3-х часов. Лист бронирования
+        официальной платформы направим на указанный электронный адрес не позднее
+        19 ч МСК
       </p>
       <div class="row">
         <div class="price">
@@ -57,7 +65,7 @@
         </div>
         <btn name="Оплатить" theme="primary" @click="openModal('payment')" />
       </div>
-    </div> -->
+    </div>
   </ContentView>
 </template>
 
@@ -68,10 +76,11 @@ import Checkbox from "~/components/ui/inputs/Checkbox.vue";
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
 import { useModalStore } from "~/store/useModalStore";
 import { useETAStore, useETAStoreRefs } from "~/store/useETAStore";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 const { getApplication } = useETAStore();
-const { visa } = useETAStoreRefs();
+const { application } = useETAStoreRefs();
 const { openModal } = useModalStore();
 
 const price = ref<any>(null);
@@ -80,6 +89,11 @@ const agreement = ref<boolean>(false);
 onMounted(async () => {
   getApplication(route.query.application_id);
 });
+
+watch(
+  () => route.query.application_id,
+  () => getApplication(route.query.application_id)
+);
 </script>
 
 <style scoped lang="scss">
