@@ -47,7 +47,8 @@ import { useValidation } from "~/composables/useValidation";
 
 const { bookingHotel, bookingHotelAddInfo } = useHotelStore();
 const { ticket, load } = useHotelStoreRefs();
-const { v$, required, requiredName, minValue, showValidationErrors } = useValidation();
+const { v$, required, requiredName, requiredDate, showValidationErrors } =
+  useValidation();
 const router = useRouter();
 const route = useRoute();
 const requestId = ref<any>(null);
@@ -57,8 +58,8 @@ const { checkAuthThen } = useCheckAuth();
 const rules = computed(() => ({
   data: {
     city: { requiredName },
-    check_in_date: { required },
-    check_out_date: { required },
+    check_in_date: { requiredDate },
+    check_out_date: { requiredDate },
   },
 }));
 

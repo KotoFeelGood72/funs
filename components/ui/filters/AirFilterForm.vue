@@ -45,24 +45,23 @@ import btn from "../buttons/btn.vue";
 import DoubleDate from "~/components/dates/DoubleDate.vue";
 
 import { useTicketStoreRefs } from "~/store/useTicketStore";
-import { useCheckAuth } from "@/composables/useCheckAuth";
 import { useValidation } from "@/composables/useValidation";
 
 import { computed } from "vue";
 
 const { tickets, isLoading } = useTicketStoreRefs();
 const emit = defineEmits(["getTicket"]);
-const { checkAuthThen } = useCheckAuth();
 
-const { v$, requiredName, minValue, showValidationErrors } = useValidation();
+const { v$, requiredName, minValue, showValidationErrors, requiredDate } =
+  useValidation();
 
 // Правила валидации
 const rules = computed(() => ({
   data: {
     departure: { requiredName },
     arrival: { requiredName },
-    date_forward: { requiredName },
-    date_backward: { requiredName },
+    date_forward: { requiredDate },
+    date_backward: { requiredDate },
     adults: { minValue: minValue(1, "Минимум 1 взрослый") },
   },
 }));
@@ -78,9 +77,7 @@ const onTicket = () => {
     return;
   }
 
-  checkAuthThen(() => {
-    emit("getTicket");
-  });
+  emit("getTicket");
 };
 
 const swapCities = () => {

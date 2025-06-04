@@ -33,6 +33,13 @@ export function useValidation() {
     }
   };
 
+  const requiredDate = helpers.withMessage("Обязательное поле", (value: any) => {
+    if (!value) return false;
+    if (typeof value === "string") return !isNaN(Date.parse(value));
+    if (value instanceof Date) return !isNaN(value.getTime());
+    return false;
+  });
+
   const flattenErrors = (v$: any, prefix = ""): string[] => {
     const errors: string[] = [];
 
@@ -58,6 +65,7 @@ export function useValidation() {
     required: helpers.withMessage("Обязательное поле", required),
     requiredName,
     requiredField,
+    requiredDate,
     email: helpers.withMessage("Некорректный email", email),
     minLength: (len: number, msg = `Минимум ${len} символов`) =>
       helpers.withMessage(msg, minLength(len)),

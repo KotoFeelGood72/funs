@@ -6,14 +6,17 @@ export function useCheckAuth() {
   const { openModal } = useModalStore();
   const { getProfile, user } = useAuth();
 
-  const checkAuthThen = async (callback: () => void) => {
-     await getProfile();
-    if (user.value && user.value.id) {
-      callback();
-    } else {
-      openModal("auth");
-    }
-  };
+// useCheckAuth.ts
+const checkAuthThen = async (callback?: () => void): Promise<boolean> => {
+  await getProfile();
+  if (user.value && user.value.id) {
+    callback?.();
+    return true;
+  } else {
+    openModal("auth");
+    return false;
+  }
+};
 
   return { checkAuthThen };
 }

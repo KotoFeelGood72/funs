@@ -1,7 +1,11 @@
 <template>
   <div class="filters">
     <div class="filter-group">
-      <Select placeholder="Выберите страну" v-model="eta.country" :options="countries" />
+      <Select
+        placeholder="Выберите страну"
+        v-model="eta.country"
+        :options="countries"
+      />
     </div>
     <div class="filter-group">
       <DoubleDate
@@ -41,7 +45,7 @@ import { useValidation } from "~/composables/useValidation";
 
 const { eta, loading } = useETAStoreRefs();
 const { getVisaTypes } = useETAStore();
-const { v$, required, minValue, showValidationErrors } = useValidation();
+const { v$, required, requiredDate, showValidationErrors } = useValidation();
 
 const router = useRouter();
 const route = useRoute();
@@ -63,8 +67,8 @@ const onBooking = () => {
 
 const rules = computed(() => ({
   data: {
-    date_forward: { required },
-    date_backward: { required },
+    date_forward: { requiredDate },
+    date_backward: { requiredDate },
   },
 }));
 

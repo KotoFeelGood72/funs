@@ -15,7 +15,10 @@
           </div>
           <div class="content-col" v-if="finalTickets.length > 0">
             <ul class="air-list">
-              <li v-for="(item, index) in finalTickets" :key="'air-items-' + index">
+              <li
+                v-for="(item, index) in finalTickets"
+                :key="'air-items-' + index"
+              >
                 <AirCard :card="item" />
               </li>
             </ul>
@@ -43,18 +46,13 @@ import InputsSearch from "~/components/ui/inputs/InputsSearch.vue";
 import AirCard from "~/components/ui/card/AirCard.vue";
 import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 import empty from "~/components/ui/empty.vue";
+import { useCheckAuth } from "@/composables/useCheckAuth";
 
 const { getTickets, getTickerForRequest } = useTicketStore();
 const { tickets, isLoading, airlines } = useTicketStoreRefs();
+const { checkAuthThen } = useCheckAuth();
 const route = useRoute();
 const router = useRouter();
-
-// const sort = ref([
-//   { name: "Сначала дешевле", val: "downprice" },
-//   { name: "Сначала дороже", val: "upprice" },
-// ]);
-
-// const selectedSort = ref("downprice");
 
 const filters = ref({
   transfer: [] as number[],
@@ -99,23 +97,14 @@ const finalTickets = computed(() => {
     });
   }
 
-  // switch (selectedSort.value) {
-  //   case "downprice":
-  //     result.sort((a: any, b: any) => a.price - b.price);
-  //     break;
-  //   case "upprice":
-  //     result.sort((a: any, b: any) => b.price - a.price);
-  //     break;
-  //   default:
-  //     break;
-  // }
-
   return result;
 });
 
 const getTicket = async () => {
-  const requestId = await getTickets();
-  await router.push({ name: "air", query: { ticketsId: requestId } });
+  await checkAuthThen(async () => {
+    const requestId = await getTickets();
+    await router.push({ name: "air", query: { ticketsId: requestId } });
+  });
 };
 
 onMounted(() => {
