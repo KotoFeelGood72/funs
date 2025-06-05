@@ -3,7 +3,7 @@
     <NuxtLink v-for="(item, i) in list" :to="item.link">
       <p>{{ item.name }}</p>
       <div class="icon">
-        <Icon name="f:right" :size="14" />
+        <Icon name="mynaui:arrow-right" :size="14" />
       </div>
     </NuxtLink>
   </nav>

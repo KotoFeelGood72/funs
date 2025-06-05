@@ -3,7 +3,7 @@
     <div class="first">
       <NuxtLink to="/">
         <p>Главная</p>
-        <Icon name="f:right" :size="16" />
+        <Icon name="mynaui:arrow-right" :size="16" />
       </NuxtLink>
     </div>
     <ul>

@@ -3,7 +3,7 @@
     <div class="info-start">
       <div class="info_start__col">
         <div class="info-ic">
-          <Icon name="f:start" :size="25" />
+          <Icon name="tabler:arrow-up-right" :size="25" />
         </div>
       </div>
       <div class="info_start__col">
@@ -20,7 +20,7 @@
     <div class="info-end">
       <div class="info_end__col">
         <div class="info-ic">
-          <Icon name="f:end" :size="25" />
+          <Icon name="tabler:arrow-down-right" :size="25" />
         </div>
       </div>
       <div class="info_end__col">

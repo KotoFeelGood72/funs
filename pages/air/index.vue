@@ -5,7 +5,7 @@
       :isLoading="isLoading"
     >
       <div class="top">
-        <AirFilterForm @getTicket="getTicket()" />
+        <AirFilterForm />
       </div>
       <div class="row">
         <FiltersSidebar v-model="filters" :airlines="airlines" v-if="tickets" />
@@ -15,10 +15,7 @@
           </div>
           <div class="content-col" v-if="finalTickets.length > 0">
             <ul class="air-list">
-              <li
-                v-for="(item, index) in finalTickets"
-                :key="'air-items-' + index"
-              >
+              <li v-for="(item, index) in finalTickets" :key="'air-items-' + index">
                 <AirCard :card="item" />
               </li>
             </ul>

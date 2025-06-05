@@ -12,7 +12,7 @@
         <div class="post_link">
           <p>Подробнее</p>
           <div class="ic">
-            <Icon name="f:right" />
+            <Icon name="mynaui:arrow-right" />
           </div>
         </div>
       </div>

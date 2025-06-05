@@ -5,7 +5,7 @@
         <div class="area__head" v-if="title">
           <div class="area-back">
             <Icon
-              name="f:left"
+              name="mynaui:arrow-left"
               v-if="back && !isLoading"
               @click="router.back()"
             />

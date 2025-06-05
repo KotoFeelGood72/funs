@@ -1,6 +1,6 @@
 <template>
   <div class="close" @click="closeAllModals">
-    <Icon name="f:close" :size="22" />
+    <Icon name="material-symbols:close" :size="22" />
   </div>
 </template>
 

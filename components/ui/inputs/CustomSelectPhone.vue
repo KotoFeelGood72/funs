@@ -30,7 +30,7 @@ interface Country {
 }
 
 // Props & emit
-const props = defineProps<{ modelValue: string; label?: string; error: any }>();
+const props = defineProps<{ modelValue: string; label?: string; error?: any }>();
 const emit = defineEmits<{ (e: "update:modelValue", v: string): void }>();
 
 // Список стран с полным шаблоном в mask

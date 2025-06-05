@@ -30,7 +30,7 @@
     <btn
       name="Искать для визы"
       icon="right"
-      @click="onTicket()"
+      @click="getTicket()"
       theme="primary"
       :loading="isLoading"
     />
@@ -44,16 +44,25 @@ import SwapBtn from "../SwapBtn.vue";
 import btn from "../buttons/btn.vue";
 import DoubleDate from "~/components/dates/DoubleDate.vue";
 
-import { useTicketStoreRefs } from "~/store/useTicketStore";
+import { useTicketStore, useTicketStoreRefs } from "~/store/useTicketStore";
 import { useValidation } from "@/composables/useValidation";
-
 import { computed } from "vue";
+import { useAuth } from "@/composables/useAuth";
+import { useToast } from "vue-toastification";
 
 const { tickets, isLoading } = useTicketStoreRefs();
-const emit = defineEmits(["getTicket"]);
-
-const { v$, requiredName, minValue, showValidationErrors, requiredDate } =
-  useValidation();
+const { getTickets } = useTicketStore();
+const router = useRouter();
+const { user } = useAuth();
+const requestId = ref<string | null>(null);
+const toast = useToast();
+const {
+  v$,
+  requiredName,
+  minValue,
+  showValidationErrors,
+  requiredDate,
+} = useValidation();
 
 // Правила валидации
 const rules = computed(() => ({
@@ -68,8 +77,7 @@ const rules = computed(() => ({
 
 const vuelidate = v$(rules, tickets);
 
-// Поиск билетов с проверкой
-const onTicket = () => {
+const getTicket = async () => {
   vuelidate.value.$touch();
 
   if (vuelidate.value.$invalid) {
@@ -77,7 +85,12 @@ const onTicket = () => {
     return;
   }
 
-  emit("getTicket");
+  if (user.value != null) {
+    requestId.value = await getTickets();
+    await router.push({ name: "air", query: { ticketsId: requestId.value } });
+  } else {
+    toast.error("Для поиска билетов, пожалуйста авторизуйтесь");
+  }
 };
 
 const swapCities = () => {

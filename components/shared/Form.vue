@@ -16,7 +16,7 @@
     <Textareas id="form-descriptiion" v-model="formData.text" label="Обращение" />
     <btn
       :name="isLoadingFormAnonim ? 'Отправляется...' : 'Отправить'"
-      icon="right"
+      icon="mynaui:arrow-right"
       @click="handleSubmit"
       style="width: 100%; justify-content: center"
       :loading="isLoadingFormAnonim"

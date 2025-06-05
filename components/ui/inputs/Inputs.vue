@@ -43,7 +43,7 @@ const props = withDefaults(
     icon?: string;
     placeholder?: any;
     mode?: "english" | "default";
-    error: string | null;
+    error?: string | null;
   }>(),
   {
     modelValue: "",

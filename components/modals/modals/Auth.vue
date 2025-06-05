@@ -7,19 +7,27 @@
         <p>Введите адрес почты, чтобы получить доступ к заказам</p>
       </div>
       <div class="auth_body">
-        <Inputs v-model="email" placeholder="E-Mail" id="auth-email" />
+        <Inputs
+          v-model="email"
+          placeholder="E-Mail"
+          id="auth-email"
+          :disabled="isLoading"
+        />
         <Inputs
           v-model="password"
           placeholder="Пароль"
           id="auth-password"
           type="password"
+          :disabled="isLoading"
         />
       </div>
       <div class="auth_bottom">
         <btn
-          name="Авторизоваться"
+          :name="isLoading ? 'Загрузка…' : 'Авторизоваться'"
           style="justify-content: center; width: 100%"
           @click="login"
+          :loading="isLoading"
+          :disabled="isLoading"
         />
       </div>
     </div>
@@ -37,7 +45,7 @@ import { useAuth } from "~/composables/useAuth";
 const store = useModalStore();
 const router = useRouter();
 
-const { email, password, login } = useAuth(store, router);
+const { email, password, login, isLoading } = useAuth(store, router);
 </script>
 
 <style scoped lang="scss">

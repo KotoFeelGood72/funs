@@ -110,6 +110,7 @@ export function useAuth(store?: any, routerParam?: any) {
   // --- Остальные методы логина/профиля/рефреша ---
 
   async function login() {
+    isLoading.value = true;
     try {
       const { data } = await api.post("/auth", {
         email: email.value,
@@ -119,15 +120,26 @@ export function useAuth(store?: any, routerParam?: any) {
       await getProfile();
       toast.success("Авторизация успешна");
       store?.closeAllModals?.();
-      await router.push("/profile");
+      // await router.push("/profile");
     } catch {
       toast.error("Ошибка при входе");
+    } finally {
+      isLoading.value = false;
     }
   }
 
   async function getProfile() {
-    const { data } = await api.get("/profiles");
-    user.value = data;
+    isLoading.value = true;
+    try {
+      const { data } = await api.get("/profiles");
+      user.value = data;
+      return data;
+    } catch (error) {
+      toast.error("Не удалось получить профиль");
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   async function updateProfile(patchData?: Partial<typeof user.value>) {
@@ -149,12 +161,20 @@ export function useAuth(store?: any, routerParam?: any) {
 
   async function refresh(): Promise<string> {
     if (!refreshToken.value) throw new Error("Нет refresh-token");
-    const { data } = await api.post("/refresh_token", {
-      refresh_token: refreshToken.value,
-    });
-    setTokens(data.access_token, data.refresh_token);
-    await getProfile();
-    return data.access_token;
+    isLoading.value = true;
+    try {
+      const { data } = await api.post("/refresh_token", {
+        refresh_token: refreshToken.value,
+      });
+      setTokens(data.access_token, data.refresh_token);
+      await getProfile();
+      return data.access_token;
+    } catch (error) {
+      toast.error("Не удалось обновить токен");
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   function setTokens(access: string, refresh: string) {

@@ -6,7 +6,7 @@
   >
     <p>{{ name }}</p>
     <div class="icon" v-if="icon && !loading">
-      <Icon :name="'f:' + icon" :size="15" />
+      <Icon :name="icon" :size="15" />
     </div>
     <div class="loading" v-if="loading">
       <Icon name="svg-spinners:180-ring" />

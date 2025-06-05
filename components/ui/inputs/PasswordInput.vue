@@ -18,9 +18,7 @@
       @click="togglePasswordVisibility"
     >
       <Icon
-        :name="
-          showPassword ? 'fluent:eye-off-32-regular' : 'fluent:eye-32-regular'
-        "
+        :name="showPassword ? 'fluent:eye-off-32-regular' : 'fluent:eye-32-regular'"
         :size="24"
       />
     </div>
@@ -61,9 +59,7 @@ const localValue = computed({
 const showPassword = ref(false);
 const error = computed(() => {
   if (props.type === "password" && props.confirmationValue !== null) {
-    return props.confirmationValue !== localValue.value
-      ? "Пароли не совпадают"
-      : null;
+    return props.confirmationValue !== localValue.value ? "Пароли не совпадают" : null;
   }
   return null;
 });

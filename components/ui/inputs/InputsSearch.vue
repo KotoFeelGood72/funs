@@ -2,7 +2,7 @@
   <div class="search">
     <input type="search" v-model="localValue" :id="id" placeholder="Поиск" />
     <div class="submit">
-      <Icon name="f:search" />
+      <Icon name="si:search-line" />
     </div>
   </div>
 </template>

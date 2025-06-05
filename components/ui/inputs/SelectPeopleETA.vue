@@ -5,7 +5,7 @@
         <p>{{ passengerText }}</p>
       </div>
       <div class="header_ic">
-        <Icon name="f:user" :size="16" />
+        <Icon name="healthicons:ui-user-profile-outline" :size="16" />
       </div>
     </div>
     <transition name="fade">
@@ -18,11 +18,11 @@
           <p>Взрослые</p>
           <div class="counter-buttons">
             <button @click="decreaseAdults">
-              <Icon name="f:minus" />
+              <Icon name="ic:baseline-minus" />
             </button>
             <span>{{ ticketHotel.adults }}</span>
             <button @click="increaseAdults">
-              <Icon name="f:plus" />
+              <Icon name="ic:baseline-plus" />
             </button>
           </div>
         </div>
@@ -31,11 +31,11 @@
           <p>Дети</p>
           <div class="counter-buttons">
             <button @click="decreaseChildren">
-              <Icon name="f:minus" />
+              <Icon name="ic:baseline-minus" />
             </button>
             <span>{{ ticketHotel.children }}</span>
             <button @click="increaseChildren">
-              <Icon name="f:plus" />
+              <Icon name="ic:baseline-plus" />
             </button>
           </div>
         </div>
@@ -43,11 +43,11 @@
           <p>Кол-во звезд</p>
           <div class="counter-buttons">
             <button @click="decreaseHotelClass">
-              <Icon name="f:minus" />
+              <Icon name="ic:baseline-minus" />
             </button>
             <span>{{ ticketHotel.hotel_class }}</span>
             <button @click="increaseHotelClass">
-              <Icon name="f:plus" />
+              <Icon name="ic:baseline-plus" />
             </button>
           </div>
         </div>
@@ -97,8 +97,7 @@ const calculateDropdownPosition = () => {
   const wrapperRect = wrapper.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
 
-  dropdownPosition.value =
-    wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
+  dropdownPosition.value = wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
 const increaseAdults = () => {

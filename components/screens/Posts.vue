@@ -5,7 +5,7 @@
         <h3>Блог</h3>
         <btn
           name="Смотреть все"
-          icon="right"
+          icon="mynaui:arrow-right"
           theme="transparent"
           @click="router.push('/articles')"
         />

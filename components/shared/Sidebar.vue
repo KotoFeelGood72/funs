@@ -7,7 +7,7 @@
       </div>
       <div class="clear" @click.stop="resetFilters" v-if="hasActiveFilters">
         <p>Сбросить</p>
-        <div class="ic"><Icon name="f:close" /></div>
+        <div class="ic"><Icon name="material-symbols:close" /></div>
       </div>
     </div>
 

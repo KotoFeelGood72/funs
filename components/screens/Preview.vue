@@ -13,7 +13,7 @@
             <div class="row">
               <h3>{{ item.title }}</h3>
               <div class="ic" v-if="activeIndex === i">
-                <Icon name="f:star" :size="25" />
+                <Icon name="material-symbols:star" :size="25" />
               </div>
             </div>
             <Divider :height="1.6" v-if="activeIndex === i" />
@@ -55,20 +55,17 @@ const list = ref<any>([
   {
     title: "Официальная бронь авиабилета 2",
     txt: "Бронь авиабилета можно проверить на сайте авиакомпании после оплаты заказа.",
-    video:
-      "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
+    video: "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
   },
   {
     title: "Официальная бронь авиабилета 3",
     txt: "Бронь авиабилета можно проверить на сайте авиакомпании после оплаты заказа.",
-    video:
-      "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
+    video: "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
   },
   {
     title: "Официальная бронь авиабилета 4",
     txt: "Бронь авиабилета можно проверить на сайте авиакомпании после оплаты заказа.",
-    video:
-      "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
+    video: "https://runway.com/static/ambient-ai-7379852bd1bdaaa4fce022116b7c4a1d.webm",
   },
 ]);
 
@@ -79,9 +76,7 @@ const contentHeights = ref<number[]>([]);
 const calculateHeights = async () => {
   await nextTick(); // Ждем рендеринга DOM
   contentRefs.value = contentRefs.value.slice(0, list.value.length); // Убираем лишние рефы
-  contentHeights.value = contentRefs.value.map((el) =>
-    el ? el.scrollHeight : 0
-  ); // Записываем высоты контента
+  contentHeights.value = contentRefs.value.map((el) => (el ? el.scrollHeight : 0)); // Записываем высоты контента
 };
 
 onMounted(() => {

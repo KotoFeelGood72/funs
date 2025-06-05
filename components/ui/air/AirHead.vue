@@ -7,7 +7,7 @@
       <p>{{ title }}</p>
     </div>
     <div class="share">
-      <Icon name="f:share" :size="25" />
+      <Icon name="material-symbols:share" :size="25" />
     </div>
   </div>
 </template>

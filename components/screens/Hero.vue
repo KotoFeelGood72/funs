@@ -16,7 +16,7 @@
         <div class="hero_bottom">
           <Tabs :tabs="list">
             <template #tab-0>
-              <AirFilterForm @get-ticket="getTicket" />
+              <AirFilterForm />
             </template>
             <template #tab-1>
               <HotelFilterForm />

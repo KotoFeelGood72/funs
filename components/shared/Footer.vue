@@ -13,23 +13,21 @@
             <p>© 1996-2024 Funbooking</p>
           </div>
           <div class="footer_bottom">
-            <p>
-              Информация, размещенная на сайте, не является публичной офертой
-            </p>
+            <p>Информация, размещенная на сайте, не является публичной офертой</p>
             <ul class="socials">
               <li>
                 <a href="#" target="_blank">
-                  <Icon name="f:tg" :size="32" />
+                  <Icon name="fa-brands:telegram-plane" :size="32" />
                 </a>
               </li>
               <li>
                 <a href="#" target="_blank">
-                  <Icon name="f:tel" :size="32" />
+                  <Icon name="mingcute:phone-fill" :size="32" />
                 </a>
               </li>
               <li>
                 <a href="#" target="_blank">
-                  <Icon name="f:vk" :size="32" />
+                  <Icon name="basil:vk-solid" :size="32" />
                 </a>
               </li>
             </ul>
@@ -47,7 +45,7 @@
             >
               <p>{{ item.name }}</p>
               <div class="nav-icon">
-                <Icon name="f:right" />
+                <Icon name="mynaui:arrow-right" />
               </div>
             </NuxtLink>
           </nav>
@@ -62,8 +60,6 @@ const nav = ref<any>([
   { name: "Личный кабинет", link: "/profile" },
   { name: "Забронировать авиабилет", link: "/air" },
   { name: "Забронировать отель", link: "/hotels" },
-  // { name: "Забронировать ETA", link: "/" },
-  // { name: "О сервисе", link: "/" },
   {
     name: "Политика в отношении обработки персональных данных",
     link: "/privacy",
