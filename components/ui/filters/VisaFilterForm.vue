@@ -60,9 +60,9 @@ const onBooking = () => {
     return;
   }
 
-  checkAuthThen(() => {
-    getVisaTypes(route, router, eta.value.country);
-  });
+  getVisaTypes(route, router, eta.value.country);
+  // checkAuthThen(() => {
+  // });
 };
 
 const rules = computed(() => ({

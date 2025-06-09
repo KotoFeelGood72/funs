@@ -56,13 +56,8 @@ const router = useRouter();
 const { user } = useAuth();
 const requestId = ref<string | null>(null);
 const toast = useToast();
-const {
-  v$,
-  requiredName,
-  minValue,
-  showValidationErrors,
-  requiredDate,
-} = useValidation();
+const { v$, requiredName, minValue, showValidationErrors, requiredDate } =
+  useValidation();
 
 // Правила валидации
 const rules = computed(() => ({
@@ -85,11 +80,11 @@ const getTicket = async () => {
     return;
   }
 
+  requestId.value = await getTickets();
+  await router.push({ name: "air", query: { ticketsId: requestId.value } });
   if (user.value != null) {
-    requestId.value = await getTickets();
-    await router.push({ name: "air", query: { ticketsId: requestId.value } });
   } else {
-    toast.error("Для поиска билетов, пожалуйста авторизуйтесь");
+    // toast.error("Для поиска билетов, пожалуйста авторизуйтесь");
   }
 };
 

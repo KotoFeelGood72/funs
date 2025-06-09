@@ -66,9 +66,9 @@ const rules = computed(() => ({
 const vuelidate = v$(rules, { data: ticket });
 
 const onBooking = () => {
-  checkAuthThen(() => {
-    validateAndBook();
-  });
+  validateAndBook();
+  // checkAuthThen(() => {
+  // });
 };
 
 const validateAndBook = async () => {
