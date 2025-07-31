@@ -1,14 +1,14 @@
 <template>
   <ContentView
     :back="false"
-    :title="ticket.city?.name ? 'Отели в ' + ticket.city.name : 'Отели в'"
+    title="Бронь отеля для визы: выберем лучший для ваших условий"
     :isLoading="false"
   >
     <div class="passenger-header">
       <HotelFilterForm />
     </div>
     <div class="passenger-form">
-      <PaymentFormHotel />
+      <PaymentFormHotel title="Данные всех гостей укажем в листе бронирования" />
       <PassengerTabs
         :tabs="ticket.adults"
         :activeTab="activeTab"
@@ -17,7 +17,7 @@
       <div class="tab-content" v-if="ticket.adults && ticket.adults.length > 0">
         <div class="form-grid">
           <Inputs
-            label="ФИО"
+            label="Фамилия и имя как в загранпаспорте"
             v-model="ticket.adults[activeTab].first_name"
             :id="'lastName' + activeTab"
           />
@@ -32,11 +32,11 @@
         </div>
         <div class="note">
           Бронирование будет направлено на ваш email с доступом в вашем личном кабинете
-          --> Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
+          Направим лист с маршрутом на ваш email. Также он доступен в Личном кабинете.
         </div>
         <div class="bottom">
           <div class="total">
-            <span>Общая стоимость</span>
+            <span>Общая стоимость – лист бронирования придет в течение 3-х часов</span>
             <p class="price">{{ price?.price }} ₽</p>
           </div>
           <btn

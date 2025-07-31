@@ -22,9 +22,9 @@ export const useTicketAirStore = defineStore("air-ticket", {
       } as any,
       date_forward: null as any,
       date_backward: null as any,
-      adults: 1 as any,
+      adults: 0 as any,
       children: 0 as any,
-      class_type: "ECONOMY",
+      class_type: "",
       passengers: [] as Array<{
         first_name: string;
         last_name: string;

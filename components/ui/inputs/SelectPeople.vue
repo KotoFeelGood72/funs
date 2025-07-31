@@ -72,7 +72,7 @@ const localStars = computed<any>({
 });
 
 const children = ref<number>(0);
-const localAdults = ref<number>(props.adults);
+const localAdults = ref<number>(0);
 const isDropdownVisible = ref(false);
 const dropdownPosition = ref<"top" | "bottom">("bottom");
 const wrapper = ref<HTMLElement | null>(null);
@@ -84,6 +84,11 @@ const classTypeTranslation: Record<string, string> = {
 
 const passengerText = computed(() => {
   const total = localAdults.value + children.value;
+
+  // Если общее количество равно 0, показываем placeholder
+  if (total === 0) {
+    return "Выберите кол-во пассажиров";
+  }
 
   // Соберём информацию о звёздах
   // Чтобы потом условно добавить `(3★)` или пропустить
@@ -171,16 +176,16 @@ const calculateDropdownPosition = () => {
   dropdownPosition.value = wrapperRect.bottom + 200 > viewportHeight ? "top" : "bottom";
 };
 
-onMounted(() => {
-  const sum = localAdults.value + children.value;
-  if (!props.classType) {
-    createPassengers(localAdults.value, children.value);
-  } else {
-    createPassengersAvia(sum);
-  }
+// onMounted(() => {
+//   const sum = localAdults.value + children.value;
+//   if (!props.classType) {
+//     createPassengers(localAdults.value, children.value);
+//   } else {
+//     createPassengersAvia(sum);
+//   }
 
-  document.addEventListener("click", closeDropdown);
-});
+//   document.addEventListener("click", closeDropdown);
+// });
 onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
 </script>
 

@@ -2,7 +2,7 @@
   <ClientOnly>
     <div class="payment-form">
       <div class="payment-form__head">
-        <p>Ваши данные</p>
+        <p>{{ title }}</p>
       </div>
       <div class="payment-form__action">
         <Inputs
@@ -23,6 +23,10 @@ import { useHotelStoreRefs } from "~/store/useHotelStore";
 import CustomSelectPhone from "../ui/inputs/CustomSelectPhone.vue";
 
 const { ticket } = useHotelStoreRefs();
+
+const props = defineProps<{
+  title: string;
+}>();
 </script>
 
 <style scoped lang="scss">

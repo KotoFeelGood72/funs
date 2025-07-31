@@ -1,7 +1,7 @@
 <template>
   <div class="air">
     <ContentView
-      :title="`${tickets?.data?.departure?.name} - ${tickets?.data?.arrival?.name} `"
+      title="Оформить лист бронирования авиаперелета на 14 дней. Легко продлить."
       :isLoading="isLoading"
     >
       <div class="top">
@@ -20,13 +20,7 @@
               </li>
             </ul>
           </div>
-          <empty
-            title="Рейсов не найдено 😔"
-            txt="К сожалению, мы не нашли подходящих авиабилетов по вашему запросу.
-              Попробуйте изменить параметры поиска: выберите другие даты,
-              аэропорты или пересмотрите фильтры. ✈️💙"
-            v-else
-          />
+          <empty :title="emptyStateTitle" :txt="emptyStateText" v-else />
         </div>
       </div>
     </ContentView>
@@ -57,6 +51,8 @@ const filters = ref({
 });
 
 const searchQuery = ref("");
+const hasSearched = ref(false);
+
 const finalTickets = computed(() => {
   if (!tickets.value?.offers || !Array.isArray(tickets.value.offers)) {
     return [];
@@ -97,19 +93,34 @@ const finalTickets = computed(() => {
   return result;
 });
 
-const getTicket = async () => {
-  await checkAuthThen(async () => {
-    const requestId = await getTickets();
-    await router.push({ name: "air", query: { ticketsId: requestId } });
-  });
-};
+// Логика для определения empty состояния
+const emptyStateTitle = computed(() => {
+  if (!route.query.ticketsId) {
+    return "Сначала найдите рейсы";
+  }
+  return "К сожалению, по вашим параметрам не нашли подходящие рейсы";
+});
+
+const emptyStateText = computed(() => {
+  if (!route.query.ticketsId) {
+    return "Проверяемые маршрутные листы подходят для всех целей туризма Продление доступно в личном кабинете, также пришлем письмо до истечения срока брони";
+  }
+  return "Попробуйте изменить параметры поиска или даты поездки";
+});
+
+// const getTicket = async () => {
+//   await checkAuthThen(async () => {
+//     const requestId = await getTickets();
+//     await router.push({ name: "air", query: { ticketsId: requestId } });
+//   });
+// };
 
 onMounted(() => {
   getTickerForRequest(route.query.ticketsId as string);
 });
 
 useSeoMeta({
-  title: `Авиабилеты ${tickets.value.data.departure.name} - ${tickets.value.data.arrival.name}, ${tickets.value.data.date_forward} - ${tickets.value.data.date_backward}`,
+  title: `Оформить лист бронирования авиаперелета на 14 дней. Легко продлить.`,
 });
 </script>
 

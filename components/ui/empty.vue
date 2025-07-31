@@ -1,6 +1,6 @@
 <template>
   <div class="empty">
-    <h3>{{ title }} 😔</h3>
+    <h3>{{ title }}</h3>
     <p>{{ txt }}</p>
   </div>
 </template>
@@ -16,9 +16,12 @@ const props = defineProps<{
 .empty {
   @include flex-center;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   min-height: 40rem;
   text-align: center;
+  background-color: #f5f3f3;
+  padding: 3.2rem;
+  border-radius: 1.6rem;
 
   @include bp($point_2) {
     justify-content: center;
@@ -34,7 +37,8 @@ const props = defineProps<{
     }
   }
   p {
-    font-size: 2.4rem;
+    // font-size: 2.4rem;
+    max-width: 55rem;
     @include bp($point_2) {
       font-size: 1.8rem;
       text-align: center;
