@@ -45,12 +45,7 @@
 import btn from "~/components/ui/buttons/btn.vue";
 import Textareas from "~/components/ui/inputs/Textareas.vue";
 import { ref } from "vue";
-
-const questions = ref([
-  { question: "Вопрос?", answer: "Ответ на первый вопрос." },
-  { question: "Вопрос?", answer: "Ответ на второй вопрос." },
-  { question: "Вопрос?", answer: "Ответ на третий вопрос." },
-]);
+import { questions } from "~/api/Questions";
 
 const activeIndex = ref<number | null>(null);
 

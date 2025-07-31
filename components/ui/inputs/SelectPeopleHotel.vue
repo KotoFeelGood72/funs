@@ -20,7 +20,7 @@
             <button @click="decreaseAdults">
               <Icon name="ic:baseline-minus" />
             </button>
-            <span>{{ ticketHotel.num }}</span>
+            <span>{{ ticket.adults_count }}</span>
             <button @click="increaseAdults">
               <Icon name="ic:baseline-plus" />
             </button>
@@ -33,7 +33,7 @@
             <button @click="decreaseChildren">
               <Icon name="ic:baseline-minus" />
             </button>
-            <span>{{ ticketHotel.children }}</span>
+            <span>0</span>
             <button @click="increaseChildren">
               <Icon name="ic:baseline-plus" />
             </button>
@@ -45,7 +45,7 @@
             <button @click="decreaseHotelClass">
               <Icon name="ic:baseline-minus" />
             </button>
-            <span>{{ ticketHotel.hotel_class }}</span>
+            <span>{{ ticket.hotel_class }}</span>
             <button @click="increaseHotelClass">
               <Icon name="ic:baseline-plus" />
             </button>
@@ -58,9 +58,10 @@
 
 <script setup lang="ts">
 import { useHotelStore, useHotelStoreRefs } from "~/store/useHotelStore";
+import { usePassengers } from "~/composables/usePassengers";
 
-const { createPassengersHotel } = useHotelStore();
-const { ticketHotel } = useHotelStoreRefs();
+const { createPassengers } = usePassengers();
+const { ticket } = useHotelStoreRefs();
 
 const isDropdownVisible = ref(false);
 const dropdownPosition = ref("bottom");
@@ -68,7 +69,7 @@ const wrapper = ref<HTMLElement | null>(null);
 
 // Текст с правильными склонениями
 const passengerText = computed(() => {
-  const total = ticketHotel.value.num + ticketHotel.value.children;
+  const total = ticket.value.adults_count;
   return `${total} пассажир${total === 1 ? "" : "а"}`;
 });
 
@@ -101,34 +102,47 @@ const calculateDropdownPosition = () => {
 };
 
 const increaseAdults = () => {
-  ticketHotel.value.num++;
-  createPassengersHotel();
+  ticket.value.adults_count++;
+  createPassengers(ticket.value.adults_count);
 };
 
 const decreaseAdults = () => {
-  if (ticketHotel.value.num > 1) {
-    ticketHotel.value.num--;
-    createPassengersHotel();
+  if (ticket.value.adults_count > 1) {
+    ticket.value.adults_count--;
+    createPassengers(ticket.value.adults_count);
   }
 };
-const increaseChildren = () => ticketHotel.value.children++;
-const decreaseChildren = () =>
-  ticketHotel.value.children > 0 && ticketHotel.value.children--;
+const increaseChildren = () => {};
+const decreaseChildren = () => {};
 const increaseHotelClass = () => {
-  if (ticketHotel.value.hotel_class < 5) {
-    ticketHotel.value.hotel_class++;
+  const currentClass = parseInt(ticket.value.hotel_class);
+  console.log("Before increase:", currentClass, "Type:", typeof currentClass);
+  if (currentClass < 5) {
+    const newClass = currentClass + 1;
+    console.log("New class:", newClass);
+    ticket.value.hotel_class = newClass.toString();
+    console.log("After set:", ticket.value.hotel_class);
   }
 };
 
 const decreaseHotelClass = () => {
-  if (ticketHotel.value.hotel_class > 1) {
-    ticketHotel.value.hotel_class--;
+  const currentClass = parseInt(ticket.value.hotel_class);
+  if (currentClass > 1) {
+    ticket.value.hotel_class = (currentClass - 1).toString();
   }
 };
 
 // Слушатели событий
 onMounted(() => document.addEventListener("click", closeDropdown));
 onBeforeUnmount(() => document.removeEventListener("click", closeDropdown));
+
+// Отслеживаем изменения hotel_class
+watch(
+  () => ticket.value.hotel_class,
+  (newVal, oldVal) => {
+    console.log("hotel_class changed:", oldVal, "→", newVal);
+  }
+);
 </script>
 <style scoped lang="scss">
 .people-wrapper {

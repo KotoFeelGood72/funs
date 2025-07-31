@@ -12,17 +12,17 @@
             :class="{
               blur:
                 !showAll &&
-                visibleQuestions.length > 5 &&
+                visibleQuestions.length > 4 &&
                 index >= visibleQuestions.length - 2,
               [`blur-${index}`]:
                 !showAll &&
-                visibleQuestions.length > 5 &&
+                visibleQuestions.length > 4 &&
                 index >= visibleQuestions.length - 2,
             }"
             :style="{
               pointerEvents:
                 !showAll &&
-                visibleQuestions.length > 5 &&
+                visibleQuestions.length > 4 &&
                 index >= visibleQuestions.length - 2
                   ? 'none'
                   : 'auto',
@@ -32,11 +32,7 @@
               <h3>{{ item.question }}</h3>
               <div class="faq-btn">
                 <Icon
-                  :name="
-                    activeIndex === index
-                      ? 'ic:baseline-minus'
-                      : 'ic:baseline-plus'
-                  "
+                  :name="activeIndex === index ? 'ic:baseline-minus' : 'ic:baseline-plus'"
                   :size="25"
                 />
               </div>
@@ -48,7 +44,7 @@
               }"
               ref="answers"
             >
-              <p>{{ item.response }}</p>
+              <p>{{ item.answer }}</p>
             </div>
           </div>
         </div>
@@ -78,9 +74,7 @@ const activeIndex = ref<number | null>(null);
 const heights = ref<number[]>([]);
 const answers = ref<HTMLElement[]>([]);
 const showAll = ref(false);
-const visibleQuestions = ref(
-  Array.isArray(props.faqs) ? props.faqs.slice(0, 5) : []
-);
+const visibleQuestions = ref(Array.isArray(props.faqs) ? props.faqs.slice(0, 5) : []);
 
 const toggleQuestion = (index: number) => {
   if (showAll || index < visibleQuestions.value.length - 2) {
@@ -118,6 +112,7 @@ nextTick(() => calculateHeights());
 .faq {
   position: relative;
   background-color: $blue;
+  user-select: none;
 
   h2 {
     color: $white;

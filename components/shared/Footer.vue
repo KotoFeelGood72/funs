@@ -58,8 +58,9 @@
 <script setup lang="ts">
 const nav = ref<any>([
   { name: "Личный кабинет", link: "/profile" },
+  { name: "Отели для визы без полной оплаты", link: "/hotels" },
+  { name: "Оплатить E-Visa и ЕТА российской картой", link: "/eta" },
   { name: "Забронировать авиабилет", link: "/air" },
-  { name: "Забронировать отель", link: "/hotels" },
   {
     name: "Политика в отношении обработки персональных данных",
     link: "/privacy",
@@ -153,6 +154,9 @@ const nav = ref<any>([
 .socials {
   @include flex-start;
   gap: 2.4rem;
+  a {
+    color: $white;
+  }
 }
 
 .footer__navigation {

@@ -6,7 +6,7 @@
       <Preview />
       <Divider :height="8" />
     </div>
-    <Faq :faqs="faq" />
+    <Faq :faqs="questions" />
     <Divider :height="8" :color="true" />
     <Posts :posts="blogs['featured']" />
     <Divider :height="8" :color="true" />
@@ -93,14 +93,15 @@ import Divider from "~/components/ui/Divider.vue";
 import Posts from "~/components/screens/Posts.vue";
 // import btn from "~/components/ui/buttons/btn.vue";
 import Form from "~/components/shared/Form.vue";
-import { useFaqs } from "~/composables/useFaqs";
+// import { useFaqs } from "~/composables/useFaqs";
 import { useBlogs } from "~/composables/useBlogs";
+import { questions } from "~/api/Questions";
 
-const { fetchFaqs, faq } = useFaqs();
+// const { fetchFaqs, faq } = useFaqs();
 const { fetchBlogs, blogs } = useBlogs();
 
 onMounted(() => {
-  fetchFaqs();
+  // fetchFaqs();
   fetchBlogs("featured");
 });
 </script>
