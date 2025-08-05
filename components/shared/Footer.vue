@@ -34,6 +34,10 @@
             <div class="payment">
               <img src="@/assets/img/payment.png" alt="" />
             </div>
+            <div class="ur_info">
+              <p>ООО "РЕД МЕД"</p>
+              <p>Юр. Адрес: 344039, РОСТОВ-НА-ДОНУ, ЗООЛОГИЧЕСКАЯ УЛ., 59</p>
+            </div>
           </div>
         </div>
         <div class="footer__navigation">
@@ -50,6 +54,10 @@
             </NuxtLink>
           </nav>
         </div>
+      </div>
+      <div class="footer__ur__info">
+        <p>ИНН/КПП 6165234690/616501001, ОГРН 1226100033257</p>
+        <a href="mailto:info@funbooking.ru">info@funbooking.ru</a>
       </div>
     </div>
   </footer>
@@ -110,6 +118,7 @@ const nav = ref<any>([
 .footer_main {
   @include flex-start;
   gap: 3.2rem;
+  margin-bottom: 2rem;
 
   @include bp($point_2) {
     flex-direction: column;
@@ -202,6 +211,25 @@ const nav = ref<any>([
   margin: 2rem 0 0 0;
   img {
     width: 100%;
+  }
+}
+
+.footer__ur__info {
+  @include flex-space;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-size: 1.4rem;
+}
+
+.ur_info {
+  & > p {
+    &:nth-child(1) {
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+    &:nth-child(2) {
+      margin-bottom: 0;
+    }
   }
 }
 </style>
