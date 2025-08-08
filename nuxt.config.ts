@@ -115,6 +115,15 @@ export default defineNuxtConfig({
           href: "/apple-touch-icon-180x180.png",
         },
       ],
+      script: [
+        {
+          innerHTML: "window.yaContextCb=window.yaContextCb||[]",
+        },
+        {
+          src: "https://yandex.ru/ads/system/context.js",
+          async: true,
+        },
+      ],
     },
   },
 });

@@ -17,12 +17,7 @@
         :errorEnd="vuelidate.data.date_backward.$error"
       />
     </div>
-    <div class="filter-group">
-      <SelectPeople
-        v-model:adults="eta.adults"
-        style="pointer-events: none; user-select: none"
-      />
-    </div>
+
     <btn
       :name="isTextBtn"
       icon="right"
@@ -35,7 +30,6 @@
 
 <script setup lang="ts">
 import Select from "../inputs/Select.vue";
-import SelectPeople from "../inputs/SelectPeople.vue";
 import btn from "../buttons/btn.vue";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
 import { useRouter, useRoute } from "vue-router";

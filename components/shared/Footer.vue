@@ -218,7 +218,6 @@ const nav = ref<any>([
   @include flex-space;
   gap: 2rem;
   flex-wrap: wrap;
-  font-size: 1.4rem;
 }
 
 .ur_info {

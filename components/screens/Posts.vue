@@ -17,8 +17,21 @@
           </li>
         </ul>
         <div class="adv">
-          <div class="adv_item"><img src="~/assets/img/adv.png" /></div>
-          <div class="adv_item"><img src="~/assets/img/adv.png" /></div>
+          <!-- Yandex.RTB R-A-14701543-1 -->
+          <div id="yandex_rtb_R-A-14701543-1">
+            <!-- Fallback content for development -->
+            <div
+              style="
+                background: #f0f0f0;
+                padding: 20px;
+                text-align: center;
+                border: 1px solid #ddd;
+              "
+            >
+              <p>Yandex Ad Placeholder</p>
+              <p>Block ID: R-A-14701543-1</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -29,12 +42,45 @@
 import Post from "../ui/card/Post.vue";
 import btn from "../ui/buttons/btn.vue";
 import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+
+// Type declarations for Yandex global variables
+declare global {
+  interface Window {
+    yaContextCb: any[];
+    Ya: {
+      Context: {
+        AdvManager: {
+          render: (config: any) => void;
+        };
+      };
+    };
+  }
+}
 
 defineProps<{
   posts: any;
 }>();
 
 const router = useRouter();
+
+onMounted(() => {
+  // Initialize Yandex.RTB ad
+  if (window.yaContextCb && window.Ya) {
+    window.yaContextCb.push(() => {
+      try {
+        window.Ya.Context.AdvManager.render({
+          blockId: "R-A-1234567-1", // Test block ID
+          renderTo: "yandex_rtb_R-A-14701543-1",
+          type: "feed",
+        });
+      } catch (error) {
+        console.log("Yandex ad failed to load:", error);
+        // You can add fallback content here if needed
+      }
+    });
+  }
+});
 </script>
 
 <style scoped lang="scss">

@@ -11,7 +11,6 @@ export const useETAStore = defineStore("eta", {
       country: "" as any,
       date_forward: "" as any,
       date_backward: "" as any,
-      adults: 1 as any,
     },
     visaList: null as any,
     visaId: null as any,
