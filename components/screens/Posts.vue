@@ -17,21 +17,7 @@
           </li>
         </ul>
         <div class="adv">
-          <!-- Yandex.RTB R-A-14701543-1 -->
-          <div id="yandex_rtb_R-A-14701543-1">
-            <!-- Fallback content for development -->
-            <div
-              style="
-                background: #f0f0f0;
-                padding: 20px;
-                text-align: center;
-                border: 1px solid #ddd;
-              "
-            >
-              <p>Yandex Ad Placeholder</p>
-              <p>Block ID: R-A-14701543-1</p>
-            </div>
-          </div>
+          <slot />
         </div>
       </div>
     </div>
