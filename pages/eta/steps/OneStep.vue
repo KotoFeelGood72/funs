@@ -3,7 +3,15 @@
     <div class="eta__head">
       <VisaFilterForm />
     </div>
-    <div class="eta_main">
+    
+      <empty 
+      v-if="!hasQueryParams"
+        title="Найдите подходящую визу"
+        txt="Выберите страну, даты поездки и другие параметры для поиска доступных виз"
+      />
+
+    <!-- Основной контент когда есть query параметры -->
+    <div v-else class="eta_main">
       <div class="eta__forms">
         <div class="grid_data">
           <infoText
@@ -136,6 +144,7 @@ import InfoText from "~/components/ui/InfoText.vue";
 import btn from "~/components/ui/buttons/btn.vue";
 import visa_short_form from "~/components/forms/visa_short_form.vue";
 import VisaFilterForm from "@/components/ui/filters/VisaFilterForm.vue";
+import empty from "~/components/ui/empty.vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { useETAStoreRefs, useETAStore } from "~/store/useETAStore";
@@ -149,6 +158,11 @@ const visaPurposeId = ref<number | null>(null);
 const isDocumentsOpen = ref(false);
 const route = useRoute();
 const router = useRouter();
+
+// Проверяем наличие query параметров
+const hasQueryParams = computed(() => {
+  return route.query.request_id && route.query.request_id !== '';
+});
 
 // СОЗДАЁМ ref для данных динамической формы
 const visaFormRef = ref<{
@@ -404,5 +418,17 @@ const submitVisa = async () => {
 
 .visa_form {
   padding: 2rem 0;
+}
+
+.eta_empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 3.2rem;
+}
+
+.eta_empty__action {
+  margin-top: 1.6rem;
 }
 </style>

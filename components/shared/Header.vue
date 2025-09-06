@@ -37,7 +37,7 @@ const router = useRouter();
 const nav = [
   { link: "/air", name: "Билеты" },
   { link: "/hotels", name: "Отели" },
-  { link: "/", name: "ETA" },
+  { link: "/eta", name: "ETA" },
 ];
 
 const isUser = computed(() => {
