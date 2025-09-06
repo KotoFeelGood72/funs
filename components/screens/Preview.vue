@@ -135,10 +135,9 @@ const toggleActive = (index: number) => {
   }
 
   img {
-    @include bp($point_2) {
-      width: 100%;
-      height: auto;
-    }
+    width: 100%;
+    object-fit: cover;
+    height: auto;
   }
 }
 
@@ -150,6 +149,7 @@ const toggleActive = (index: number) => {
   max-height: 100%;
   display: flex;
   flex-direction: column;
+  max-width: 71rem;
   @include bp($point_2) {
     order: 1;
     padding: 2rem 1rem;
@@ -210,6 +210,9 @@ const toggleActive = (index: number) => {
 }
 
 .preview-text {
-  white-space: pre-line;
+  font-size: 2.2rem;
+  @include bp($point_2) {
+    font-size: 1.8rem;
+  }
 }
 </style>
