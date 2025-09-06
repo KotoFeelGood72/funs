@@ -8,6 +8,14 @@
     </div>
     <Faq :faqs="questions" />
     <Divider :height="8" :color="true" />
+    
+    <!-- Yandex.RTB рекламный блок -->
+    <section class="advertisement">
+      <div class="container">
+        <div id="yandex_rtb_R-A-14701543-1"></div>
+      </div>
+    </section>
+    
     <Posts :posts="blogs['featured']" />
     <Divider :height="8" :color="true" />
     <section class="quote blue">
@@ -103,6 +111,15 @@ const { fetchBlogs, blogs } = useBlogs();
 onMounted(() => {
   // fetchFaqs();
   fetchBlogs("featured");
+  
+  // Инициализация Yandex.RTB рекламного блока
+  window.yaContextCb.push(() => {
+    Ya.Context.AdvManager.render({
+      "blockId": "R-A-14701543-1",
+      "renderTo": "yandex_rtb_R-A-14701543-1",
+      "type": "feed"
+    });
+  });
 });
 </script>
 
@@ -248,5 +265,21 @@ onMounted(() => {
 }
 .callback__content {
   max-width: 40rem;
+}
+
+.advertisement {
+  padding: 3.2rem 0;
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 25rem;
+  }
+  
+  #yandex_rtb_R-A-14701543-1 {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 </style>
